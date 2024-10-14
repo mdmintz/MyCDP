@@ -43,7 +43,6 @@ class PlayerMessage:
     Have one type per entry in MediaLogRecord::Type
     Corresponds to kMessage
     """
-
     #: Keep in sync with MediaLogMessageLevel
     #: We are currently keeping the message level 'error' separate from the
     #: PlayerError type because right now they represent different things,
@@ -54,7 +53,6 @@ class PlayerMessage:
     #: introducing a new error type which should hopefully let us integrate
     #: the error log level into the PlayerError type.
     level: str
-
     message: str
 
     def to_json(self) -> T_JSON_DICT:
@@ -74,7 +72,6 @@ class PlayerMessage:
 @dataclass
 class PlayerProperty:
     """Corresponds to kMediaPropertyChange"""
-
     name: str
     value: str
 
@@ -95,7 +92,6 @@ class PlayerProperty:
 @dataclass
 class PlayerEvent:
     """Corresponds to kMediaEventTriggered"""
-
     timestamp: Timestamp
     value: str
 
@@ -119,7 +115,6 @@ class PlayerErrorSourceLocation:
     Represents logged source line numbers reported in an error.
     NOTE: file and line are from chromium c++ implementation code, not js.
     """
-
     file: str
     line: int
 
@@ -140,20 +135,15 @@ class PlayerErrorSourceLocation:
 @dataclass
 class PlayerError:
     """Corresponds to kMediaError"""
-
     error_type: str
-
     #: Code is the numeric enum entry for a specific set of error codes, such
     #: as PipelineStatusCodes in media/base/pipeline_status.h
     code: int
-
     #: A trace of where this error was caused / where it passed through.
     stack: typing.List[PlayerErrorSourceLocation]
-
     #: Errors potentially have a root cause error, ie, a DecoderError might be
     #: caused by an WindowsError
     cause: typing.List[PlayerError]
-
     #: Extra data attached to an error, such as an HRESULT, Video Codec, etc.
     data: dict
 
@@ -202,7 +192,6 @@ class PlayerPropertiesChanged:
     This can be called multiple times, and can be used to set / override /
     remove player properties. A null propValue indicates removal.
     """
-
     player_id: PlayerId
     properties: typing.List[PlayerProperty]
 
@@ -223,7 +212,6 @@ class PlayerEventsAdded:
     Send events as a list, allowing them to be batched on the browser for less
     congestion. If batched, events must ALWAYS be in chronological order.
     """
-
     player_id: PlayerId
     events: typing.List[PlayerEvent]
 
@@ -239,7 +227,6 @@ class PlayerEventsAdded:
 @dataclass
 class PlayerMessagesLogged:
     """Send a list of any messages that need to be delivered."""
-
     player_id: PlayerId
     messages: typing.List[PlayerMessage]
 
@@ -255,7 +242,6 @@ class PlayerMessagesLogged:
 @dataclass
 class PlayerErrorsRaised:
     """Send a list of any errors that need to be delivered."""
-
     player_id: PlayerId
     errors: typing.List[PlayerError]
 
@@ -275,7 +261,6 @@ class PlayersCreated:
     a list of active players. If an agent is restored, it will receive the full
     list of player ids and all events again.
     """
-
     players: typing.List[PlayerId]
 
     @classmethod

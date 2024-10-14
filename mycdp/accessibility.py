@@ -101,31 +101,22 @@ class AXValueNativeSourceType(enum.Enum):
 @dataclass
 class AXValueSource:
     """A single source for a computed AX property."""
-
     #: What type of source this is.
     type_: AXValueSourceType
-
     #: The value of this property source.
     value: typing.Optional[AXValue] = None
-
     #: The name of the relevant attribute, if any.
     attribute: typing.Optional[str] = None
-
     #: The value of the relevant attribute, if any.
     attribute_value: typing.Optional[AXValue] = None
-
     #: Whether this source is superseded by a higher priority source.
     superseded: typing.Optional[bool] = None
-
     #: The native markup source for this value, e.g. a ``<label>`` element.
     native_source: typing.Optional[AXValueNativeSourceType] = None
-
     #: The value, such as a node or node list, of the native source.
     native_source_value: typing.Optional[AXValue] = None
-
     #: Whether the value for this property is invalid.
     invalid: typing.Optional[bool] = None
-
     #: Reason for the value being invalid, if it is.
     invalid_reason: typing.Optional[str] = None
 
@@ -201,10 +192,8 @@ class AXValueSource:
 class AXRelatedNode:
     #: The BackendNodeId of the related DOM node.
     backend_dom_node_id: dom.BackendNodeId
-
     #: The IDRef value provided, if any.
     idref: typing.Optional[str] = None
-
     #: The text alternative of this node in the current context.
     text: typing.Optional[str] = None
 
@@ -240,7 +229,6 @@ class AXRelatedNode:
 class AXProperty:
     #: The name of this property.
     name: AXPropertyName
-
     #: The value of this property.
     value: AXValue
 
@@ -261,16 +249,12 @@ class AXProperty:
 @dataclass
 class AXValue:
     """A single computed AX property."""
-
     #: The type of this value.
     type_: AXValueType
-
     #: The computed value of this property.
     value: typing.Optional[typing.Any] = None
-
     #: One or more related nodes, if applicable.
     related_nodes: typing.Optional[typing.List[AXRelatedNode]] = None
-
     #: The sources which contributed to the computation of this property.
     sources: typing.Optional[typing.List[AXValueSource]] = None
 
@@ -367,43 +351,30 @@ class AXPropertyName(enum.Enum):
 @dataclass
 class AXNode:
     """A node in the accessibility tree."""
-
     #: Unique identifier for this node.
     node_id: AXNodeId
-
     #: Whether this node is ignored for accessibility
     ignored: bool
-
     #: Collection of reasons why this node is hidden.
     ignored_reasons: typing.Optional[typing.List[AXProperty]] = None
-
     #: This ``Node``'s role, whether explicit or implicit.
     role: typing.Optional[AXValue] = None
-
     #: This ``Node``'s Chrome raw role.
     chrome_role: typing.Optional[AXValue] = None
-
     #: The accessible name for this ``Node``.
     name: typing.Optional[AXValue] = None
-
     #: The accessible description for this ``Node``.
     description: typing.Optional[AXValue] = None
-
     #: The value for this ``Node``.
     value: typing.Optional[AXValue] = None
-
     #: All other properties
     properties: typing.Optional[typing.List[AXProperty]] = None
-
     #: ID for this node's parent.
     parent_id: typing.Optional[AXNodeId] = None
-
     #: IDs for each of this node's child nodes.
     child_ids: typing.Optional[typing.List[AXNodeId]] = None
-
     #: The backend ID for the associated DOM node, if any.
     backend_dom_node_id: typing.Optional[dom.BackendNodeId] = None
-
     #: The frame ID for the frame associated with this nodes document.
     frame_id: typing.Optional[page.FrameId] = None
 
@@ -530,21 +501,19 @@ def get_partial_ax_tree(
     """
     Fetches the accessibility node and partial accessibility tree for
     this DOM node, if it exists.
-
     **EXPERIMENTAL**
-
     :param node_id: *(Optional)*
-    Identifier of the node to get the partial accessibility tree for.
+     Identifier of the node to get the partial accessibility tree for.
     :param backend_node_id: *(Optional)*
-    Identifier of the backend node to get the partial accessibility tree for.
+     Identifier of the backend node to get the partial accessibility tree for.
     :param object_id: *(Optional)*
-    JavaScript object id of the node wrapper to get
-    the partial accessibility tree for.
+     JavaScript object id of the node wrapper to get
+     the partial accessibility tree for.
     :param fetch_relatives: *(Optional)*
-    Whether to fetch this node's ancestors, siblings and children.
-    Defaults to true.
+     Whether to fetch this node's ancestors, siblings and children.
+     Defaults to true.
     :returns: The ``Accessibility.AXNode`` for this DOM node,
-    if it exists, plus its ancestors, siblings and children, if requested.
+     if it exists, plus its ancestors, siblings and children, if requested.
     """
     params: T_JSON_DICT = dict()
     if node_id is not None:
@@ -568,16 +537,13 @@ def get_full_ax_tree(
     frame_id: typing.Optional[page.FrameId] = None,
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, typing.List[AXNode]]:
     """
-    Fetches the entire accessibility tree for the root Document
-
+    Fetches the entire accessibility tree for the root Document.
     **EXPERIMENTAL**
-
     :param depth: *(Optional)* The maximum depth at which
-    descendants of the root node should be retrieved.
-    If omitted, the full tree is returned.
+     descendants of the root node should be retrieved.
+     If omitted, the full tree is returned.
     :param frame_id: *(Optional)* The frame for whose document
-    the AX tree should be retrieved. If omitted, the root frame is used.
-    :returns:
+     the AX tree should be retrieved. If omitted, the root frame is used.
     """
     params: T_JSON_DICT = dict()
     if depth is not None:
@@ -598,12 +564,9 @@ def get_root_ax_node(
     """
     Fetches the root node.
     Requires ``enable()`` to have been called previously.
-
     **EXPERIMENTAL**
-
     :param frame_id: *(Optional)* The frame in whose document
-    the node resides. If omitted, the root frame is used.
-    :returns:
+     the node resides. If omitted, the root frame is used.
     """
     params: T_JSON_DICT = dict()
     if frame_id is not None:
@@ -624,15 +587,12 @@ def get_ax_node_and_ancestors(
     """
     Fetches a node and all ancestors up to and including the root.
     Requires ``enable()`` to have been called previously.
-
     **EXPERIMENTAL**
-
     :param node_id: *(Optional)* Identifier of the node to get.
     :param backend_node_id: *(Optional)*
-    Identifier of the backend node to get.
+     Identifier of the backend node to get.
     :param object_id: *(Optional)* JavaScript object id of
-    the node wrapper to get.
-    :returns:
+     the node wrapper to get.
     """
     params: T_JSON_DICT = dict()
     if node_id is not None:
@@ -655,13 +615,10 @@ def get_child_ax_nodes(
     """
     Fetches a particular accessibility node by AXNodeId.
     Requires ``enable()`` to have been called previously.
-
     **EXPERIMENTAL**
-
     :param id_:
     :param frame_id: *(Optional)* The frame in whose document the node resides.
-    If omitted, the root frame is used.
-    :returns:
+     If omitted, the root frame is used.
     """
     params: T_JSON_DICT = dict()
     params["id"] = id_.to_json()
@@ -691,18 +648,16 @@ def query_ax_tree(
     the command returns an error.
     If neither ``accessibleName`` or ``role`` is specified,
     it returns all the accessibility nodes in the subtree.
-
     **EXPERIMENTAL**
-
     :param node_id: *(Optional)* Identifier of the node for the root to query.
     :param backend_node_id: *(Optional)* Identifier of the backend node for
-    the root to query.
+     the root to query.
     :param object_id: *(Optional)* JavaScript object id of the node wrapper
-    for the root to query.
+     for the root to query.
     :param accessible_name: *(Optional)* Find nodes with this computed name.
     :param role: *(Optional)* Find nodes with this computed role.
     :returns: A list of ``Accessibility.AXNode`` matching the specified
-    attributes, including nodes that are ignored for accessibility.
+     attributes, including nodes that are ignored for accessibility.
     """
     params: T_JSON_DICT = dict()
     if node_id is not None:
@@ -728,11 +683,9 @@ def query_ax_tree(
 class LoadComplete:
     """
     **EXPERIMENTAL**
-
     The loadComplete event mirrors the load complete event sent by
     the browser to assistive technology when the web page has finished loading.
     """
-
     #: New document root node.
     root: AXNode
 
@@ -746,11 +699,9 @@ class LoadComplete:
 class NodesUpdated:
     """
     **EXPERIMENTAL**
-
     The nodesUpdated event is sent every time a
     previously requested node has changed in the tree.
     """
-
     #: Updated node data.
     nodes: typing.List[AXNode]
 

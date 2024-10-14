@@ -44,13 +44,10 @@ class CallFrameId(str):
 @dataclass
 class Location:
     """Location in the source code."""
-
     #: Script identifier as reported in the ``Debugger.scriptParsed``.
     script_id: runtime.ScriptId
-
     #: Line number in the script (0-based).
     line_number: int
-
     #: Column number in the script (0-based).
     column_number: typing.Optional[int] = None
 
@@ -78,7 +75,6 @@ class Location:
 @dataclass
 class ScriptPosition:
     """Location in the source code."""
-
     line_number: int
     column_number: int
 
@@ -99,7 +95,6 @@ class ScriptPosition:
 @dataclass
 class LocationRange:
     """Location range within one script."""
-
     script_id: runtime.ScriptId
     start: ScriptPosition
     end: ScriptPosition
@@ -123,35 +118,26 @@ class LocationRange:
 @dataclass
 class CallFrame:
     """JavaScript call frame. Array of call frames form the call stack."""
-
     #: Call frame identifier.
     #: This identifier is only valid while the virtual machine is paused.
     call_frame_id: CallFrameId
-
     #: Name of the JavaScript function called on this call frame.
     function_name: str
-
     #: Location in the source code.
     location: Location
-
     #: JavaScript script name or url.
     #: Deprecated in favor of using the ``location.scriptId``
     #: to resolve the URL via a previously
     #: sent ``Debugger.scriptParsed`` event.
     url: str
-
     #: Scope chain for this call frame.
     scope_chain: typing.List[Scope]
-
     #: ``this`` object for this call frame.
     this: runtime.RemoteObject
-
     #: Location in the source code.
     function_location: typing.Optional[Location] = None
-
     #: The value being returned, if the function is at return point.
     return_value: typing.Optional[runtime.RemoteObject] = None
-
     #: Valid only while the VM is paused and indicates whether this frame
     #: can be restarted or not. Note that a ``true`` value here does not
     #: guarantee that Debugger#restartFrame with this CallFrameId will be
@@ -204,22 +190,17 @@ class CallFrame:
 @dataclass
 class Scope:
     """Scope description."""
-
     #: Scope type.
     type_: str
-
     #: Object representing the scope.
     #: For ``global`` and ``with`` scopes it represents the actual
     #: object; for the rest of the scopes,
     #: it is artificial transient object enumerating scope
     #: variables as its properties.
     object_: runtime.RemoteObject
-
     name: typing.Optional[str] = None
-
     #: Location in the source code where scope starts
     start_location: typing.Optional[Location] = None
-
     #: Location in the source code where scope ends
     end_location: typing.Optional[Location] = None
 
@@ -261,10 +242,8 @@ class Scope:
 @dataclass
 class SearchMatch:
     """Search match for resource."""
-
     #: Line number in resource content.
     line_number: float
-
     #: Line with match content.
     line_content: str
 
@@ -286,13 +265,10 @@ class SearchMatch:
 class BreakLocation:
     #: Script identifier as reported in the ``Debugger.scriptParsed``.
     script_id: runtime.ScriptId
-
     #: Line number in the script (0-based).
     line_number: int
-
     #: Column number in the script (0-based).
     column_number: typing.Optional[int] = None
-
     type_: typing.Optional[str] = None
 
     def to_json(self) -> T_JSON_DICT:
@@ -327,7 +303,6 @@ class BreakLocation:
 class WasmDisassemblyChunk:
     #: The next chunk of disassembled lines.
     lines: typing.List[str]
-
     #: The bytecode offsets describing the start of each line.
     bytecode_offsets: typing.List[int]
 
@@ -347,7 +322,6 @@ class WasmDisassemblyChunk:
 
 class ScriptLanguage(enum.Enum):
     """Enum of possible script languages."""
-
     JAVA_SCRIPT = "JavaScript"
     WEB_ASSEMBLY = "WebAssembly"
 
@@ -362,10 +336,8 @@ class ScriptLanguage(enum.Enum):
 @dataclass
 class DebugSymbols:
     """Debug symbols available for a wasm script."""
-
     #: Type of the debug symbols.
     type_: str
-
     #: URL of the external symbol source.
     external_url: typing.Optional[str] = None
 
@@ -587,7 +559,6 @@ def disassemble_wasm_module(
 ]:
     """
     **EXPERIMENTAL**
-
     :param script_id: Id of the script to disassemble
     :returns: A tuple with the following items:
         0. **streamId** - *(Optional)*
@@ -628,9 +599,7 @@ def next_wasm_disassembly_chunk(
     stream. If disassembly is complete, this API will invalidate the streamId
     and return an empty chunk. Any subsequent calls for the now invalid stream
     will return errors.
-
     **EXPERIMENTAL**
-
     :param stream_id:
     :returns: The next chunk of disassembly.
     """
@@ -644,37 +613,13 @@ def next_wasm_disassembly_chunk(
     return WasmDisassemblyChunk.from_json(json["chunk"])
 
 
-def get_wasm_bytecode(
-    script_id: runtime.ScriptId,
-) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, str]:
-    """
-    This command is deprecated. Use getScriptSource instead.
-
-    .. deprecated:: 1.3
-
-    :param script_id: Id of the Wasm script to get source for.
-    :returns: Script source. (Encoded as a base64 string when passed over JSON)
-    """
-    params: T_JSON_DICT = dict()
-    params["scriptId"] = script_id.to_json()
-    cmd_dict: T_JSON_DICT = {
-        "method": "Debugger.getWasmBytecode",
-        "params": params,
-    }
-    json = yield cmd_dict
-    return str(json["bytecode"])
-
-
 def get_stack_trace(
     stack_trace_id: runtime.StackTraceId,
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, runtime.StackTrace]:
     """
     Returns stack trace with given ``stackTraceId``.
-
     **EXPERIMENTAL**
-
     :param stack_trace_id:
-    :returns:
     """
     params: T_JSON_DICT = dict()
     params["stackTraceId"] = stack_trace_id.to_json()
@@ -690,26 +635,6 @@ def pause() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """Stops on the next JavaScript statement."""
     cmd_dict: T_JSON_DICT = {
         "method": "Debugger.pause",
-    }
-    json = yield cmd_dict  # NOQA
-
-
-def pause_on_async_call(
-    parent_stack_trace_id: runtime.StackTraceId,
-) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
-    """
-    .. deprecated:: 1.3
-
-    **EXPERIMENTAL**
-
-    :param parent_stack_trace_id:
-     Debugger will pause when async call with given stack trace is started.
-    """
-    params: T_JSON_DICT = dict()
-    params["parentStackTraceId"] = parent_stack_trace_id.to_json()
-    cmd_dict: T_JSON_DICT = {
-        "method": "Debugger.pauseOnAsyncCall",
-        "params": params,
     }
     json = yield cmd_dict  # NOQA
 
@@ -747,15 +672,12 @@ def restart_frame(
     after a restart was scheduled. This can cause problems with restarting, so
     we now continue execution immediatly after it has been scheduled until we
     reach the beginning of the restarted frame.
-
     To stay back-wards compatible, ``restartFrame`` now expects a ``mode``
     parameter to be present. If the `mode` parameter is missing, `restartFrame`
     errors out.
-
     The various return values are deprecated and `callFrames` is always empty.
     Use the call frames from the ``Debugger#paused`` events instead, that fires
     once V8 pauses at the beginning of the restarted function.
-
     :param call_frame_id: Call frame identifier to evaluate on.
     :param mode: **(EXPERIMENTAL)** *(Optional)* The ``mode`` parameter
      must be present and set to 'StepInto', otherwise ``restartFrame``
@@ -868,9 +790,7 @@ def set_blackbox_patterns(
     VM will try to leave blackboxed script by
     performing 'step in' several times,
     finally resorting to 'step out' if unsuccessful.
-
     **EXPERIMENTAL**
-
     :param patterns:
     Array of regexps that will be used to check script url for blackbox state.
     """
@@ -892,9 +812,7 @@ def set_blackboxed_ranges(
     several times, finally resorting to 'step out' if unsuccessful.
     Positions array contains positions where blackbox state is changed.
     First interval isn't blackboxed. Array should be sorted.
-
     **EXPERIMENTAL**
-
     :param script_id: Id of the script.
     :param positions:
     """
@@ -988,7 +906,6 @@ def set_breakpoint_by_url(
      When specified, debugger will only stop on the breakpoint
      if this expression evaluates to true.
     :returns: A tuple with the following items:
-
         0. **breakpointId** -
           Id of the created breakpoint for further reference.
         1. **locations** - List of the locations this breakpoint resolved
@@ -1024,9 +941,7 @@ def set_breakpoint_on_function_call(
     Sets JavaScript breakpoint before each call to the given function.
     If another function was created from the same source as a given one,
     calling it will also trigger the breakpoint.
-
     **EXPERIMENTAL**
-
     :param object_id: Function object id.
     :param condition: *(Optional)* Expression to use as a breakpoint condition.
      When specified, debugger will stop on the breakpoint
@@ -1085,9 +1000,7 @@ def set_return_value(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Changes return value in top frame. Available only at return break position.
-
     **EXPERIMENTAL**
-
     :param new_value: New return value.
     """
     params: T_JSON_DICT = dict()
@@ -1288,7 +1201,6 @@ def step_over(
 @dataclass
 class BreakpointResolved:
     """Fired when breakpoint is resolved to an actual script and location."""
-
     #: Breakpoint unique identifier.
     breakpoint_id: BreakpointId
     #: Actual breakpoint location.
@@ -1309,7 +1221,6 @@ class Paused:
     Fired when the virtual machine stopped on breakpoint
     or exception or any other stop criteria.
     """
-
     #: Call stack the virtual machine stopped on.
     call_frames: typing.List[CallFrame]
     #: Pause reason.
@@ -1372,7 +1283,6 @@ class Resumed:
 @dataclass
 class ScriptFailedToParse:
     """Fired when virtual machine fails to parse the script."""
-
     #: Identifier of the script parsed.
     script_id: runtime.ScriptId
     #: URL or name of the script parsed (if any).
@@ -1482,7 +1392,6 @@ class ScriptParsed:
     This event is also fired for all known and uncollected
     scripts upon enabling debugger.
     """
-
     #: Identifier of the script parsed.
     script_id: runtime.ScriptId
     #: URL or name of the script parsed (if any).

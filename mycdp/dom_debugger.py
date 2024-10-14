@@ -16,7 +16,6 @@ from . import runtime
 
 class DOMBreakpointType(enum.Enum):
     """DOM breakpoint type."""
-
     SUBTREE_MODIFIED = "subtree-modified"
     ATTRIBUTE_MODIFIED = "attribute-modified"
     NODE_REMOVED = "node-removed"
@@ -31,7 +30,6 @@ class DOMBreakpointType(enum.Enum):
 
 class CSPViolationType(enum.Enum):
     """CSP Violation type."""
-
     TRUSTEDTYPE_SINK_VIOLATION = "trustedtype-sink-violation"
     TRUSTEDTYPE_POLICY_VIOLATION = "trustedtype-policy-violation"
 
@@ -46,7 +44,6 @@ class CSPViolationType(enum.Enum):
 @dataclass
 class EventListener:
     """Object event listener."""
-
     #: ``EventListener``'s type.
     type_: str
     #: ``EventListener``'s useCapture.
@@ -183,24 +180,6 @@ def remove_event_listener_breakpoint(
     json = yield cmd_dict  # NOQA
 
 
-def remove_instrumentation_breakpoint(
-    event_name: str,
-) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
-    """
-    Removes breakpoint on particular native event.
-    .. deprecated:: 1.3
-    **EXPERIMENTAL**
-    :param event_name: Instrumentation name to stop on.
-    """
-    params: T_JSON_DICT = dict()
-    params["eventName"] = event_name
-    cmd_dict: T_JSON_DICT = {
-        "method": "DOMDebugger.removeInstrumentationBreakpoint",
-        "params": params,
-    }
-    json = yield cmd_dict  # NOQA
-
-
 def remove_xhr_breakpoint(
     url: str,
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
@@ -268,24 +247,6 @@ def set_event_listener_breakpoint(
         params["targetName"] = target_name
     cmd_dict: T_JSON_DICT = {
         "method": "DOMDebugger.setEventListenerBreakpoint",
-        "params": params,
-    }
-    json = yield cmd_dict  # NOQA
-
-
-def set_instrumentation_breakpoint(
-    event_name: str,
-) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
-    """
-    Sets breakpoint on particular native event.
-    .. deprecated:: 1.3
-    **EXPERIMENTAL**
-    :param event_name: Instrumentation name to stop on.
-    """
-    params: T_JSON_DICT = dict()
-    params["eventName"] = event_name
-    cmd_dict: T_JSON_DICT = {
-        "method": "DOMDebugger.setInstrumentationBreakpoint",
         "params": params,
     }
     json = yield cmd_dict  # NOQA

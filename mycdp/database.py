@@ -28,16 +28,12 @@ class DatabaseId(str):
 @dataclass
 class Database:
     """Database object."""
-
     #: Database ID.
     id_: DatabaseId
-
     #: Database domain.
     domain: str
-
     #: Database name.
     name: str
-
     #: Database version.
     version: str
 
@@ -62,10 +58,8 @@ class Database:
 @dataclass
 class Error:
     """Database error."""
-
     #: Error message.
     message: str
-
     #: Error code.
     code: int
 
@@ -154,7 +148,6 @@ def get_database_table_names(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, typing.List[str]]:
     """
     :param database_id:
-    :returns:
     """
     params: T_JSON_DICT = dict()
     params["databaseId"] = database_id.to_json()

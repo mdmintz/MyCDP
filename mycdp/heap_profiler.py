@@ -32,17 +32,13 @@ class SamplingHeapProfileNode:
     Sampling Heap Profile node.
     Holds callsite information, allocation statistics and child nodes.
     """
-
     #: Function location.
     call_frame: runtime.CallFrame
-
     #: Allocations size in bytes for the node excluding children.
     self_size: float
-
     #: Node id. Ids are unique across all profiles
     #: collected between startSampling and stopSampling.
     id_: int
-
     #: Child nodes.
     children: typing.List[SamplingHeapProfileNode]
 
@@ -69,13 +65,10 @@ class SamplingHeapProfileNode:
 @dataclass
 class SamplingHeapProfileSample:
     """A single sample from a sampling profile."""
-
     #: Allocation size in bytes attributed to the sample.
     size: float
-
     #: Id of the corresponding profile tree node.
     node_id: int
-
     #: Time-ordered sample ordinal number.
     #: It is unique across all profiles retrieved
     #: between startSampling and stopSampling.
@@ -100,7 +93,6 @@ class SamplingHeapProfileSample:
 @dataclass
 class SamplingHeapProfile:
     """Sampling profile."""
-
     head: SamplingHeapProfileNode
     samples: typing.List[SamplingHeapProfileSample]
 
@@ -139,7 +131,6 @@ def add_inspected_heap_object(
 
 
 def collect_garbage() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
-
     cmd_dict: T_JSON_DICT = {
         "method": "HeapProfiler.collectGarbage",
     }
@@ -147,7 +138,6 @@ def collect_garbage() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
 
 
 def disable() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
-
     cmd_dict: T_JSON_DICT = {
         "method": "HeapProfiler.disable",
     }
@@ -155,7 +145,6 @@ def disable() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
 
 
 def enable() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
-
     cmd_dict: T_JSON_DICT = {
         "method": "HeapProfiler.enable",
     }
@@ -373,7 +362,6 @@ class HeapStatsUpdate:
     If heap objects tracking has been started then backend
     may send update for one or more fragments.
     """
-
     #: An array of triplets. Each triplet describes a fragment.
     #: The first integer is the fragment index.
     #: The second integer is a total count of objects for the fragment.
@@ -394,7 +382,6 @@ class LastSeenObjectId:
     If the were changes in the heap since last event then one or more
     heapStatsUpdate events will be sent before a new lastSeenObjectId event.
     """
-
     last_seen_object_id: int
     timestamp: float
 

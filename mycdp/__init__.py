@@ -24,7 +24,6 @@ __all__ = [
     "console",
     "database",
     "debugger",
-    "decorators",
     "device_access",
     "device_orientation",
     "dom",

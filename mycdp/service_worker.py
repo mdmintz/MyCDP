@@ -28,7 +28,6 @@ class RegistrationID(str):
 @dataclass
 class ServiceWorkerRegistration:
     """ServiceWorker registration."""
-
     registration_id: RegistrationID
     scope_url: str
     is_deleted: bool
@@ -82,21 +81,17 @@ class ServiceWorkerVersionStatus(enum.Enum):
 @dataclass
 class ServiceWorkerVersion:
     """ServiceWorker version."""
-
     version_id: str
     registration_id: RegistrationID
     script_url: str
     running_status: ServiceWorkerVersionRunningStatus
     status: ServiceWorkerVersionStatus
-
     #: The Last-Modified header value of the main script.
     script_last_modified: typing.Optional[float] = None
-
     #: The time at which the response headers of the main script were received
     #: from the server.
     #: For cached script it is the last time the cache entry was validated.
     script_response_time: typing.Optional[float] = None
-
     controlled_clients: typing.Optional[typing.List[target.TargetID]] = None
     target_id: typing.Optional[target.TargetID] = None
     router_rules: typing.Optional[str] = None
@@ -166,7 +161,6 @@ class ServiceWorkerVersion:
 @dataclass
 class ServiceWorkerErrorMessage:
     """ServiceWorker error message."""
-
     error_message: str
     registration_id: RegistrationID
     version_id: str
@@ -216,7 +210,6 @@ def deliver_push_message(
 
 
 def disable() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
-
     cmd_dict: T_JSON_DICT = {
         "method": "ServiceWorker.disable",
     }
@@ -264,7 +257,6 @@ def dispatch_periodic_sync_event(
 
 
 def enable() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
-
     cmd_dict: T_JSON_DICT = {
         "method": "ServiceWorker.enable",
     }
@@ -332,7 +324,6 @@ def start_worker(
 
 
 def stop_all_workers() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
-
     cmd_dict: T_JSON_DICT = {
         "method": "ServiceWorker.stopAllWorkers",
     }

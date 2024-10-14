@@ -26,13 +26,10 @@ class SerializedStorageKey(str):
 @dataclass
 class StorageId:
     """DOM Storage identifier."""
-
     #: Whether the storage is local storage (not session storage).
     is_local_storage: bool
-
     #: Security origin for the storage.
     security_origin: typing.Optional[str] = None
-
     #: Represents a key by which DOM Storage keys its CachedStorageAreas
     storage_key: typing.Optional[SerializedStorageKey] = None
 
@@ -118,7 +115,6 @@ def get_dom_storage_items(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, typing.List[Item]]:
     """
     :param storage_id:
-    :returns:
     """
     params: T_JSON_DICT = dict()
     params["storageId"] = storage_id.to_json()

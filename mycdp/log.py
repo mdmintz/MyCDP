@@ -16,36 +16,25 @@ from . import runtime
 @dataclass
 class LogEntry:
     """Log entry."""
-
     #: Log entry source.
     source: str
-
     #: Log entry severity.
     level: str
-
     #: Logged text.
     text: str
-
     #: Timestamp when this entry was added.
     timestamp: runtime.Timestamp
-
     category: typing.Optional[str] = None
-
     #: URL of the resource if known.
     url: typing.Optional[str] = None
-
     #: Line number in the resource.
     line_number: typing.Optional[int] = None
-
     #: JavaScript stack trace.
     stack_trace: typing.Optional[runtime.StackTrace] = None
-
     #: Identifier of the network request associated with this entry.
     network_request_id: typing.Optional[network.RequestId] = None
-
     #: Identifier of the worker associated with this entry.
     worker_id: typing.Optional[str] = None
-
     #: Call arguments.
     args: typing.Optional[typing.List[runtime.RemoteObject]] = None
 
@@ -117,10 +106,8 @@ class LogEntry:
 @dataclass
 class ViolationSetting:
     """Violation configuration setting."""
-
     #: Violation type.
     name: str
-
     #: Time threshold to trigger upon.
     threshold: float
 
@@ -198,7 +185,6 @@ def stop_violations_report() -> (
 @dataclass
 class EntryAdded:
     """Issued when new message was logged."""
-
     #: The entry.
     entry: LogEntry
 

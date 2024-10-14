@@ -28,7 +28,6 @@ def bind(port: int) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
 def unbind(port: int) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Request browser port unbinding.
-
     :param port: Port number to unbind.
     """
     params: T_JSON_DICT = dict()
@@ -46,7 +45,6 @@ class Accepted:
     """
     Informs that port was successfully bound and got a specified connection id.
     """
-
     #: Port number that was successfully bound.
     port: int
     #: Connection id to be used.

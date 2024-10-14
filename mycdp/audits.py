@@ -19,7 +19,6 @@ from . import runtime
 @dataclass
 class AffectedCookie:
     """Information about a cookie that is affected by an inspector issue."""
-
     #: The following three properties uniquely identify a cookie
     name: str
     path: str
@@ -44,10 +43,8 @@ class AffectedCookie:
 @dataclass
 class AffectedRequest:
     """Information about a request that is affected by an inspector issue."""
-
     #: The unique request id.
     request_id: network.RequestId
-
     url: typing.Optional[str] = None
 
     def to_json(self) -> T_JSON_DICT:
@@ -170,11 +167,9 @@ class CookieIssueDetails:
     """
     cookie_warning_reasons: typing.List[CookieWarningReason]
     cookie_exclusion_reasons: typing.List[CookieExclusionReason]
-
     #: Optionally identifies the site-for-cookies and the cookie url, which
     #: may be used by the front-end as additional context.
     operation: CookieOperation
-
     #: If AffectedCookie is not set then rawCookieLine contains the raw
     #: Set-Cookie header string. This hints at a problem where the
     #: cookie line is syntactically or semantically malformed in a way
@@ -302,23 +297,18 @@ class MixedContentResourceType(enum.Enum):
 class MixedContentIssueDetails:
     #: The way the mixed content issue is being resolved.
     resolution_status: MixedContentResolutionStatus
-
     #: The unsafe http url causing the mixed content issue.
     insecure_url: str
-
     #: The url responsible for the call to an unsafe url.
     main_resource_url: str
-
     #: The type of resource causing the mixed content issue (css, js, iframe,
     #: form,...). Marked as optional because it is mapped to from
     #: blink::mojom::RequestContextType, which will be replaced
     #: by network::mojom::RequestDestination
     resource_type: typing.Optional[MixedContentResourceType] = None
-
     #: The mixed content request.
     #: Does not always exist (e.g. for unsafe form submission urls).
     request: typing.Optional[AffectedRequest] = None
-
     #: Optional because not every mixed content issue
     #  is necessarily linked to a frame.
     frame: typing.Optional[AffectedFrame] = None
@@ -460,10 +450,8 @@ class HeavyAdReason(enum.Enum):
 class HeavyAdIssueDetails:
     #: The resolution status, either blocking the content or warning.
     resolution: HeavyAdResolutionStatus
-
     #: The reason the ad was blocked, total network or cpu or peak cpu.
     reason: HeavyAdReason
-
     #: The frame that was blocked.
     frame: AffectedFrame
 
@@ -533,13 +521,10 @@ class SourceCodeLocation:
 class ContentSecurityPolicyIssueDetails:
     #: Specific directive that is violated, causing the CSP issue.
     violated_directive: str
-
     is_report_only: bool
     content_security_policy_violation_type: ContentSecurityPolicyViolationType
-
     #: The url not included in allowed sources.
     blocked_url: typing.Optional[str] = None
-
     frame_ancestor: typing.Optional[AffectedFrame] = None
     source_code_location: typing.Optional[SourceCodeLocation] = None
     violating_node_id: typing.Optional[dom.BackendNodeId] = None
@@ -610,7 +595,6 @@ class SharedArrayBufferIssueDetails:
     Details for a issue arising from an SAB being instantiated in, or
     transferred to a context that is not cross-origin isolated.
     """
-
     source_code_location: SourceCodeLocation
     is_warning: bool
     type_: SharedArrayBufferIssueType
@@ -860,11 +844,9 @@ class QuirksModeIssueDetails:
     Details for issues about documents in Quirks Mode
     or Limited Quirks Mode that affects page layouting.
     """
-
     #: If false, it means the document's mode is "quirks"
     #: instead of "limited-quirks".
     is_limited_quirks_mode: bool
-
     document_node_id: dom.BackendNodeId
     url: str
     frame_id: page.FrameId
@@ -978,10 +960,8 @@ class GenericIssueErrorType(enum.Enum):
 @dataclass
 class GenericIssueDetails:
     """Depending on the concrete errorType, different properties are set."""
-
     #: Issues with the same errorType are aggregated in the frontend.
     error_type: GenericIssueErrorType
-
     frame_id: typing.Optional[page.FrameId] = None
     violating_node_id: typing.Optional[dom.BackendNodeId] = None
     violating_node_attribute: typing.Optional[str] = None
@@ -1035,13 +1015,10 @@ class DeprecationIssueDetails:
     /blink/renderer/core/frame/third_party/blink/renderer/core/frame
     /deprecation/README.md
     """
-
     source_code_location: SourceCodeLocation
-
     #: One of the deprecation names from
     #  third_party/blink/renderer/core/frame/deprecation/deprecation.json5
     type_: str
-
     affected_frame: typing.Optional[AffectedFrame] = None
 
     def to_json(self) -> T_JSON_DICT:
@@ -1247,7 +1224,6 @@ class FederatedAuthUserInfoRequestIssueReason(enum.Enum):
     Should be updated alongside FederatedAuthUserInfoRequestResult in
     third_party/blink/public/mojom/devtools/inspector_issue.mojom.
     """
-
     NOT_SAME_ORIGIN = "NotSameOrigin"
     NOT_IFRAME = "NotIframe"
     NOT_POTENTIALLY_TRUSTWORTHY = "NotPotentiallyTrustworthy"
@@ -1299,10 +1275,8 @@ class ClientHintIssueDetails:
 class FailedRequestInfo:
     #: The URL that failed to load.
     url: str
-
     #: The failure message for the failed request.
     failure_message: str
-
     request_id: typing.Optional[network.RequestId] = None
 
     def to_json(self) -> T_JSON_DICT:
@@ -1341,13 +1315,10 @@ class StyleSheetLoadingIssueReason(enum.Enum):
 @dataclass
 class StylesheetLoadingIssueDetails:
     """This issue warns when a referenced stylesheet couldn't be loaded."""
-
     #: Source code position that referenced the failing stylesheet.
     source_code_location: SourceCodeLocation
-
     #: Reason why the stylesheet couldn't be loaded.
     style_sheet_loading_issue_reason: StyleSheetLoadingIssueReason
-
     #: Contains additional info when the failure was due to a request.
     failed_request_info: typing.Optional[FailedRequestInfo] = None
 
@@ -1398,13 +1369,10 @@ class PropertyRuleIssueDetails:
     This issue warns about errors in property rules that lead to property
     registrations being ignored.
     """
-
     #: Source code position of the property rule.
     source_code_location: SourceCodeLocation
-
     #: Reason why the property rule was discarded.
     property_rule_issue_reason: PropertyRuleIssueReason
-
     #: The value of the property rule property that failed to parse
     property_value: typing.Optional[str] = None
 
@@ -1783,7 +1751,6 @@ class InspectorIssue:
     """An inspector issue reported from the back-end."""
     code: InspectorIssueCode
     details: InspectorIssueDetails
-
     #: A unique id for this issue. May be omitted if no other entity (e.g.
     #: exception, CDP message, etc.) is referencing this issue.
     issue_id: typing.Optional[IssueId] = None

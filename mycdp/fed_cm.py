@@ -17,7 +17,6 @@ class LoginState(enum.Enum):
     Whether this is a sign-up or sign-in action for this account, i.e.
     whether this account has ever been used to sign in to this RP before.
     """
-
     SIGN_IN = "SignIn"
     SIGN_UP = "SignUp"
 
@@ -31,7 +30,6 @@ class LoginState(enum.Enum):
 
 class DialogType(enum.Enum):
     """The types of FedCM dialogs."""
-
     ACCOUNT_CHOOSER = "AccountChooser"
     AUTO_REAUTHN = "AutoReauthn"
     CONFIRM_IDP_LOGIN = "ConfirmIdpLogin"
@@ -47,7 +45,6 @@ class DialogType(enum.Enum):
 
 class DialogButton(enum.Enum):
     """The buttons on the FedCM dialog."""
-
     CONFIRM_IDP_LOGIN_CONTINUE = "ConfirmIdpLoginContinue"
     ERROR_GOT_IT = "ErrorGotIt"
     ERROR_MORE_DETAILS = "ErrorMoreDetails"
@@ -62,7 +59,6 @@ class DialogButton(enum.Enum):
 
 class AccountUrlType(enum.Enum):
     """The URLs that each account has."""
-
     TERMS_OF_SERVICE = "TermsOfService"
     PRIVACY_POLICY = "PrivacyPolicy"
 
@@ -77,7 +73,6 @@ class AccountUrlType(enum.Enum):
 @dataclass
 class Account:
     """Corresponds to IdentityRequestAccount."""
-
     account_id: str
     email: str
     name: str
@@ -86,7 +81,6 @@ class Account:
     idp_config_url: str
     idp_login_url: str
     login_state: LoginState
-
     #: These two are only set if the loginState is signUp
     terms_of_service_url: typing.Optional[str] = None
     privacy_policy_url: typing.Optional[str] = None

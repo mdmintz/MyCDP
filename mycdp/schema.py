@@ -14,7 +14,6 @@ from .util import T_JSON_DICT
 @dataclass
 class Domain:
     """Description of the protocol domain."""
-
     #: Domain name.
     name: str
     #: Domain version.

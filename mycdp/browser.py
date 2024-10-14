@@ -40,7 +40,6 @@ class WindowID(int):
 
 class WindowState(enum.Enum):
     """The state of the browser window."""
-
     NORMAL = "normal"
     MINIMIZED = "minimized"
     MAXIMIZED = "maximized"
@@ -57,19 +56,14 @@ class WindowState(enum.Enum):
 @dataclass
 class Bounds:
     """Browser window bounds information"""
-
     #: The offset from the left edge of the screen to the window in pixels.
     left: typing.Optional[int] = None
-
     #: The offset from the top edge of the screen to the window in pixels.
     top: typing.Optional[int] = None
-
     #: The window width in pixels.
     width: typing.Optional[int] = None
-
     #: The window height in pixels.
     height: typing.Optional[int] = None
-
     #: The window state. Default to normal.
     window_state: typing.Optional[WindowState] = None
 
@@ -174,26 +168,17 @@ class PermissionDescriptor:
     Definition of PermissionDescriptor defined in the Permissions API:
     https://w3c.github.io/permissions/#dom-permissiondescriptor.
     """
-
     #: Name of permission.
-    #: See https://cs.chromium.org/chromium/src/third_party/blink/
-    #  renderer/modules/permissions/permission_descriptor.idl
-    #  for valid permission names.
     name: str
-
     #: For "midi" permission, may also specify sysex control.
     sysex: typing.Optional[bool] = None
-
     #: For "push" permission, may specify userVisibleOnly.
     #: Note that userVisibleOnly = true is the only currently supported type.
     user_visible_only: typing.Optional[bool] = None
-
     #: For "clipboard" permission, may specify allowWithoutSanitization.
     allow_without_sanitization: typing.Optional[bool] = None
-
     #: For "fullscreen" permission, must specify allowWithoutGesture:true.
     allow_without_gesture: typing.Optional[bool] = None
-
     #: For "camera" permission, may specify panTiltZoom.
     pan_tilt_zoom: typing.Optional[bool] = None
 
@@ -246,7 +231,6 @@ class PermissionDescriptor:
 
 class BrowserCommandId(enum.Enum):
     """Browser command ids used by executeBrowserCommand."""
-
     OPEN_TAB_SEARCH = "openTabSearch"
     CLOSE_TAB_SEARCH = "closeTabSearch"
 
@@ -261,13 +245,10 @@ class BrowserCommandId(enum.Enum):
 @dataclass
 class Bucket:
     """Chrome histogram bucket."""
-
     #: Minimum value (inclusive).
     low: int
-
     #: Maximum value (exclusive).
     high: int
-
     #: Number of samples.
     count: int
 
@@ -290,16 +271,12 @@ class Bucket:
 @dataclass
 class Histogram:
     """Chrome histogram."""
-
     #: Name.
     name: str
-
     #: Sum of sample values.
     sum_: int
-
     #: Total number of samples.
     count: int
-
     #: Buckets.
     buckets: typing.List[Bucket]
 
@@ -329,9 +306,7 @@ def set_permission(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Set permission settings for given origin.
-
     **EXPERIMENTAL**
-
     :param permission: Descriptor of permission to override.
     :param setting: Setting of the permission.
     :param origin: *(Optional)* Origin the permission applies to,
@@ -360,9 +335,7 @@ def grant_permissions(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Grant specific permissions to the given origin and reject all others.
-
     **EXPERIMENTAL**
-
     :param permissions:
     :param origin: *(Optional)* Origin the permission applies to,
      all origins if not specified.
@@ -408,9 +381,7 @@ def set_download_behavior(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Set the behavior when downloading a file.
-
     **EXPERIMENTAL**
-
     :param behavior: Whether to allow all or deny all download requests,
      or use default Chrome behavior if available (otherwise deny).
      ``allowAndName`` allows download and names files
@@ -443,10 +414,8 @@ def cancel_download(
     guid: str, browser_context_id: typing.Optional[BrowserContextID] = None
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
-    Cancel a download if in progress
-
+    Cancel a download if in progress.
     **EXPERIMENTAL**
-
     :param guid: Global unique identifier of the download.
     :param browser_context_id: *(Optional)*
      BrowserContext to perform the action in.
@@ -474,7 +443,6 @@ def close() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
 def crash() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Crashes browser on the main thread.
-
     **EXPERIMENTAL**
     """
     cmd_dict: T_JSON_DICT = {
@@ -486,7 +454,6 @@ def crash() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
 def crash_gpu_process() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Crashes GPU process.
-
     **EXPERIMENTAL**
     """
     cmd_dict: T_JSON_DICT = {
@@ -503,7 +470,6 @@ def get_version() -> (
     """
     Returns version information.
     :returns: A tuple with the following items:
-
         0. **protocolVersion** - Protocol version.
         1. **product** - Product name.
         2. **revision** - Product revision.
@@ -527,11 +493,9 @@ def get_browser_command_line() -> (
     typing.Generator[T_JSON_DICT, T_JSON_DICT, typing.List[str]]
 ):
     """
-    Returns the command line switches for the browser process if, and only if
-    --enable-automation is on the commandline.
-
+    Returns the command line switches for the browser process if,
+    and only if --enable-automation is on the command-line.
     **EXPERIMENTAL**
-
     :returns: Commandline parameters
     """
     cmd_dict: T_JSON_DICT = {
@@ -546,9 +510,7 @@ def get_histograms(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, typing.List[Histogram]]:
     """
     Get Chrome histograms.
-
     **EXPERIMENTAL**
-
     :param query: *(Optional)* Requested substring in name.
      Only histograms which have query as a substring in their name
      are extracted. An empty or absent query returns all histograms.
@@ -573,9 +535,7 @@ def get_histogram(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, Histogram]:
     """
     Get a Chrome histogram by name.
-
     **EXPERIMENTAL**
-
     :param name: Requested histogram name.
     :param delta: *(Optional)* If true, retrieve delta since last delta call.
     :returns: Histogram.
@@ -597,9 +557,7 @@ def get_window_bounds(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, Bounds]:
     """
     Get position and size of the browser window.
-
     **EXPERIMENTAL**
-
     :param window_id: Browser window id.
     :returns: Bounds information of the window.
     When window state is 'minimized',
@@ -622,13 +580,10 @@ def get_window_for_target(
 ]:
     """
     Get the browser window that contains the devtools target.
-
     **EXPERIMENTAL**
-
     :param target_id: *(Optional)* Devtools agent host id.
      If called as a part of the session, associated targetId is used.
     :returns: A tuple with the following items:
-
         0. **windowId** - Browser window id.
         1. **bounds** - Bounds information of the window.
         When window state is 'minimized',
@@ -653,9 +608,7 @@ def set_window_bounds(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Set position and/or size of the browser window.
-
     **EXPERIMENTAL**
-
     :param window_id: Browser window id.
     :param bounds: New window bounds.
     The 'minimized', 'maximized' and 'fullscreen' states
@@ -678,9 +631,7 @@ def set_dock_tile(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Set dock tile details, platform-specific.
-
     **EXPERIMENTAL**
-
     :param badge_label: *(Optional)*
     :param image: *(Optional)* Png encoded image.
     (Encoded as a base64 string when passed over JSON)
@@ -702,9 +653,7 @@ def execute_browser_command(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Invoke custom browser commands used by telemetry.
-
     **EXPERIMENTAL**
-
     :param command_id:
     """
     params: T_JSON_DICT = dict()
@@ -738,10 +687,8 @@ def add_privacy_sandbox_enrollment_override(
 class DownloadWillBegin:
     """
     **EXPERIMENTAL**
-
     Fired when page is about to start a download.
     """
-
     #: Id of the frame that caused the download to begin.
     frame_id: page.FrameId
     #: Global unique identifier of the download.
@@ -767,10 +714,8 @@ class DownloadWillBegin:
 class DownloadProgress:
     """
     **EXPERIMENTAL**
-
     Fired when download makes progress. Last call has ``done`` == true.
     """
-
     #: Global unique identifier of the download.
     guid: str
     #: Total expected bytes to download.

@@ -14,13 +14,10 @@ from .util import T_JSON_DICT
 @dataclass
 class ScreenshotParams:
     """Encoding options for a screenshot."""
-
     #: Image compression format (defaults to png).
     format_: typing.Optional[str] = None
-
     #: Compression quality from range [0..100] (jpeg and webp only).
     quality: typing.Optional[int] = None
-
     #: Optimize image encoding for speed, not for resulting size
     #: (defaults to false)
     optimize_for_speed: typing.Optional[bool] = None
@@ -121,25 +118,3 @@ def begin_frame(
             else None
         ),
     )
-
-
-def disable() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
-    """
-    Disables headless events for the target.
-    .. deprecated:: 1.3
-    """
-    cmd_dict: T_JSON_DICT = {
-        "method": "HeadlessExperimental.disable",
-    }
-    json = yield cmd_dict  # NOQA
-
-
-def enable() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
-    """
-    Enables headless events for the target.
-    .. deprecated:: 1.3
-    """
-    cmd_dict: T_JSON_DICT = {
-        "method": "HeadlessExperimental.enable",
-    }
-    json = yield cmd_dict  # NOQA

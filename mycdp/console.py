@@ -14,23 +14,17 @@ from .util import event_class, T_JSON_DICT
 @dataclass
 class ConsoleMessage:
     """Console message."""
-
     #: Message source.
     source: str
-
     #: Message severity.
     level: str
-
     #: Message text.
     text: str
-
     #: URL of the message origin.
     url: typing.Optional[str] = None
-
-    #: Line number in the resource that generated this message (1-based).
+    #: Line number in the resource that generated this message.
     line: typing.Optional[int] = None
-
-    #: Column number in the resource that generated this message (1-based).
+    #: Column number in the resource that generated this message.
     column: typing.Optional[int] = None
 
     def to_json(self) -> T_JSON_DICT:
@@ -69,7 +63,6 @@ class ConsoleMessage:
 
 
 def clear_messages() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
-    """Does nothing."""
     cmd_dict: T_JSON_DICT = {
         "method": "Console.clearMessages",
     }
@@ -102,9 +95,7 @@ def enable() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
 @dataclass
 class MessageAdded:
     """Issued when new console message is added."""
-
-    #: Console message that has been added.
-    message: ConsoleMessage
+    message: ConsoleMessage  # Console message that has been added.
 
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> MessageAdded:

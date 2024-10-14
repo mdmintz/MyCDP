@@ -31,7 +31,6 @@ class GraphObjectId(str):
 
 class ContextType(enum.Enum):
     """Enum of BaseAudioContext types."""
-
     REALTIME = "realtime"
     OFFLINE = "offline"
 
@@ -45,7 +44,6 @@ class ContextType(enum.Enum):
 
 class ContextState(enum.Enum):
     """Enum of AudioContextState from the spec."""
-
     SUSPENDED = "suspended"
     RUNNING = "running"
     CLOSED = "closed"
@@ -74,7 +72,6 @@ class NodeType(str):
 
 class ChannelCountMode(enum.Enum):
     """Enum of AudioNode::ChannelCountMode from the spec."""
-
     CLAMPED_MAX = "clamped-max"
     EXPLICIT = "explicit"
     MAX_ = "max"
@@ -89,7 +86,6 @@ class ChannelCountMode(enum.Enum):
 
 class ChannelInterpretation(enum.Enum):
     """Enum of AudioNode::ChannelInterpretation from the spec."""
-
     DISCRETE = "discrete"
     SPEAKERS = "speakers"
 
@@ -102,9 +98,7 @@ class ChannelInterpretation(enum.Enum):
 
 
 class ParamType(str):
-    """
-    Enum of AudioParam types
-    """
+    """Enum of AudioParam types."""
 
     def to_json(self) -> str:
         return self
@@ -119,7 +113,6 @@ class ParamType(str):
 
 class AutomationRate(enum.Enum):
     """Enum of AudioParam::AutomationRate from the spec."""
-
     A_RATE = "a-rate"
     K_RATE = "k-rate"
 
@@ -134,18 +127,14 @@ class AutomationRate(enum.Enum):
 @dataclass
 class ContextRealtimeData:
     """Fields in AudioContext that change in real-time."""
-
     #: The current context time in second in BaseAudioContext.
     current_time: float
-
     #: The time spent on rendering graph divided by render quantum duration,
     #: and multiplied by 100. 100 means the audio renderer reached the full
     #: capacity and glitch may occur.
     render_capacity: float
-
     #: A running mean of callback interval.
     callback_interval_mean: float
-
     #: A running variance of callback interval.
     callback_interval_variance: float
 
@@ -170,20 +159,15 @@ class ContextRealtimeData:
 @dataclass
 class BaseAudioContext:
     """Protocol object for BaseAudioContext."""
-
     context_id: GraphObjectId
     context_type: ContextType
     context_state: ContextState
-
     #: Platform-dependent callback buffer size.
     callback_buffer_size: float
-
     #: Number of output channels supported by audio hardware in use.
     max_output_channel_count: float
-
     #: Context sample rate.
     sample_rate: float
-
     realtime_data: typing.Optional[ContextRealtimeData] = None
 
     def to_json(self) -> T_JSON_DICT:
@@ -218,7 +202,6 @@ class BaseAudioContext:
 @dataclass
 class AudioListener:
     """Protocol object for AudioListener."""
-
     listener_id: GraphObjectId
     context_id: GraphObjectId
 
@@ -239,7 +222,6 @@ class AudioListener:
 @dataclass
 class AudioNode:
     """Protocol object for AudioNode."""
-
     node_id: GraphObjectId
     context_id: GraphObjectId
     node_type: NodeType
@@ -282,7 +264,6 @@ class AudioNode:
 @dataclass
 class AudioParam:
     """Protocol object for AudioParam."""
-
     param_id: GraphObjectId
     node_id: GraphObjectId
     context_id: GraphObjectId
@@ -319,9 +300,7 @@ class AudioParam:
 
 
 def enable() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
-    """
-    Enables the WebAudio domain and starts sending context lifetime events.
-    """
+    """Enables WebAudio domain and starts sending context lifetime events."""
     cmd_dict: T_JSON_DICT = {
         "method": "WebAudio.enable",
     }
@@ -342,7 +321,6 @@ def get_realtime_data(
     """
     Fetch the realtime data from the registered contexts.
     :param context_id:
-    :returns:
     """
     params: T_JSON_DICT = dict()
     params["contextId"] = context_id.to_json()
@@ -358,7 +336,6 @@ def get_realtime_data(
 @dataclass
 class ContextCreated:
     """Notifies that a new BaseAudioContext has been created."""
-
     context: BaseAudioContext
 
     @classmethod
@@ -370,7 +347,6 @@ class ContextCreated:
 @dataclass
 class ContextWillBeDestroyed:
     """Notifies that an existing BaseAudioContext will be destroyed."""
-
     context_id: GraphObjectId
 
     @classmethod
@@ -385,7 +361,6 @@ class ContextChanged:
     Notifies that existing BaseAudioContext has changed some properties
     (id stays the same).
     """
-
     context: BaseAudioContext
 
     @classmethod
@@ -397,7 +372,6 @@ class ContextChanged:
 @dataclass
 class AudioListenerCreated:
     """Notifies that the construction of an AudioListener has finished."""
-
     listener: AudioListener
 
     @classmethod
@@ -409,7 +383,6 @@ class AudioListenerCreated:
 @dataclass
 class AudioListenerWillBeDestroyed:
     """Notifies that a new AudioListener has been created."""
-
     context_id: GraphObjectId
     listener_id: GraphObjectId
 
@@ -425,7 +398,6 @@ class AudioListenerWillBeDestroyed:
 @dataclass
 class AudioNodeCreated:
     """Notifies that a new AudioNode has been created."""
-
     node: AudioNode
 
     @classmethod
@@ -437,7 +409,6 @@ class AudioNodeCreated:
 @dataclass
 class AudioNodeWillBeDestroyed:
     """Notifies that an existing AudioNode has been destroyed."""
-
     context_id: GraphObjectId
     node_id: GraphObjectId
 
@@ -453,7 +424,6 @@ class AudioNodeWillBeDestroyed:
 @dataclass
 class AudioParamCreated:
     """Notifies that a new AudioParam has been created."""
-
     param: AudioParam
 
     @classmethod
@@ -465,7 +435,6 @@ class AudioParamCreated:
 @dataclass
 class AudioParamWillBeDestroyed:
     """Notifies that an existing AudioParam has been destroyed."""
-
     context_id: GraphObjectId
     node_id: GraphObjectId
     param_id: GraphObjectId
@@ -483,7 +452,6 @@ class AudioParamWillBeDestroyed:
 @dataclass
 class NodesConnected:
     """Notifies that two AudioNodes are connected."""
-
     context_id: GraphObjectId
     source_id: GraphObjectId
     destination_id: GraphObjectId
@@ -516,7 +484,6 @@ class NodesDisconnected:
     Notifies that AudioNodes are disconnected. The destination can be null,
     and it means all the outgoing connections from the source are disconnected.
     """
-
     context_id: GraphObjectId
     source_id: GraphObjectId
     destination_id: GraphObjectId
@@ -546,7 +513,6 @@ class NodesDisconnected:
 @dataclass
 class NodeParamConnected:
     """Notifies that an AudioNode is connected to an AudioParam."""
-
     context_id: GraphObjectId
     source_id: GraphObjectId
     destination_id: GraphObjectId
@@ -570,7 +536,6 @@ class NodeParamConnected:
 @dataclass
 class NodeParamDisconnected:
     """Notifies that an AudioNode is disconnected to an AudioParam."""
-
     context_id: GraphObjectId
     source_id: GraphObjectId
     destination_id: GraphObjectId

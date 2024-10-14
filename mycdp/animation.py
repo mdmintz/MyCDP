@@ -16,42 +16,31 @@ from . import runtime
 @dataclass
 class Animation:
     """Animation instance."""
-
     #: ``Animation``'s id.
     id_: str
-
     #: ``Animation``'s name.
     name: str
-
     #: ``Animation``'s internal paused state.
     paused_state: bool
-
     #: ``Animation``'s play state.
     play_state: str
-
     #: ``Animation``'s playback rate.
     playback_rate: float
-
     #: ``Animation``'s start time.
     #: Milliseconds for time based animations and
     #: percentage [0 - 100] for scroll driven animations
     #: (i.e. when viewOrScrollTimeline exists).
     start_time: float
-
     #: ``Animation``'s current time.
     current_time: float
-
     #: Animation type of ``Animation``.
     type_: str
-
     #: ``Animation``'s source animation node.
     source: typing.Optional[AnimationEffect] = None
-
     #: A unique ID for ``Animation`` representing
     #  the sources that triggered this CSS
     #: animation/transition.
     css_id: typing.Optional[str] = None
-
     #: View or scroll timeline
     view_or_scroll_timeline: typing.Optional[ViewOrScrollTimeline] = None
 
@@ -107,21 +96,16 @@ class Animation:
 @dataclass
 class ViewOrScrollTimeline:
     """Timeline instance."""
-
     #: Orientation of the scroll
     axis: dom.ScrollOrientation
-
     #: Scroll container node
     source_node_id: typing.Optional[dom.BackendNodeId] = None
-
     #: Represents the starting scroll position of the timeline
     #: as a length offset in pixels from scroll origin.
     start_offset: typing.Optional[float] = None
-
     #: Represents the ending scroll position of the timeline
     #: as a length offset in pixels from scroll origin.
     end_offset: typing.Optional[float] = None
-
     #: The element whose principal box's visibility in the
     #: scrollport defined the progress of the timeline.
     #: Does not exist for animations with ScrollTimeline
@@ -170,37 +154,27 @@ class ViewOrScrollTimeline:
 @dataclass
 class AnimationEffect:
     """AnimationEffect instance."""
-
     #: ``AnimationEffect``'s delay.
     delay: float
-
     #: ``AnimationEffect``'s end delay.
     end_delay: float
-
     #: ``AnimationEffect``'s iteration start.
     iteration_start: float
-
     #: ``AnimationEffect``'s iterations.
     iterations: float
-
     #: ``AnimationEffect``'s iteration duration.
     #: Milliseconds for time based animations and
     #: percentage [0 - 100] for scroll driven animations
     #: (i.e. when viewOrScrollTimeline exists).
     duration: float
-
     #: ``AnimationEffect``'s playback direction.
     direction: str
-
     #: ``AnimationEffect``'s fill mode.
     fill: str
-
     #: ``AnimationEffect``'s timing function.
     easing: str
-
     #: ``AnimationEffect``'s target node.
     backend_node_id: typing.Optional[dom.BackendNodeId] = None
-
     #: ``AnimationEffect``'s keyframes.
     keyframes_rule: typing.Optional[KeyframesRule] = None
 
@@ -247,10 +221,8 @@ class AnimationEffect:
 @dataclass
 class KeyframesRule:
     """Keyframes Rule."""
-
     #: List of animation keyframes.
     keyframes: typing.List[KeyframeStyle]
-
     #: CSS keyframed animation's name.
     name: typing.Optional[str] = None
 
@@ -276,10 +248,8 @@ class KeyframesRule:
 @dataclass
 class KeyframeStyle:
     """Keyframe Style."""
-
     #: Keyframe's time offset.
     offset: str
-
     #: ``AnimationEffect``'s timing function.
     easing: str
 
@@ -453,7 +423,6 @@ def set_timing(
 @dataclass
 class AnimationCanceled:
     """Event for when an animation has been cancelled."""
-
     #: Id of the animation that was cancelled.
     id_: str
 
@@ -466,7 +435,6 @@ class AnimationCanceled:
 @dataclass
 class AnimationCreated:
     """Event for each animation that has been created."""
-
     #: Id of the animation that was created.
     id_: str
 
@@ -479,7 +447,6 @@ class AnimationCreated:
 @dataclass
 class AnimationStarted:
     """Event for animation that has been started."""
-
     #: Animation that was started.
     animation: Animation
 
@@ -492,7 +459,6 @@ class AnimationStarted:
 @dataclass
 class AnimationUpdated:
     """Event for animation that has been updated."""
-
     #: Animation that was updated.
     animation: Animation
 

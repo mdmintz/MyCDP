@@ -145,7 +145,6 @@ class UnserializableValue(str):
 @dataclass
 class RemoteObject:
     """Mirror object referencing original JavaScript object."""
-
     #: Object type.
     type_: str
     #: Object subtype hint. Specified for ``object`` type values only.
@@ -278,7 +277,6 @@ class CustomPreview:
 @dataclass
 class ObjectPreview:
     """Object containing abbreviated remote object value."""
-
     #: Object type.
     type_: str
     #: True if some of the properties or entries of the original object
@@ -411,7 +409,6 @@ class EntryPreview:
 @dataclass
 class PropertyDescriptor:
     """Object property descriptor."""
-
     #: Property name or symbol description.
     name: str
     #: True if the type of this property descriptor may be changed
@@ -509,7 +506,6 @@ class InternalPropertyDescriptor:
     Object internal property descriptor.
     This property isn't normally visible in JavaScript code.
     """
-
     #: Conventional property name.
     name: str
     #: The value associated with the property.
@@ -537,7 +533,6 @@ class InternalPropertyDescriptor:
 @dataclass
 class PrivatePropertyDescriptor:
     """Object private field descriptor."""
-
     #: Private property name.
     name: str
     #: The value associated with the private property.
@@ -590,7 +585,6 @@ class CallArgument:
     unserializable primitive value or neither of them (for undefined)
     should be specified.
     """
-
     #: Primitive value or serializable javascript object.
     value: typing.Optional[typing.Any] = None
     #: Primitive value which can not be JSON-stringified.
@@ -644,7 +638,6 @@ class ExecutionContextId(int):
 @dataclass
 class ExecutionContextDescription:
     """Description of an isolated world."""
-
     #: Unique id of the execution context.
     #: It can be used to specify in which execution context
     #: script evaluation should be performed.
@@ -694,7 +687,6 @@ class ExceptionDetails:
     Detailed information about exception (or error)
     that was thrown during script compilation or execution.
     """
-
     #: Exception id.
     exception_id: int
     #: Exception text, which should be used together with exception object
@@ -809,7 +801,6 @@ class TimeDelta(float):
 @dataclass
 class CallFrame:
     """Stack entry for runtime errors and assertions."""
-
     #: JavaScript function name.
     function_name: str
     #: JavaScript script id.
@@ -844,7 +835,6 @@ class CallFrame:
 @dataclass
 class StackTrace:
     """Call frames for assertions or error messages."""
-
     #: JavaScript function name.
     call_frames: typing.List[CallFrame]
     #: String label of this stack trace.
@@ -1412,7 +1402,6 @@ def global_lexical_scope_names(
     Returns all let, const and class variables from global scope.
     :param execution_context_id: *(Optional)*
      Specifies in which execution context to lookup global scope variables.
-    :returns:
     """
     params: T_JSON_DICT = dict()
     if execution_context_id is not None:
@@ -1483,9 +1472,7 @@ def release_object_group(
 def run_if_waiting_for_debugger() -> (
     typing.Generator[T_JSON_DICT, T_JSON_DICT, None]
 ):
-    """
-    Tells inspected instance to run if it was waiting for debugger to attach.
-    """
+    """Tells inspected instance to run if waiting for debugger to attach."""
     cmd_dict: T_JSON_DICT = {
         "method": "Runtime.runIfWaitingForDebugger",
     }
@@ -1571,8 +1558,7 @@ def set_async_call_stack_depth(
     """
     Enables or disables async call stacks tracking.
     :param max_depth: Maximum depth of async call stacks.
-     Setting to ``0`` will effectively disable collecting async call stacks
-     (default).
+     Setting to ``0`` (default) will disable collecting async call stacks.
     """
     params: T_JSON_DICT = dict()
     params["maxDepth"] = max_depth
@@ -1700,7 +1686,6 @@ def get_exception_details(
     **EXPERIMENTAL**
     :param error_object_id:
      The error object for which to resolve the exception details.
-    :returns:
     """
     params: T_JSON_DICT = dict()
     params["errorObjectId"] = error_object_id.to_json()
@@ -1743,7 +1728,6 @@ class BindingCalled:
 @dataclass
 class ConsoleAPICalled:
     """Issued when console API was called."""
-
     #: Type of the call.
     type_: str
     #: Call arguments.
@@ -1790,7 +1774,6 @@ class ConsoleAPICalled:
 @dataclass
 class ExceptionRevoked:
     """Issued when unhandled exception was revoked."""
-
     #: Reason describing why exception was revoked.
     reason: str
     #: The id of revoked exception, as reported in ``exceptionThrown``.
@@ -1807,7 +1790,6 @@ class ExceptionRevoked:
 @dataclass
 class ExceptionThrown:
     """Issued when exception was thrown and unhandled."""
-
     #: Timestamp of the exception.
     timestamp: Timestamp
     exception_details: ExceptionDetails
@@ -1826,7 +1808,6 @@ class ExceptionThrown:
 @dataclass
 class ExecutionContextCreated:
     """Issued when new execution context is created."""
-
     #: A newly created execution context.
     context: ExecutionContextDescription
 
@@ -1841,7 +1822,6 @@ class ExecutionContextCreated:
 @dataclass
 class ExecutionContextDestroyed:
     """Issued when execution context is destroyed."""
-
     #: Id of the destroyed context
     execution_context_id: ExecutionContextId
     #: Unique Id of the destroyed context

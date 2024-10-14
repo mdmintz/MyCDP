@@ -18,10 +18,8 @@ from . import page
 @dataclass
 class ScreenOrientation:
     """Screen orientation."""
-
     #: Orientation type.
     type_: str
-
     #: Orientation angle.
     angle: int
 
@@ -43,11 +41,9 @@ class ScreenOrientation:
 class DisplayFeature:
     #: Orientation of a display feature in relation to screen
     orientation: str
-
     #: The offset from the screen origin in either the x (for vertical
     #: orientation) or y (for horizontal orientation) direction.
     offset: int
-
     #: A display feature may mask content such that it is not physically
     #: displayed - this length along with the offset describes this area.
     #: A display feature that only splits content will have a 0 mask_length.
@@ -89,7 +85,6 @@ class DevicePosture:
 @dataclass
 class MediaFeature:
     name: str
-
     value: str
 
     def to_json(self) -> T_JSON_DICT:
@@ -115,7 +110,6 @@ class VirtualTimePolicy(enum.Enum):
     pauseIfNetworkFetchesPending: The virtual time base may not advance
     if there are any pending resource fetches.
     """
-
     ADVANCE = "advance"
     PAUSE = "pause"
     PAUSE_IF_NETWORK_FETCHES_PENDING = "pauseIfNetworkFetchesPending"
@@ -134,9 +128,7 @@ class UserAgentBrandVersion:
     Used to specify User Agent Client Hints to emulate.
     See https://wicg.github.io/ua-client-hints
     """
-
     brand: str
-
     version: str
 
     def to_json(self) -> T_JSON_DICT:
@@ -161,21 +153,17 @@ class UserAgentMetadata:
     Missing optional values will be filled in by the target
     with what it would normally use.
     """
-
     platform: str
     platform_version: str
     architecture: str
     model: str
     mobile: bool
-
     #: Brands appearing in Sec-CH-UA.
     brands: typing.Optional[typing.List[UserAgentBrandVersion]] = None
-
     #: Brands appearing in Sec-CH-UA-Full-Version-List.
     full_version_list: typing.Optional[typing.List[UserAgentBrandVersion]] = (
         None
     )
-
     full_version: typing.Optional[str] = None
     bitness: typing.Optional[str] = None
     wow64: typing.Optional[bool] = None
@@ -245,7 +233,6 @@ class SensorType(enum.Enum):
     Used to specify sensor types to emulate.
     See https://w3c.github.io/sensors/#automation for more information.
     """
-
     ABSOLUTE_ORIENTATION = "absolute-orientation"
     ACCELEROMETER = "accelerometer"
     AMBIENT_LIGHT = "ambient-light"
@@ -403,7 +390,6 @@ class SensorReading:
 
 class DisabledImageType(enum.Enum):
     """Enum of image types that can be disabled."""
-
     AVIF = "avif"
     WEBP = "webp"
 
@@ -413,19 +399,6 @@ class DisabledImageType(enum.Enum):
     @classmethod
     def from_json(cls, json: str) -> DisabledImageType:
         return cls(json)
-
-
-def can_emulate() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, bool]:
-    """
-    Tells whether emulation is supported.
-    .. deprecated:: 1.3
-    :returns: True if emulation is supported.
-    """
-    cmd_dict: T_JSON_DICT = {
-        "method": "Emulation.canEmulate",
-    }
-    json = yield cmd_dict
-    return bool(json["result"])
 
 
 def clear_device_metrics_override() -> (
@@ -784,7 +757,6 @@ def get_overridden_sensor_information(
     """
     **EXPERIMENTAL**
     :param type_:
-    :returns:
     """
     params: T_JSON_DICT = dict()
     params["type"] = type_.to_json()
@@ -867,24 +839,6 @@ def clear_idle_override() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """Clears Idle state overrides."""
     cmd_dict: T_JSON_DICT = {
         "method": "Emulation.clearIdleOverride",
-    }
-    json = yield cmd_dict  # NOQA
-
-
-def set_navigator_overrides(
-    platform: str,
-) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
-    """
-    Overrides value returned by the javascript navigator object.
-    .. deprecated:: 1.3
-    **EXPERIMENTAL**
-    :param platform: The platform navigator.platform should return.
-    """
-    params: T_JSON_DICT = dict()
-    params["platform"] = platform
-    cmd_dict: T_JSON_DICT = {
-        "method": "Emulation.setNavigatorOverrides",
-        "params": params,
     }
     json = yield cmd_dict  # NOQA
 

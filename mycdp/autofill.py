@@ -18,16 +18,12 @@ from . import page
 class CreditCard:
     #: 16-digit credit card number.
     number: str
-
     #: Name of the credit card owner.
     name: str
-
     #: 2-digit expiry month.
     expiry_month: str
-
     #: 4-digit expiry year.
     expiry_year: str
-
     #: 3-digit card verification code.
     cvc: str
 
@@ -55,7 +51,6 @@ class CreditCard:
 class AddressField:
     #: address field name, for example GIVEN_NAME.
     name: str
-
     #: address field value, for example Jon Doe.
     value: str
 
@@ -121,7 +116,6 @@ class AddressUI:
     Jon Doe
     Munich 81456
     """
-
     #: A two dimension array containing the representation of values
     #  from an address profile.
     address_fields: typing.List[AddressFields]
@@ -145,7 +139,6 @@ class FillingStrategy(enum.Enum):
     Specified whether a filled field was done so by using
     the html autocomplete attribute or autofill heuristics.
     """
-
     AUTOCOMPLETE_ATTRIBUTE = "autocompleteAttribute"
     AUTOFILL_INFERRED = "autofillInferred"
 
@@ -161,25 +154,18 @@ class FillingStrategy(enum.Enum):
 class FilledField:
     #: The type of the field, e.g text, password etc.
     html_type: str
-
     #: the html id
     id_: str
-
     #: the html name
     name: str
-
     #: the field value
     value: str
-
     #: The actual field type, e.g FAMILY_NAME
     autofill_type: str
-
     #: The filling strategy
     filling_strategy: FillingStrategy
-
     #: The frame the field belongs to
     frame_id: page.FrameId
-
     #: The form field's DOM node
     field_id: dom.BackendNodeId
 
@@ -272,7 +258,6 @@ def enable() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
 @dataclass
 class AddressFormFilled:
     """Emitted when an address form is filled."""
-
     #: Information about the fields that were filled
     filled_fields: typing.List[FilledField]
     #: An UI representation of the address used to fill the form.

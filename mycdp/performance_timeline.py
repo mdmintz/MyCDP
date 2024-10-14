@@ -20,19 +20,14 @@ class LargestContentfulPaint:
     See https://github.com/WICG/LargestContentfulPaint
     and largest_contentful_paint.idl
     """
-
     render_time: network.TimeSinceEpoch
     load_time: network.TimeSinceEpoch
-
     #: The number of pixels being painted.
     size: float
-
     #: The id attribute of the element, if available.
     element_id: typing.Optional[str] = None
-
     #: The URL of the image (may be trimmed).
     url: typing.Optional[str] = None
-
     node_id: typing.Optional[dom.BackendNodeId] = None
 
     def to_json(self) -> T_JSON_DICT:
@@ -103,10 +98,8 @@ class LayoutShift:
     See https://wicg.github.io/layout-instability/#sec-layout-shift
     and layout_shift.idl
     """
-
     #: Score increment produced by this event.
     value: float
-
     had_recent_input: bool
     last_input_time: network.TimeSinceEpoch
     sources: typing.List[LayoutShiftAttribution]
@@ -138,23 +131,18 @@ class TimelineEvent:
     #: Identifies the frame that this event is related to.
     #: Empty for non-frame targets.
     frame_id: page.FrameId
-
     #: The event type, as specified in
     #: https://w3c.github.io/performance-timeline
     #: /#dom-performanceentry-entrytype
     #: This determines which of the optional "details" fields is present.
     type_: str
-
     #: Name may be empty depending on the type.
     name: str
-
     #: Time in seconds since Epoch,
     #: monotonically increasing within document lifetime.
     time: network.TimeSinceEpoch
-
     #: Event duration, if applicable.
     duration: typing.Optional[float] = None
-
     lcp_details: typing.Optional[LargestContentfulPaint] = None
     layout_shift_details: typing.Optional[LayoutShift] = None
 
@@ -225,7 +213,6 @@ class TimelineEventAdded:
     Sent when a performance timeline event is added.
     See reportPerformanceTimeline method.
     """
-
     event: TimelineEvent
 
     @classmethod

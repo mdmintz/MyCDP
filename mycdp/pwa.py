@@ -21,11 +21,9 @@ class FileHandlerAccept:
     web_app_os_integration_state.proto;
     drc=9910d3be894c8f142c977ba1023f30a656bc13fc;l=67
     """
-
     #: New name of the mimetype according to
     #: https://www.iana.org/assignments/media-types/media-types.xhtml
     media_type: str
-
     file_extensions: typing.List[str]
 
     def to_json(self) -> T_JSON_DICT:
@@ -66,7 +64,6 @@ class FileHandler:
 
 class DisplayMode(enum.Enum):
     """If user prefers opening the app in browser or an app window."""
-
     STANDALONE = "standalone"
     BROWSER = "browser"
 
@@ -111,13 +108,11 @@ def install(
     """
     Installs the given manifest identity,
     optionally using the given install_url or IWA bundle location.
-
     IWA-specific install description: If the manifest_id is isolated-app://,
     install_url_or_bundle_url is required, and can be either an http(s) URL or
     file:// URL pointing to a signed web bundle (.swbn). The .swbn file's
     signing key must correspond to manifest_id. If Chrome is not in IWA dev
     mode, the installation will fail, regardless of the state of the allowlist.
-
     :param manifest_id:
     :param install_url_or_bundle_url: *(Optional)*
     The location of the app
@@ -185,13 +180,9 @@ def launch_files_in_app(
     If some files in the parameters cannot be handled by the web app, they will
     be ignored. If none of the files can be handled, this API returns an error.
     If no files are provided as the parameter, this API also returns an error.
-
     According to the definition of the file handlers in the manifest file, one
     Target.TargetID may represent a page handling one or more files. The order
     of the returned Target.TargetIDs is not guaranteed.
-
-    TODO(crbug.com/339454034): Check the existences of the input files.
-
     :param manifest_id:
     :param files:
     :returns: IDs of the tab targets created as the result.
@@ -234,13 +225,10 @@ def change_app_user_settings(
     Changes user settings of the web app identified by its manifestId. If the
     app was not installed, this command returns an error. Unset parameters will
     be ignored; unrecognized values will cause an error.
-
     Unlike the ones defined in the manifest files of the web apps, these
     settings are provided by the browser and controlled by the users, they
     impact the way the browser handling the web apps.
-
     See the comment of each parameter.
-
     :param manifest_id:
     :param link_capturing: *(Optional)*
     If user allows the links clicked on by the user in the app's scope,

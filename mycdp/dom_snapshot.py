@@ -17,100 +17,72 @@ from . import page
 @dataclass
 class DOMNode:
     """A Node in the DOM tree."""
-
     #: ``Node``'s nodeType.
     node_type: int
-
     #: ``Node``'s nodeName.
     node_name: str
-
     #: ``Node``'s nodeValue.
     node_value: str
-
     #: ``Node``'s id, corresponds to DOM.Node.backendNodeId.
     backend_node_id: dom.BackendNodeId
-
     #: Only set for textarea elements, contains the text value.
     text_value: typing.Optional[str] = None
-
     #: Only set for input elements,
     # contains the input's associated text value.
     input_value: typing.Optional[str] = None
-
     #: Only set for radio and checkbox input elements,
     #: indicates if the element has been checked
     input_checked: typing.Optional[bool] = None
-
     #: Only set for option elements,
     #: indicates if the element has been selected
     option_selected: typing.Optional[bool] = None
-
     #: The indexes of the node's child nodes in the ``domNodes`` array
     #: returned by ``getSnapshot``, if any.
     child_node_indexes: typing.Optional[typing.List[int]] = None
-
     #: Attributes of an ``Element`` node.
     attributes: typing.Optional[typing.List[NameValue]] = None
-
     #: Indexes of pseudo elements associated with this node
     #: in the ``domNodes`` array returned by ``getSnapshot``, if any.
     pseudo_element_indexes: typing.Optional[typing.List[int]] = None
-
     #: The index of the node's related layout tree node
     #: in the ``layoutTreeNodes`` array returned by ``getSnapshot``, if any.
     layout_node_index: typing.Optional[int] = None
-
     #: Document URL that ``Document`` or ``FrameOwner`` node points to.
     document_url: typing.Optional[str] = None
-
     #: Base URL that `Document` or `FrameOwner` node uses for URL completion.
     base_url: typing.Optional[str] = None
-
     #: Only set for documents, contains the document's content language.
     content_language: typing.Optional[str] = None
-
     #: Only set for documents, contains the document's character set encoding.
     document_encoding: typing.Optional[str] = None
-
     #: ``DocumentType`` node's publicId.
     public_id: typing.Optional[str] = None
-
     #: ``DocumentType`` node's systemId.
     system_id: typing.Optional[str] = None
-
     #: Frame ID for frame owner elements and also for the document node.
     frame_id: typing.Optional[page.FrameId] = None
-
     #: The index of a frame owner element's content document
     #: in the ``domNodes`` array returned by ``getSnapshot``, if any.
     content_document_index: typing.Optional[int] = None
-
     #: Type of a pseudo element node.
     pseudo_type: typing.Optional[dom.PseudoType] = None
-
     #: Shadow root type.
     shadow_root_type: typing.Optional[dom.ShadowRootType] = None
-
     #: Whether this DOM node responds to mouse clicks.
     #: This includes nodes that have had click event
     #: listeners attached via JavaScript as well as anchor tags
     #: that naturally navigate when clicked.
     is_clickable: typing.Optional[bool] = None
-
     #: Details of the node's event listeners, if any.
     event_listeners: typing.Optional[
         typing.List[dom_debugger.EventListener]
     ] = None
-
     #: The selected url for nodes with a srcset attribute.
     current_source_url: typing.Optional[str] = None
-
     #: The url of the script (if any) that generates this node.
     origin_url: typing.Optional[str] = None
-
     #: Scroll offsets, set when this node is a Document.
     scroll_offset_x: typing.Optional[float] = None
-
     scroll_offset_y: typing.Optional[float] = None
 
     def to_json(self) -> T_JSON_DICT:
@@ -313,17 +285,14 @@ class InlineTextBox:
     The exact layout should not be regarded as
     stable and may change between versions.
     """
-
     #: The bounding box in document coordinates.
     #: Note that scroll offset of the document is ignored.
     bounding_box: dom.Rect
-
     #: The starting index in characters,
     #: for this post layout textbox substring.
     #: Characters that would be represented as a surrogate pair in
     #: UTF-16 have length 2.
     start_character_index: int
-
     #: The number of characters in this post layout textbox substring.
     #: Characters that would be represented as a surrogate pair in
     #: UTF-16 have length 2.
@@ -348,29 +317,22 @@ class InlineTextBox:
 @dataclass
 class LayoutTreeNode:
     """Details of an element in the DOM tree with a LayoutObject."""
-
     #: The index of the related DOM node in the ``domNodes`` array
     #: returned by ``getSnapshot``.
     dom_node_index: int
-
     #: The bounding box in document coordinates.
     #: Note that scroll offset of the document is ignored.
     bounding_box: dom.Rect
-
     #: Contents of the LayoutText, if any.
     layout_text: typing.Optional[str] = None
-
     #: The post-layout inline text nodes, if any.
     inline_text_nodes: typing.Optional[typing.List[InlineTextBox]] = None
-
     #: Index into the ``computedStyles`` array returned by ``getSnapshot``.
     style_index: typing.Optional[int] = None
-
     #: Global paint order index, which is determined by the stacking order
     #: of the nodes. Nodes that are painted together will have the same index.
     #: Only provided if includePaintOrder in getSnapshot was true.
     paint_order: typing.Optional[int] = None
-
     #: Set to true to indicate the element begins a new stacking context.
     is_stacking_context: typing.Optional[bool] = None
 
@@ -430,7 +392,6 @@ class ComputedStyle:
     """
     A subset of the full ComputedStyle as defined by the request whitelist.
     """
-
     #: Name/value pairs of computed style properties.
     properties: typing.List[NameValue]
 
@@ -449,10 +410,8 @@ class ComputedStyle:
 @dataclass
 class NameValue:
     """A name/value pair."""
-
     #: Attribute/property name.
     name: str
-
     #: Attribute/property value.
     value: str
 
@@ -501,7 +460,6 @@ class ArrayOfStrings(list):
 @dataclass
 class RareStringData:
     """Data that is only present on rare nodes."""
-
     index: typing.List[int]
     value: typing.List[StringIndex]
 
@@ -538,7 +496,6 @@ class RareBooleanData:
 @dataclass
 class RareIntegerData:
     index: typing.List[int]
-
     value: typing.List[int]
 
     def to_json(self) -> T_JSON_DICT:
@@ -570,49 +527,34 @@ class Rectangle(list):
 @dataclass
 class DocumentSnapshot:
     """Document snapshot."""
-
     #: Document URL that ``Document`` or ``FrameOwner`` node points to.
     document_url: StringIndex
-
     #: Document title.
     title: StringIndex
-
     #: Base URL that `Document` or `FrameOwner` node uses for URL completion.
     base_url: StringIndex
-
     #: Contains the document's content language.
     content_language: StringIndex
-
     #: Contains the document's character set encoding.
     encoding_name: StringIndex
-
     #: ``DocumentType`` node's publicId.
     public_id: StringIndex
-
     #: ``DocumentType`` node's systemId.
     system_id: StringIndex
-
     #: Frame ID for frame owner elements and also for the document node.
     frame_id: StringIndex
-
     #: A table with dom nodes.
     nodes: NodeTreeSnapshot
-
     #: The nodes in the layout tree.
     layout: LayoutTreeSnapshot
-
     #: The post-layout inline text nodes.
     text_boxes: TextBoxSnapshot
-
     #: Horizontal scroll offset.
     scroll_offset_x: typing.Optional[float] = None
-
     #: Vertical scroll offset.
     scroll_offset_y: typing.Optional[float] = None
-
     #: Document content width.
     content_width: typing.Optional[float] = None
-
     #: Document content height.
     content_height: typing.Optional[float] = None
 
@@ -679,61 +621,44 @@ class DocumentSnapshot:
 @dataclass
 class NodeTreeSnapshot:
     """Table containing nodes."""
-
     #: Parent node index.
     parent_index: typing.Optional[typing.List[int]] = None
-
     #: ``Node``'s nodeType.
     node_type: typing.Optional[typing.List[int]] = None
-
     #: Type of the shadow root the ``Node`` is in.
     #: String values are equal to the ``ShadowRootType`` enum.
     shadow_root_type: typing.Optional[RareStringData] = None
-
     #: ``Node``'s nodeName.
     node_name: typing.Optional[typing.List[StringIndex]] = None
-
     #: ``Node``'s nodeValue.
     node_value: typing.Optional[typing.List[StringIndex]] = None
-
     #: ``Node``'s id, corresponds to DOM.Node.backendNodeId.
     backend_node_id: typing.Optional[typing.List[dom.BackendNodeId]] = None
-
     #: Attributes of an ``Element`` node. Flatten name, value pairs.
     attributes: typing.Optional[typing.List[ArrayOfStrings]] = None
-
     #: Only set for textarea elements, contains the text value.
     text_value: typing.Optional[RareStringData] = None
-
     #: Only set for input elements, contains the input's associated text value.
     input_value: typing.Optional[RareStringData] = None
-
     #: Only set for radio and checkbox input elements,
     #: indicates if the element has been checked
     input_checked: typing.Optional[RareBooleanData] = None
-
     #: Only set for option elements, indicates if the element has been selected
     option_selected: typing.Optional[RareBooleanData] = None
-
     #: The index of the document in the list of the snapshot documents.
     content_document_index: typing.Optional[RareIntegerData] = None
-
     #: Type of a pseudo element node.
     pseudo_type: typing.Optional[RareStringData] = None
-
     #: Pseudo element identifier for this node. Only present if there is a
     #: valid pseudoType.
     pseudo_identifier: typing.Optional[RareStringData] = None
-
     #: Whether this DOM node responds to mouse clicks.
     #: This includes nodes that have had click
     #: event listeners attached via JavaScript
     #: as well as anchor tags that naturally navigate when clicked.
     is_clickable: typing.Optional[RareBooleanData] = None
-
     #: The selected url for nodes with a srcset attribute.
     current_source_url: typing.Optional[RareStringData] = None
-
     #: The url of the script (if any) that generates this node.
     origin_url: typing.Optional[RareStringData] = None
 
@@ -871,47 +796,36 @@ class NodeTreeSnapshot:
 @dataclass
 class LayoutTreeSnapshot:
     """Table of details of an element in the DOM tree with a LayoutObject."""
-
     #: Index of the corresponding node in the ``NodeTreeSnapshot``
     #: array returned by ``captureSnapshot``.
     node_index: typing.List[int]
-
     #: Array of indexes specifying computed style strings,
     #: filtered according to the ``computedStyles`` parameter
     #: passed to ``captureSnapshot``.
     styles: typing.List[ArrayOfStrings]
-
     #: The absolute position bounding box.
     bounds: typing.List[Rectangle]
-
     #: Contents of the LayoutText, if any.
     text: typing.List[StringIndex]
-
     #: Stacking context information.
     stacking_contexts: RareBooleanData
-
     #: Global paint order index,
     #: which is determined by the stacking order of the nodes.
     #: Nodes that are painted together will have the same index.
     #: Only provided if includePaintOrder in captureSnapshot was true.
     paint_orders: typing.Optional[typing.List[int]] = None
-
     #: The offset rect of nodes.
     #: Only available when includeDOMRects is set to true
     offset_rects: typing.Optional[typing.List[Rectangle]] = None
-
     #: The scroll rect of nodes.
     #: Only available when includeDOMRects is set to true
     scroll_rects: typing.Optional[typing.List[Rectangle]] = None
-
     #: The client rect of nodes.
     #: Only available when includeDOMRects is set to true
     client_rects: typing.Optional[typing.List[Rectangle]] = None
-
     #: The list of background colors that are blended
     #: with colors of overlapping elements.
     blended_background_colors: typing.Optional[typing.List[StringIndex]] = None
-
     #: The list of computed text opacities.
     text_color_opacities: typing.Optional[typing.List[float]] = None
 
@@ -991,18 +905,14 @@ class TextBoxSnapshot:
     The exact layout should not be regarded as
     stable and may change between versions.
     """
-
     #: Index of the layout tree node that owns this box collection.
     layout_index: typing.List[int]
-
     #: The absolute position bounding box.
     bounds: typing.List[Rectangle]
-
     #: The starting index in characters for this post layout textbox substring.
     #: Characters that would be represented as a surrogate pair in UTF-16
     #: have length 2.
     start: typing.List[int]
-
     #: The number of characters in this post layout textbox substring.
     #: Characters that would be represented as a surrogate pair in UTF-16
     #: have length 2.
@@ -1061,9 +971,7 @@ def get_snapshot(
     (including iframes, template contents, and imported documents)
     in a flattened array, as well as layout and white-listed computed style
     information for the nodes. ShadowDOM in the returned DOM tree is flattened.
-
     .. deprecated:: 1.3
-
     :param computed_style_whitelist: Whitelist of computed styles to return.
     :param include_event_listeners: *(Optional)*
       Whether or not to retrieve details of DOM listeners (default false).
@@ -1073,7 +981,6 @@ def get_snapshot(
     :param include_user_agent_shadow_tree: *(Optional)*
       Whether to include UA shadow tree in the snapshot (default false).
     :returns: A tuple with the following items:
-
         0. **domNodes** - The nodes in the DOM tree.
         The DOMNode at index 0 corresponds to the root document.
         1. **layoutTreeNodes** - The nodes in the layout tree.

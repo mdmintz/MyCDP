@@ -42,9 +42,7 @@ class DeviceId(str):
 @dataclass
 class PromptDevice:
     """Device information displayed in a user prompt to select a device."""
-
     id_: DeviceId
-
     #: Display name as it appears in a device request user prompt.
     name: str
 
@@ -119,7 +117,6 @@ class DeviceRequestPrompted:
     A device request opened a user prompt to select a device. Respond with the
     selectPrompt or cancelPrompt command.
     """
-
     id_: RequestId
     devices: typing.List[PromptDevice]
 

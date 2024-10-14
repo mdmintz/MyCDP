@@ -19,7 +19,6 @@ class ProfileNode:
     Profile node. Holds callsite information,
     execution statistics and child nodes.
     """
-
     #: Unique id of the node.
     id_: int
     #: Function location.
@@ -79,7 +78,6 @@ class ProfileNode:
 @dataclass
 class Profile:
     """Profile."""
-
     #: The list of profile nodes. First item is the root node.
     nodes: typing.List[ProfileNode]
     #: Profiling start timestamp in microseconds.
@@ -124,10 +122,7 @@ class Profile:
 
 @dataclass
 class PositionTickInfo:
-    """
-    Specifies a number of samples attributed to a certain source position.
-    """
-
+    """Specifies number of samples attributed to a certain source position."""
     #: Source line number (1-based).
     line: int
     #: Number of samples attributed to the source line.
@@ -150,7 +145,6 @@ class PositionTickInfo:
 @dataclass
 class CoverageRange:
     """Coverage data for a source range."""
-
     #: JavaScript script source offset for the range start.
     start_offset: int
     #: JavaScript script source offset for the range end.
@@ -177,7 +171,6 @@ class CoverageRange:
 @dataclass
 class FunctionCoverage:
     """Coverage data for a JavaScript function."""
-
     #: JavaScript function name.
     function_name: str
     #: Source ranges inside the function with coverage data.
@@ -204,7 +197,6 @@ class FunctionCoverage:
 @dataclass
 class ScriptCoverage:
     """Coverage data for a JavaScript script."""
-
     #: JavaScript script id.
     script_id: runtime.ScriptId
     #: JavaScript script name or url.
@@ -395,7 +387,6 @@ class ConsoleProfileStarted:
     """
     Sent when new profile recording is started using console.profile() call.
     """
-
     id_: str
     #: Location of console.profile().
     location: debugger.Location
@@ -426,7 +417,6 @@ class PreciseCoverageDeltaUpdate:
     This event can be trigged by the embedder to, for example,
     trigger collection of coverage data immediately at a certain point in time.
     """
-
     #: Monotonically increasing time (in seconds)
     #: when the coverage update was taken in the backend.
     timestamp: float

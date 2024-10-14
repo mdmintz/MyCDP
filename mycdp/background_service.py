@@ -17,10 +17,8 @@ from . import service_worker
 class ServiceName(enum.Enum):
     """
     The Background Service that will be associated with the commands/events.
-    Every Background Service operates independently, but they share the same
-    API.
+    Every Background Service operates independently, but share the same API.
     """
-
     BACKGROUND_FETCH = "backgroundFetch"
     BACKGROUND_SYNC = "backgroundSync"
     PUSH_MESSAGING = "pushMessaging"
@@ -60,25 +58,18 @@ class EventMetadata:
 class BackgroundServiceEvent:
     #: Timestamp of the event (in seconds).
     timestamp: network.TimeSinceEpoch
-
     #: The origin this event belongs to.
     origin: str
-
     #: The Service Worker ID that initiated the event.
     service_worker_registration_id: service_worker.RegistrationID
-
     #: The Background Service this event belongs to.
     service: ServiceName
-
     #: A description of the event.
     event_name: str
-
     #: An identifier that groups related events together.
     instance_id: str
-
     #: A list of event-specific information.
     event_metadata: typing.List[EventMetadata]
-
     #: Storage key this event belongs to.
     storage_key: str
 

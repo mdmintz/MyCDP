@@ -29,7 +29,6 @@ class CacheId(str):
 
 class CachedResponseType(enum.Enum):
     """Type of HTTP response cached."""
-
     BASIC = "basic"
     CORS = "cors"
     DEFAULT = "default"
@@ -48,28 +47,20 @@ class CachedResponseType(enum.Enum):
 @dataclass
 class DataEntry:
     """Data entry."""
-
     #: Request URL.
     request_url: str
-
     #: Request method.
     request_method: str
-
     #: Request headers
     request_headers: typing.List[Header]
-
     #: Number of seconds since epoch.
     response_time: float
-
     #: HTTP response status code.
     response_status: int
-
     #: HTTP response status text.
     response_status_text: str
-
     #: HTTP response type
     response_type: CachedResponseType
-
     #: Response headers
     response_headers: typing.List[Header]
 
@@ -106,19 +97,14 @@ class DataEntry:
 @dataclass
 class Cache:
     """Cache identifier."""
-
     #: An opaque unique id of the cache.
     cache_id: CacheId
-
     #: Security origin of the cache.
     security_origin: str
-
     #: Storage key of the cache.
     storage_key: str
-
     #: The name of the cache.
     cache_name: str
-
     #: Storage bucket of the cache.
     storage_bucket: typing.Optional[storage.StorageBucket] = None
 
@@ -169,7 +155,6 @@ class Header:
 @dataclass
 class CachedResponse:
     """Cached response."""
-
     #: Entry content, base64-encoded.
     #  (Encoded as a base64 string when passed over JSON)
     body: str

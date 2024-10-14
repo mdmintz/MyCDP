@@ -36,7 +36,6 @@ class RequestStage(enum.Enum):
     Response will intercept after the response is received
     (but before response body is received).
     """
-
     REQUEST = "Request"
     RESPONSE = "Response"
 
@@ -53,10 +52,8 @@ class RequestPattern:
     #: Wildcards (``'*'`` -> zero or more, ``'?'`` -> exactly one) are allowed.
     #: Escape character is backslash. Omitting is equivalent to ``"*"``.
     url_pattern: typing.Optional[str] = None
-
     #: If set, only requests for matching resource types will be intercepted.
     resource_type: typing.Optional[network.ResourceType] = None
-
     #: Stage at which to begin intercepting requests. Default is Request.
     request_stage: typing.Optional[RequestStage] = None
 
@@ -94,9 +91,7 @@ class RequestPattern:
 @dataclass
 class HeaderEntry:
     """Response HTTP header entry."""
-
     name: str
-
     value: str
 
     def to_json(self) -> T_JSON_DICT:
@@ -116,16 +111,12 @@ class HeaderEntry:
 @dataclass
 class AuthChallenge:
     """Authorization challenge for HTTP status code 401 or 407."""
-
     #: Origin of the challenger.
     origin: str
-
     #: The authentication scheme used, such as basic or digest
     scheme: str
-
     #: The realm of the challenge. May be empty.
     realm: str
-
     #: Source of the authentication challenge.
     source: typing.Optional[str] = None
 
@@ -155,17 +146,14 @@ class AuthChallenge:
 @dataclass
 class AuthChallengeResponse:
     """Response to an AuthChallenge."""
-
     #: The decision on what to do in response to the authorization challenge.
     #: Default means deferring to the default behavior of the net stack,
     #: which will likely either the Cancel authentication
     #: or display a popup dialog box.
     response: str
-
     #: The username to provide, possibly empty.
     #: Should only be set if response is ProvideCredentials.
     username: typing.Optional[str] = None
-
     #: The password to provide, possibly empty.
     #: Should only be set if response is ProvideCredentials.
     password: typing.Optional[str] = None
@@ -371,9 +359,7 @@ def continue_response(
     Continues loading of the paused response, optionally modifying the
     response headers. If either responseCode or headers are modified,
     all of them must be present.
-
     **EXPERIMENTAL**
-
     :param request_id: An id the client received in requestPaused event.
     :param response_code: *(Optional)*
      An HTTP response code. If absent, original response code will be used.
@@ -450,7 +436,6 @@ def take_response_body_as_stream(
     Calling other methods that affect the request or disabling fetch
     domain before body is received results in an undefined behavior.
     :param request_id:
-    :returns:
     """
     params: T_JSON_DICT = dict()
     params["requestId"] = request_id.to_json()
@@ -554,7 +539,6 @@ class AuthRequired:
     Issued when the domain is enabled with handleAuthRequests set to true.
     The request is paused until client responds with continueWithAuth.
     """
-
     #: Each request the page makes will have a unique id.
     request_id: RequestId
     #: The details of the request.

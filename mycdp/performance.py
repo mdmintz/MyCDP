@@ -14,7 +14,6 @@ from .util import event_class, T_JSON_DICT
 @dataclass
 class Metric:
     """Run-time execution metric."""
-
     #: Metric name.
     name: str
     #: Metric value.
@@ -60,26 +59,6 @@ def enable(
     json = yield cmd_dict  # noqa
 
 
-def set_time_domain(
-    time_domain: str,
-) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
-    """
-    Sets time domain to use for collecting and reporting duration metrics.
-    Note that this must be called before enabling metrics collection.
-    Calling this method while metrics collection is enabled returns an error.
-    .. deprecated:: 1.3
-    **EXPERIMENTAL**
-    :param time_domain: Time domain
-    """
-    params: T_JSON_DICT = dict()
-    params["timeDomain"] = time_domain
-    cmd_dict: T_JSON_DICT = {
-        "method": "Performance.setTimeDomain",
-        "params": params,
-    }
-    json = yield cmd_dict  # noqa
-
-
 def get_metrics() -> (
     typing.Generator[T_JSON_DICT, T_JSON_DICT, typing.List[Metric]]
 ):
@@ -98,7 +77,6 @@ def get_metrics() -> (
 @dataclass
 class Metrics:
     """Current values of the metrics."""
-
     #: Current values of the metrics.
     metrics: typing.List[Metric]
     #: Timestamp title.

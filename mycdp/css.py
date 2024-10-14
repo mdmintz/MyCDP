@@ -34,7 +34,6 @@ class StyleSheetOrigin(enum.Enum):
     (i.e. those holding the "via inspector" rules),
     "regular" for regular stylesheets.
     """
-
     INJECTED = "injected"
     USER_AGENT = "user-agent"
     INSPECTOR = "inspector"
@@ -51,13 +50,10 @@ class StyleSheetOrigin(enum.Enum):
 @dataclass
 class PseudoElementMatches:
     """CSS rule collection for a single pseudo style."""
-
     #: Pseudo element type.
     pseudo_type: dom.PseudoType
-
     #: Matches of CSS rules applicable to the pseudo style.
     matches: typing.List[RuleMatch]
-
     #: Pseudo element custom ident.
     pseudo_identifier: typing.Optional[str] = None
 
@@ -85,11 +81,9 @@ class PseudoElementMatches:
 @dataclass
 class InheritedStyleEntry:
     """Inherited CSS rule collection from ancestor node."""
-
     #: Matches of CSS rules matching the ancestor node in the
     #: style inheritance chain.
     matched_css_rules: typing.List[RuleMatch]
-
     #: The ancestor node's inline style, if any,
     #: in the style inheritance chain.
     inline_style: typing.Optional[CSSStyle] = None
@@ -118,7 +112,6 @@ class InheritedStyleEntry:
 @dataclass
 class InheritedPseudoElementMatches:
     """Inherited pseudo element matches from pseudos of an ancestor node."""
-
     #: Matches of pseudo styles from the pseudos of an ancestor node.
     pseudo_elements: typing.List[PseudoElementMatches]
 
@@ -140,10 +133,8 @@ class InheritedPseudoElementMatches:
 @dataclass
 class RuleMatch:
     """Match data for a CSS rule."""
-
     #: CSS rule in the match.
     rule: CSSRule
-
     #: Matching selector indices in the rule's selectorList selectors (0-based)
     matching_selectors: typing.List[int]
 
@@ -167,13 +158,10 @@ class Value:
     Data for a simple selector
     (these are delimited by commas in a selector list).
     """
-
     #: Value text.
     text: str
-
     #: Value range in the underlying resource (if available).
     range_: typing.Optional[SourceRange] = None
-
     #: Specificity of the selector.
     specificity: typing.Optional[Specificity] = None
 
@@ -209,14 +197,11 @@ class Specificity:
     Specificity:
     https://drafts.csswg.org/selectors/#specificity-rules
     """
-
     #: The a component, which represents the number of ID selectors.
     a: int
-
     #: The b component, which represents the number of class selectors,
     #: attributes selectors, and pseudo-classes.
     b: int
-
     #: The c component, which represents the number of type selectors
     #: and pseudo-elements.
     c: int
@@ -240,10 +225,8 @@ class Specificity:
 @dataclass
 class SelectorList:
     """Selector list data."""
-
     #: Selectors in the list.
     selectors: typing.List[Value]
-
     #: Rule selector text.
     text: str
 
@@ -264,33 +247,25 @@ class SelectorList:
 @dataclass
 class CSSStyleSheetHeader:
     """CSS stylesheet metainformation."""
-
     #: The stylesheet identifier.
     style_sheet_id: StyleSheetId
-
     #: Owner frame identifier.
     frame_id: page.FrameId
-
     #: Stylesheet resource URL.
     #: Empty if this is a constructed stylesheet created using
     #: new CSSStyleSheet()
     #: (but non-empty if this is a constructed stylesheet imported
     #: as a CSS module script).
     source_url: str
-
     #: Stylesheet origin.
     origin: StyleSheetOrigin
-
     #: Stylesheet title.
     title: str
-
     #: Denotes whether the stylesheet is disabled.
     disabled: bool
-
     #: Whether this stylesheet is created for STYLE tag by parser.
     #  This flag is not set for document.written STYLE tags.
     is_inline: bool
-
     #: Whether this stylesheet is mutable. Inline stylesheets become mutable
     #: after they have been modified via CSSOM API.
     #: ``<link>`` element's stylesheets become mutable
@@ -298,37 +273,27 @@ class CSSStyleSheetHeader:
     #: Constructed stylesheets (new CSSStyleSheet()) are mutable immediately
     # after creation.
     is_mutable: bool
-
     #: True if this stylesheet is created through new CSSStyleSheet()
     #: or imported as a CSS module script.
     is_constructed: bool
-
     #: Line offset of the stylesheet within the resource (zero based).
     start_line: float
-
     #: Column offset of the stylesheet within the resource (zero based).
     start_column: float
-
     #: Size of the content (in characters).
     length: float
-
     #: Line offset of the end of the stylesheet within the resource
     #  (zero based).
     end_line: float
-
     #: Column offset of the end of the stylesheet within the resource
     #  (zero based).
     end_column: float
-
     #: URL of source map associated with the stylesheet (if any).
     source_map_url: typing.Optional[str] = None
-
     #: The backend id for the owner node of the stylesheet.
     owner_node: typing.Optional[dom.BackendNodeId] = None
-
     #: Whether the sourceURL field value comes from the sourceURL comment.
     has_source_url: typing.Optional[bool] = None
-
     #: If the style sheet was loaded from a network resource,
     #: this indicates when the resource failed to load
     loading_failed: typing.Optional[bool] = None
@@ -402,50 +367,39 @@ class CSSStyleSheetHeader:
 @dataclass
 class CSSRule:
     """CSS rule representation."""
-
     #: Rule selector data.
     selector_list: SelectorList
-
     #: Parent stylesheet's origin.
     origin: StyleSheetOrigin
-
     #: Associated style declaration.
     style: CSSStyle
-
     #: The css style sheet identifier
     #: (absent for user agent stylesheet and user-specified
     #: stylesheet rules) this rule came from.
     style_sheet_id: typing.Optional[StyleSheetId] = None
-
     #: Array of selectors from ancestor style rules,
     #  sorted by distance from the current rule.
     nesting_selectors: typing.Optional[typing.List[str]] = None
-
     #: Media list array (for rules involving media queries).
     #: The array enumerates media queries
     #: starting with the innermost one, going outwards.
     media: typing.Optional[typing.List[CSSMedia]] = None
-
     #: Container query list array (for rules involving container queries).
     #: The array enumerates container queries starting with the innermost one,
     #: going outwards.
     container_queries: typing.Optional[typing.List[CSSContainerQuery]] = None
-
     #: @supports CSS at-rule array.
     #: The array enumerates @supports at-rules starting with the innermost one,
     #: going outwards.
     supports: typing.Optional[typing.List[CSSSupports]] = None
-
     #: Cascade layer array.
     #: Contains the layer hierarchy that this rule belongs to starting
     #: with the innermost layer and going outwards.
     layers: typing.Optional[typing.List[CSSLayer]] = None
-
     #: @scope CSS at-rule array.
     #: The array enumerates @scope at-rules starting with the innermost one,
     #: going outwards.
     scopes: typing.Optional[typing.List[CSSScope]] = None
-
     #: The array keeps the types of ancestor CSSRules
     #: from the innermost going outwards.
     rule_types: typing.Optional[typing.List[CSSRuleType]] = None
@@ -534,7 +488,6 @@ class CSSRuleType(enum.Enum):
     This list only contains rule types that are collected
     during the ancestor rule collection.
     """
-
     MEDIA_RULE = "MediaRule"
     SUPPORTS_RULE = "SupportsRule"
     CONTAINER_RULE = "ContainerRule"
@@ -553,19 +506,15 @@ class CSSRuleType(enum.Enum):
 @dataclass
 class RuleUsage:
     """CSS coverage information."""
-
     #: The css style sheet identifier
     #: (absent for user agent stylesheet and user-specified
     #: stylesheet rules) this rule came from.
     style_sheet_id: StyleSheetId
-
     #: Offset of the start of the rule (including selector)
     #: from the beginning of the stylesheet.
     start_offset: float
-
     #: Offset of the end of the rule body from the beginning of the stylesheet.
     end_offset: float
-
     #: Indicates whether the rule was actually used by some element in the page
     used: bool
 
@@ -590,16 +539,12 @@ class RuleUsage:
 @dataclass
 class SourceRange:
     """Text range within a resource. All numbers are zero-based."""
-
     #: Start line of range.
     start_line: int
-
     #: Start column of range (inclusive).
     start_column: int
-
     #: End line of range
     end_line: int
-
     #: End column of range (exclusive).
     end_column: int
 
@@ -625,10 +570,8 @@ class SourceRange:
 class ShorthandEntry:
     #: Shorthand name.
     name: str
-
     #: Shorthand value.
     value: str
-
     #: Whether the property has "!important" annotation
     #: (implies ``false`` if absent).
     important: typing.Optional[bool] = None
@@ -658,7 +601,6 @@ class ShorthandEntry:
 class CSSComputedStyleProperty:
     #: Computed style property name.
     name: str
-
     #: Computed style property value.
     value: str
 
@@ -679,21 +621,16 @@ class CSSComputedStyleProperty:
 @dataclass
 class CSSStyle:
     """CSS style representation."""
-
     #: CSS properties in the style.
     css_properties: typing.List[CSSProperty]
-
     #: Computed values for all shorthands found in the style.
     shorthand_entries: typing.List[ShorthandEntry]
-
     #: The css style sheet identifier
     #: (absent for user agent stylesheet and user-specified
     #: stylesheet rules) this rule came from.
     style_sheet_id: typing.Optional[StyleSheetId] = None
-
     #: Style declaration text (if available).
     css_text: typing.Optional[str] = None
-
     #: Style declaration range in the enclosing stylesheet (if available).
     range_: typing.Optional[SourceRange] = None
 
@@ -741,35 +678,26 @@ class CSSStyle:
 @dataclass
 class CSSProperty:
     """CSS property declaration data."""
-
     #: The property name.
     name: str
-
     #: The property value.
     value: str
-
     #: Whether the property has "!important" annotation
     #: (implies ``false`` if absent).
     important: typing.Optional[bool] = None
-
     #: Whether the property is implicit (implies ``false`` if absent).
     implicit: typing.Optional[bool] = None
-
     #: The full property text as specified in the style.
     text: typing.Optional[str] = None
-
     #: Whether the property is understood by the browser
     #  (implies ``true`` if absent).
     parsed_ok: typing.Optional[bool] = None
-
     #: Whether the property is disabled by the user
     #  (present for source-based properties only).
     disabled: typing.Optional[bool] = None
-
     #: The entire property range in the enclosing style declaration
     #: (if available).
     range_: typing.Optional[SourceRange] = None
-
     #: Parsed longhand components of this property if it is a shorthand.
     #: This field will be empty if the given property is not a shorthand.
     longhand_properties: typing.Optional[typing.List[CSSProperty]] = None
@@ -842,10 +770,8 @@ class CSSProperty:
 @dataclass
 class CSSMedia:
     """CSS media rule descriptor."""
-
     #: Media query text.
     text: str
-
     #: Source of the media query: "mediaRule" if specified by a @media rule,
     #: "importRule" if
     #: specified by an @import rule, "linkedSheet" if specified by a "media"
@@ -854,17 +780,13 @@ class CSSMedia:
     #: attribute in an inline
     #: stylesheet's STYLE tag.
     source: str
-
     #: URL of the document containing the media query description.
     source_url: typing.Optional[str] = None
-
     #: The associated rule (@media or @import) header range
     #: in the enclosing stylesheet (if available).
     range_: typing.Optional[SourceRange] = None
-
     #: Identifier of the stylesheet containing this object (if exists).
     style_sheet_id: typing.Optional[StyleSheetId] = None
-
     #: Array of media queries.
     media_list: typing.Optional[typing.List[MediaQuery]] = None
 
@@ -913,10 +835,8 @@ class CSSMedia:
 @dataclass
 class MediaQuery:
     """Media query descriptor."""
-
     #: Array of media query expressions.
     expressions: typing.List[MediaQueryExpression]
-
     #: Whether the media query condition is satisfied.
     active: bool
 
@@ -939,20 +859,15 @@ class MediaQuery:
 @dataclass
 class MediaQueryExpression:
     """Media query expression descriptor."""
-
     #: Media query expression value.
     value: float
-
     #: Media query expression units.
     unit: str
-
     #: Media query expression feature.
     feature: str
-
     #: The associated range of the value text in the enclosing stylesheet
     #: (if available).
     value_range: typing.Optional[SourceRange] = None
-
     #: Computed length of media query expression (if applicable).
     computed_length: typing.Optional[float] = None
 
@@ -989,23 +904,17 @@ class MediaQueryExpression:
 @dataclass
 class CSSContainerQuery:
     """CSS container query rule descriptor."""
-
     #: Container query text.
     text: str
-
     #: The associated rule header range in the enclosing stylesheet (if
     #: available).
     range_: typing.Optional[SourceRange] = None
-
     #: Identifier of the stylesheet containing this object (if exists).
     style_sheet_id: typing.Optional[StyleSheetId] = None
-
     #: Optional name for the container.
     name: typing.Optional[str] = None
-
     #: Optional physical axes queried for the container.
     physical_axes: typing.Optional[dom.PhysicalAxes] = None
-
     #: Optional logical axes queried for the container.
     logical_axes: typing.Optional[dom.LogicalAxes] = None
 
@@ -1059,17 +968,13 @@ class CSSContainerQuery:
 @dataclass
 class CSSSupports:
     """CSS Supports at-rule descriptor."""
-
     #: Supports rule text.
     text: str
-
     #: Whether the supports condition is satisfied.
     active: bool
-
     #: The associated rule header range in the enclosing stylesheet (if
     #: available).
     range_: typing.Optional[SourceRange] = None
-
     #: Identifier of the stylesheet containing this object (if exists).
     style_sheet_id: typing.Optional[StyleSheetId] = None
 
@@ -1104,14 +1009,11 @@ class CSSSupports:
 @dataclass
 class CSSScope:
     """CSS Scope at-rule descriptor."""
-
     #: Scope rule text.
     text: str
-
     #: The associated rule header range in the enclosing stylesheet (if
     #: available).
     range_: typing.Optional[SourceRange] = None
-
     #: Identifier of the stylesheet containing this object (if exists).
     style_sheet_id: typing.Optional[StyleSheetId] = None
 
@@ -1144,14 +1046,11 @@ class CSSScope:
 @dataclass
 class CSSLayer:
     """CSS Layer at-rule descriptor."""
-
     #: Layer name.
     text: str
-
     #: The associated rule header range in the enclosing stylesheet (if
     #: available).
     range_: typing.Optional[SourceRange] = None
-
     #: Identifier of the stylesheet containing this object (if exists).
     style_sheet_id: typing.Optional[StyleSheetId] = None
 
@@ -1184,15 +1083,12 @@ class CSSLayer:
 @dataclass
 class CSSLayerData:
     """CSS Layer data."""
-
     #: Layer name.
     name: str
-
     #: Layer order. The order determines the order of the layer
     #: in the cascade order.
     #: A higher number has higher priority in the cascade order.
     order: float
-
     #: Direct sub-layers
     sub_layers: typing.Optional[typing.List[CSSLayerData]] = None
 
@@ -1222,16 +1118,12 @@ class PlatformFontUsage:
     """
     Information about amount of glyphs that were rendered with given font.
     """
-
     #: Font's family name reported by platform.
     family_name: str
-
     #: Font's PostScript name reported by platform.
     post_script_name: str
-
     #: Indicates if the font was downloaded or resolved locally.
     is_custom_font: bool
-
     #: Amount of glyphs that were rendered with this font.
     glyph_count: float
 
@@ -1256,19 +1148,14 @@ class PlatformFontUsage:
 @dataclass
 class FontVariationAxis:
     """Information about font variation axes for variable fonts."""
-
     #: The font-variation-setting tag (a.k.a. "axis tag").
     tag: str
-
     #: Human-readable variation name in the default language (normally, "en").
     name: str
-
     #: The minimum value (inclusive) the font supports for this tag.
     min_value: float
-
     #: The maximum value (inclusive) the font supports for this tag.
     max_value: float
-
     #: The default value.
     default_value: float
 
@@ -1299,34 +1186,24 @@ class FontFace:
     https://www.w3.org/TR/2008/REC-CSS2-20080411/fonts.html#font-descriptions
     and additional information such as platformFontFamily and fontVariationAxes
     """
-
     #: The font-family.
     font_family: str
-
     #: The font-style.
     font_style: str
-
     #: The font-variant.
     font_variant: str
-
     #: The font-weight.
     font_weight: str
-
     #: The font-stretch.
     font_stretch: str
-
     #: The font-display.
     font_display: str
-
     #: The unicode-range.
     unicode_range: str
-
     #: The src.
     src: str
-
     #: The resolved platform font family
     platform_font_family: str
-
     #: Available variation settings (a.k.a. "axes").
     font_variation_axes: typing.Optional[typing.List[FontVariationAxis]] = None
 
@@ -1373,13 +1250,10 @@ class FontFace:
 @dataclass
 class CSSTryRule:
     """CSS try rule representation."""
-
     #: Parent stylesheet's origin.
     origin: StyleSheetOrigin
-
     #: Associated style declaration.
     style: CSSStyle
-
     #: The css style sheet identifier
     #  (absent for user agent stylesheet and user-specified
     #: stylesheet rules) this rule came from.
@@ -1409,9 +1283,7 @@ class CSSTryRule:
 @dataclass
 class CSSPositionFallbackRule:
     """CSS position-fallback rule representation."""
-
     name: Value
-
     #: List of keyframes.
     try_rules: typing.List[CSSTryRule]
 
@@ -1432,16 +1304,12 @@ class CSSPositionFallbackRule:
 @dataclass
 class CSSPositionTryRule:
     """CSS @position-try rule representation."""
-
     #: The prelude dashed-ident name
     name: Value
-
     #: Parent stylesheet's origin.
     origin: StyleSheetOrigin
-
     #: Associated style declaration.
     style: CSSStyle
-
     #: The css style sheet identifier
     #: (absent for user agent stylesheet and user-specified
     #: stylesheet rules) this rule came from.
@@ -1473,10 +1341,8 @@ class CSSPositionTryRule:
 @dataclass
 class CSSKeyframesRule:
     """CSS keyframes rule representation."""
-
     #: Animation name.
     animation_name: Value
-
     #: List of keyframes.
     keyframes: typing.List[CSSKeyframeRule]
 
@@ -1502,7 +1368,6 @@ class CSSPropertyRegistration:
     Representation of a custom property registration
     through CSS.registerProperty
     """
-
     property_name: str
     inherits: bool
     syntax: str
@@ -1534,16 +1399,12 @@ class CSSPropertyRegistration:
 @dataclass
 class CSSFontPaletteValuesRule:
     """CSS font-palette-values rule representation."""
-
     #: Parent stylesheet's origin.
     origin: StyleSheetOrigin
-
     #: Associated font palette name.
     font_palette_name: Value
-
     #: Associated style declaration.
     style: CSSStyle
-
     #: The css style sheet identifier
     #: (absent for user agent stylesheet and user-specified
     #: stylesheet rules) this rule came from.
@@ -1575,16 +1436,12 @@ class CSSFontPaletteValuesRule:
 @dataclass
 class CSSPropertyRule:
     """CSS property at-rule representation."""
-
     #: Parent stylesheet's origin.
     origin: StyleSheetOrigin
-
     #: Associated property name.
     property_name: Value
-
     #: Associated style declaration.
     style: CSSStyle
-
     #: The css style sheet identifier
     #: (absent for user agent stylesheet and user-specified
     #: stylesheet rules) this rule came from.
@@ -1616,16 +1473,12 @@ class CSSPropertyRule:
 @dataclass
 class CSSKeyframeRule:
     """CSS keyframe rule representation."""
-
     #: Parent stylesheet's origin.
     origin: StyleSheetOrigin
-
     #: Associated key text.
     key_text: Value
-
     #: Associated style declaration.
     style: CSSStyle
-
     #: The css style sheet identifier
     #: (absent for user agent stylesheet and user-specified stylesheet rules)
     #: this rule came from.
@@ -1657,13 +1510,10 @@ class CSSKeyframeRule:
 @dataclass
 class StyleDeclarationEdit:
     """A descriptor of operation to mutate style declaration text."""
-
     #: The css style sheet identifier.
     style_sheet_id: StyleSheetId
-
     #: The range of the style text in the enclosing stylesheet.
     range_: SourceRange
-
     #: New style text.
     text: str
 
@@ -2065,10 +1915,7 @@ def get_matched_styles_for_node(
 def get_media_queries() -> (
     typing.Generator[T_JSON_DICT, T_JSON_DICT, typing.List[CSSMedia]]
 ):
-    """
-    Returns all media queries parsed by the rendering engine.
-    :returns:
-    """
+    """Returns all media queries parsed by the rendering engine."""
     cmd_dict: T_JSON_DICT = {
         "method": "CSS.getMediaQueries",
     }
@@ -2082,7 +1929,7 @@ def get_platform_fonts_for_node(
     T_JSON_DICT, T_JSON_DICT, typing.List[PlatformFontUsage]
 ]:
     """
-    Requests information about platform fonts
+    Requests information about platform fonts,
     which we used to render child TextNodes in the given node.
     :param node_id:
     :returns: Usage statistics for every employed platform font.
@@ -2125,11 +1972,8 @@ def get_layers_for_node(
     getLayersForNode returns the root layer for the nearest ancestor document
     or shadow root. The layer root contains the full layer tree
     for the tree scope and their ordering.
-
     **EXPERIMENTAL**
-
     :param node_id:
-    :returns:
     """
     params: T_JSON_DICT = dict()
     params["nodeId"] = node_id.to_json()
@@ -2147,12 +1991,9 @@ def get_location_for_selector(
     """
     Given a CSS selector text and a style sheet ID, getLocationForSelector
     returns an array of locations of the CSS selector in the style sheet.
-
     **EXPERIMENTAL**
-
     :param style_sheet_id:
     :param selector_text:
-    :returns:
     """
     params: T_JSON_DICT = dict()
     params["styleSheetId"] = style_sheet_id.to_json()
@@ -2180,9 +2021,7 @@ def track_computed_style_updates(
     If no changes to the tracked properties occur after the node
     has been pushed to the front-end,
     no updates will be issued for the node.
-
     **EXPERIMENTAL**
-
     :param properties_to_track:
     """
     params: T_JSON_DICT = dict()
@@ -2199,9 +2038,7 @@ def take_computed_style_updates() -> (
 ):
     """
     Polls the next batch of computed style updates.
-
     **EXPERIMENTAL**
-
     :returns: The list of node IDs that have
     their tracked computed styles updated.
     """
@@ -2304,9 +2141,7 @@ def set_container_query_text(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, CSSContainerQuery]:
     """
     Modifies the expression of a container query.
-
     **EXPERIMENTAL**
-
     :param style_sheet_id:
     :param range_:
     :param text:
@@ -2329,9 +2164,7 @@ def set_supports_text(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, CSSSupports]:
     """
     Modifies the expression of a supports at-rule.
-
     **EXPERIMENTAL**
-
     :param style_sheet_id:
     :param range_:
     :param text:
@@ -2354,9 +2187,7 @@ def set_scope_text(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, CSSScope]:
     """
     Modifies the expression of a scope at-rule.
-
     **EXPERIMENTAL**
-
     :param style_sheet_id:
     :param range_:
     :param text:
@@ -2466,7 +2297,6 @@ def stop_rule_usage_tracking() -> (
     Stop tracking rule usage and return the list of rules that were used
     since last call to ``takeCoverageDelta``
     (or since start of coverage instrumentation).
-    :returns:
     """
     cmd_dict: T_JSON_DICT = {
         "method": "CSS.stopRuleUsageTracking",
@@ -2502,9 +2332,7 @@ def set_local_fonts_enabled(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Enables/disables rendering of local CSS fonts (enabled by default).
-
     **EXPERIMENTAL**
-
     :param enabled: Whether rendering of local fonts is enabled.
     """
     params: T_JSON_DICT = dict()
@@ -2523,7 +2351,6 @@ class FontsUpdated:
     Fires whenever a web font is updated.
     A non-empty font parameter indicates a successfully loaded web font.
     """
-
     #: The web font that has loaded.
     font: typing.Optional[FontFace]
 
@@ -2557,7 +2384,6 @@ class MediaQueryResultChanged:
 @dataclass
 class StyleSheetAdded:
     """Fired whenever an active document stylesheet is added."""
-
     #: Added stylesheet metainfo.
     header: CSSStyleSheetHeader
 
@@ -2572,7 +2398,6 @@ class StyleSheetChanged:
     """
     Fired whenever a stylesheet is changed as a result of the client operation.
     """
-
     style_sheet_id: StyleSheetId
 
     @classmethod
@@ -2584,7 +2409,6 @@ class StyleSheetChanged:
 @dataclass
 class StyleSheetRemoved:
     """Fired whenever an active document stylesheet is removed."""
-
     #: Identifier of the removed stylesheet.
     style_sheet_id: StyleSheetId
 

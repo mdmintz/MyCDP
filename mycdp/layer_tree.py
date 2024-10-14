@@ -43,10 +43,8 @@ class SnapshotId(str):
 @dataclass
 class ScrollRect:
     """Rectangle where scrolling happens on the main thread."""
-
     #: Rectangle itself.
     rect: dom.Rect
-
     #: Reason for rectangle to force scrolling on the main thread
     type_: str
 
@@ -67,16 +65,12 @@ class ScrollRect:
 @dataclass
 class StickyPositionConstraint:
     """Sticky position constraints."""
-
     #: Layout rectangle of the sticky element before being shifted
     sticky_box_rect: dom.Rect
-
     #: Layout rectangle of the containing block of the sticky element
     containing_block_rect: dom.Rect
-
     #: The nearest sticky layer that shifts the sticky box
     nearest_layer_shifting_sticky_box: typing.Optional[LayerId] = None
-
     #: The nearest sticky layer that shifts the containing block
     nearest_layer_shifting_containing_block: typing.Optional[LayerId] = None
 
@@ -120,13 +114,10 @@ class PictureTile:
     """
     Serialized fragment of layer picture along with its offset within the layer
     """
-
     #: Offset from owning layer left boundary
     x: float
-
     #: Offset from owning layer top boundary
     y: float
-
     #: Base64-encoded snapshot data.
     #: (Encoded as a base64 string when passed over JSON)
     picture: str
@@ -150,53 +141,37 @@ class PictureTile:
 @dataclass
 class Layer:
     """Information about a compositing layer."""
-
     #: The unique id for this layer.
     layer_id: LayerId
-
     #: Offset from parent layer, X coordinate.
     offset_x: float
-
     #: Offset from parent layer, Y coordinate.
     offset_y: float
-
     #: Layer width.
     width: float
-
     #: Layer height.
     height: float
-
     #: Indicates how many time this layer has painted.
     paint_count: int
-
     #: Indicates whether this layer hosts any content,
     #: rather than being used for transform/scrolling purposes only.
     draws_content: bool
-
     #: The id of parent (not present for root).
     parent_layer_id: typing.Optional[LayerId] = None
-
     #: The backend id for the node associated with this layer.
     backend_node_id: typing.Optional[dom.BackendNodeId] = None
-
     #: Transformation matrix for layer, default is identity matrix
     transform: typing.Optional[typing.List[float]] = None
-
     #: Transform anchor point X, absent if no transform specified
     anchor_x: typing.Optional[float] = None
-
     #: Transform anchor point Y, absent if no transform specified
     anchor_y: typing.Optional[float] = None
-
     #: Transform anchor point Z, absent if no transform specified
     anchor_z: typing.Optional[float] = None
-
     #: Set if layer is not visible.
     invisible: typing.Optional[bool] = None
-
     #: Rectangles scrolling on main thread only.
     scroll_rects: typing.Optional[typing.List[ScrollRect]] = None
-
     #: Sticky position constraint information
     sticky_position_constraint: typing.Optional[StickyPositionConstraint] = (
         None

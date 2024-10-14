@@ -29,7 +29,6 @@ class SerializedStorageKey(str):
 
 class StorageType(enum.Enum):
     """Enum of possible storage types."""
-
     APPCACHE = "appcache"
     COOKIES = "cookies"
     FILE_SYSTEMS = "file_systems"
@@ -56,10 +55,8 @@ class StorageType(enum.Enum):
 @dataclass
 class UsageForType:
     """Usage for a storage type."""
-
     #: Name of storage type.
     storage_type: StorageType
-
     #: Storage usage (bytes).
     usage: float
 
@@ -83,9 +80,7 @@ class TrustTokens:
     Pair of issuer origin and number of available (signed, but not used) Trust
     Tokens from that issuer.
     """
-
     issuer_origin: str
-
     count: float
 
     def to_json(self) -> T_JSON_DICT:
@@ -118,7 +113,6 @@ class InterestGroupAuctionId(str):
 
 class InterestGroupAccessType(enum.Enum):
     """Enum of interest group access types."""
-
     JOIN = "join"
     LEAVE = "leave"
     UPDATE = "update"
@@ -141,7 +135,6 @@ class InterestGroupAccessType(enum.Enum):
 
 class InterestGroupAuctionEventType(enum.Enum):
     """Enum of auction events."""
-
     STARTED = "started"
     CONFIG_RESOLVED = "configResolved"
 
@@ -155,7 +148,6 @@ class InterestGroupAuctionEventType(enum.Enum):
 
 class InterestGroupAuctionFetchType(enum.Enum):
     """Enum of network fetches auctions can do."""
-
     BIDDER_JS = "bidderJs"
     BIDDER_WASM = "bidderWasm"
     SELLER_JS = "sellerJs"
@@ -172,7 +164,6 @@ class InterestGroupAuctionFetchType(enum.Enum):
 
 class SharedStorageAccessType(enum.Enum):
     """Enum of shared storage access types."""
-
     DOCUMENT_ADD_MODULE = "documentAddModule"
     DOCUMENT_SELECT_URL = "documentSelectURL"
     DOCUMENT_RUN = "documentRun"
@@ -206,7 +197,6 @@ class SharedStorageAccessType(enum.Enum):
 @dataclass
 class SharedStorageEntry:
     """Struct for a single key-value pair in an origin's shared storage."""
-
     key: str
     value: str
 
@@ -227,16 +217,12 @@ class SharedStorageEntry:
 @dataclass
 class SharedStorageMetadata:
     """Details for an origin's shared storage."""
-
     #: Time when the origin's shared storage was last created.
     creation_time: network.TimeSinceEpoch
-
     #: Number of key-value pairs stored in origin's shared storage.
     length: int
-
     #: Current amount of bits of entropy remaining in the navigation budget.
     remaining_budget: float
-
     #: Total number of bytes stored as key-value pairs in origin's shared
     #: storage.
     bytes_used: int
@@ -266,9 +252,7 @@ class SharedStorageReportingMetadata:
     """
     Pair of reporting metadata details for a candidate URL for ``selectURL()``.
     """
-
     event_type: str
-
     reporting_url: str
 
     def to_json(self) -> T_JSON_DICT:
@@ -288,10 +272,8 @@ class SharedStorageReportingMetadata:
 @dataclass
 class SharedStorageUrlWithMetadata:
     """Bundles a candidate URL with its reporting metadata."""
-
     #: Spec of candidate URL.
     url: str
-
     #: Any associated reporting metadata.
     reporting_metadata: typing.List[SharedStorageReportingMetadata]
 
@@ -320,27 +302,22 @@ class SharedStorageAccessParams:
     Bundles the parameters for shared storage access events whose
     presence/absence can vary according to SharedStorageAccessType.
     """
-
     #: Spec of the module script URL.
     #: Present only for SharedStorageAccessType.documentAddModule.
     script_source_url: typing.Optional[str] = None
-
     #: Name of the registered operation to be run.
     #: Present only for SharedStorageAccessType.documentRun and
     #: SharedStorageAccessType.documentSelectURL.
     operation_name: typing.Optional[str] = None
-
     #: The operation's serialized data in bytes (converted to a string).
     #: Present only for SharedStorageAccessType.documentRun and
     #: SharedStorageAccessType.documentSelectURL.
     serialized_data: typing.Optional[str] = None
-
     #: Array of candidate URLs' specs, along with any associated metadata.
     #: Present only for SharedStorageAccessType.documentSelectURL.
     urls_with_metadata: typing.Optional[
         typing.List[SharedStorageUrlWithMetadata]
     ] = None
-
     #: Key for a specific entry in an origin's shared storage.
     #: Present only for SharedStorageAccessType.documentSet,
     #: SharedStorageAccessType.documentAppend,
@@ -353,7 +330,6 @@ class SharedStorageAccessParams:
     #: SharedStorageAccessType.headerAppend, and
     #: SharedStorageAccessType.headerDelete.
     key: typing.Optional[str] = None
-
     #: Value for a specific entry in an origin's shared storage.
     #: Present only for SharedStorageAccessType.documentSet,
     #: SharedStorageAccessType.documentAppend,
@@ -362,7 +338,6 @@ class SharedStorageAccessParams:
     #: SharedStorageAccessType.headerSet, and
     #: SharedStorageAccessType.headerAppend.
     value: typing.Optional[str] = None
-
     #: Whether or not to set an entry for a key if that key is already present.
     #: Present only for SharedStorageAccessType.documentSet,
     #: SharedStorageAccessType.workletSet, and
@@ -446,7 +421,6 @@ class StorageBucketsDurability(enum.Enum):
 @dataclass
 class StorageBucket:
     storage_key: SerializedStorageKey
-
     #: If not specified, it is the default bucket of the storageKey.
     name: typing.Optional[str] = None
 
@@ -474,10 +448,8 @@ class StorageBucketInfo:
     bucket: StorageBucket
     id_: str
     expiration: network.TimeSinceEpoch
-
     #: Storage quota (bytes).
     quota: float
-
     persistent: bool
     durability: StorageBucketsDurability
 
@@ -554,7 +526,6 @@ class SignedInt64AsBase10(str):
 @dataclass
 class AttributionReportingFilterDataEntry:
     key: str
-
     values: typing.List[str]
 
     def to_json(self) -> T_JSON_DICT:
@@ -576,7 +547,6 @@ class AttributionReportingFilterDataEntry:
 @dataclass
 class AttributionReportingFilterConfig:
     filter_values: typing.List[AttributionReportingFilterDataEntry]
-
     #: duration in seconds
     lookback_window: typing.Optional[int] = None
 
@@ -652,7 +622,6 @@ class AttributionReportingAggregationKeysEntry:
 class AttributionReportingEventReportWindows:
     #: Duration in seconds
     start: int
-
     #: Duration in seconds
     ends: typing.List[int]
 
@@ -677,7 +646,6 @@ class AttributionReportingTriggerSpec:
     #: Number instead of integer
     #: because not all uint32 can be represented by int
     trigger_data: typing.List[float]
-
     event_report_windows: AttributionReportingEventReportWindows
 
     def to_json(self) -> T_JSON_DICT:
@@ -711,15 +679,11 @@ class AttributionReportingTriggerDataMatching(enum.Enum):
 @dataclass
 class AttributionReportingSourceRegistration:
     time: network.TimeSinceEpoch
-
     #: duration in seconds
     expiry: int
-
     trigger_specs: typing.List[AttributionReportingTriggerSpec]
-
     #: duration in seconds
     aggregatable_report_window: int
-
     type_: AttributionReportingSourceType
     source_origin: str
     reporting_origin: str
@@ -836,9 +800,7 @@ class AttributionReportingSourceRegistrationTimeConfig(enum.Enum):
 @dataclass
 class AttributionReportingAggregatableValueDictEntry:
     key: str
-
-    #: number instead of integer because not all uint32 can be represented by
-    #: int
+    #: float because not all uint32 can be represented by an int
     value: float
 
     def to_json(self) -> T_JSON_DICT:
@@ -1117,13 +1079,10 @@ class AttributionReportingAggregatableResult(enum.Enum):
 @dataclass
 class RelatedWebsiteSet:
     """A single Related Website Set object."""
-
     #: The primary site of this set, along with the ccTLDs if there is any.
     primary_sites: typing.List[str]
-
     #: The associated sites of this set, along with the ccTLDs if there is any.
     associated_sites: typing.List[str]
-
     #: The service sites of this set, along with the ccTLDs if there is any.
     service_sites: typing.List[str]
 
@@ -1149,7 +1108,6 @@ def get_storage_key_for_frame(
     """
     Returns a storage key given a frame id.
     :param frame_id:
-    :returns:
     """
     params: T_JSON_DICT = dict()
     params["frameId"] = frame_id.to_json()
@@ -1293,9 +1251,7 @@ def override_quota_for_origin(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Override quota for the specified origin
-
     **EXPERIMENTAL**
-
     :param origin: Security origin.
     :param quota_size: *(Optional)* The quota size (in bytes)
      to override the original quota with. If this is called multiple times,
@@ -1454,10 +1410,7 @@ def get_trust_tokens() -> (
     """
     Returns the number of stored Trust Tokens per issuer for the
     current browsing context.
-
     **EXPERIMENTAL**
-
-    :returns:
     """
     cmd_dict: T_JSON_DICT = {
         "method": "Storage.getTrustTokens",
@@ -1473,9 +1426,7 @@ def clear_trust_tokens(
     Removes all Trust Tokens issued by the provided issuerOrigin.
     Leaves other stored data, including the issuer's Redemption Records,
     intact.
-
     **EXPERIMENTAL**
-
     :param issuer_origin:
     :returns: True if any tokens were deleted, false otherwise.
     """
@@ -1494,9 +1445,7 @@ def get_interest_group_details(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, dict]:
     """
     Gets details for a named interest group.
-
     **EXPERIMENTAL**
-
     :param owner_origin:
     :param name:
     :returns: This largely corresponds to:
@@ -1520,9 +1469,7 @@ def set_interest_group_tracking(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Enables/Disables issuing of interestGroupAccessed events.
-
     **EXPERIMENTAL**
-
     :param enable:
     """
     params: T_JSON_DICT = dict()
@@ -1540,9 +1487,7 @@ def set_interest_group_auction_tracking(
     """
     Enables/Disables issuing of interestGroupAuctionEventOccurred and
     interestGroupAuctionNetworkRequestCreated.
-
     **EXPERIMENTAL**
-
     :param enable:
     """
     params: T_JSON_DICT = dict()
@@ -1559,11 +1504,8 @@ def get_shared_storage_metadata(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, SharedStorageMetadata]:
     """
     Gets metadata for an origin's shared storage.
-
     **EXPERIMENTAL**
-
     :param owner_origin:
-    :returns:
     """
     params: T_JSON_DICT = dict()
     params["ownerOrigin"] = owner_origin
@@ -1582,11 +1524,8 @@ def get_shared_storage_entries(
 ]:
     """
     Gets the entries in an given origin's shared storage.
-
     **EXPERIMENTAL**
-
     :param owner_origin:
-    :returns:
     """
     params: T_JSON_DICT = dict()
     params["ownerOrigin"] = owner_origin
@@ -1606,9 +1545,7 @@ def set_shared_storage_entry(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Sets entry with ``key`` and ``value`` for a given origin's shared storage.
-
     **EXPERIMENTAL**
-
     :param owner_origin:
     :param key:
     :param value:
@@ -1635,9 +1572,7 @@ def delete_shared_storage_entry(
     """
     Deletes entry for ``key`` (if it exists)
     for a given origin's shared storage.
-
     **EXPERIMENTAL**
-
     :param owner_origin:
     :param key:
     """
@@ -1656,9 +1591,7 @@ def clear_shared_storage_entries(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Clears all entries for a given origin's shared storage.
-
     **EXPERIMENTAL**
-
     :param owner_origin:
     """
     params: T_JSON_DICT = dict()
@@ -1675,9 +1608,7 @@ def reset_shared_storage_budget(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Resets the budget for ``ownerOrigin`` by clearing all budget withdrawals.
-
     **EXPERIMENTAL**
-
     :param owner_origin:
     """
     params: T_JSON_DICT = dict()
@@ -1694,9 +1625,7 @@ def set_shared_storage_tracking(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Enables/disables issuing of sharedStorageAccessed events.
-
     **EXPERIMENTAL**
-
     :param enable:
     """
     params: T_JSON_DICT = dict()
@@ -1713,9 +1642,7 @@ def set_storage_bucket_tracking(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Set tracking for a storage key's buckets.
-
     **EXPERIMENTAL**
-
     :param storage_key:
     :param enable:
     """
@@ -1734,9 +1661,7 @@ def delete_storage_bucket(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Deletes the Storage Bucket with the given storage key and bucket name.
-
     **EXPERIMENTAL**
-
     :param bucket:
     """
     params: T_JSON_DICT = dict()
@@ -1754,10 +1679,7 @@ def run_bounce_tracking_mitigations() -> (
     """
     Deletes state for sites identified as potential bounce trackers,
     immediately.
-
     **EXPERIMENTAL**
-
-    :returns:
     """
     cmd_dict: T_JSON_DICT = {
         "method": "Storage.runBounceTrackingMitigations",
@@ -1771,9 +1693,7 @@ def set_attribution_reporting_local_testing_mode(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     https://wicg.github.io/attribution-reporting-api/
-
     **EXPERIMENTAL**
-
     :param enabled: If enabled, noise is suppressed
     and reports are sent immediately.
     """
@@ -1791,9 +1711,7 @@ def set_attribution_reporting_tracking(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Enables/disables issuing of Attribution Reporting events.
-
     **EXPERIMENTAL**
-
     :param enable:
     """
     params: T_JSON_DICT = dict()
@@ -1809,11 +1727,9 @@ def send_pending_attribution_reports() -> (
     typing.Generator[T_JSON_DICT, T_JSON_DICT, int]
 ):
     """
-    Sends all pending Attribution Reports immediately, regardless of their
-    scheduled report time.
-
+    Sends all pending Attribution Reports immediately,
+    regardless of their scheduled report time.
     **EXPERIMENTAL**
-
     :returns: The number of reports that were sent.
     """
     cmd_dict: T_JSON_DICT = {
@@ -1831,10 +1747,7 @@ def get_related_website_sets() -> (
     for the browser session.
     The effective Related Website Sets will not change
     during a browser session.
-
     **EXPERIMENTAL**
-
-    :returns:
     """
     cmd_dict: T_JSON_DICT = {
         "method": "Storage.getRelatedWebsiteSets",
@@ -1944,7 +1857,6 @@ class InterestGroupAccessed:
     Note that these events are global to all targets
     sharing an interest group store.
     """
-
     access_time: network.TimeSinceEpoch
     type_: InterestGroupAccessType
     owner_origin: str
@@ -1995,7 +1907,6 @@ class InterestGroupAuctionEventOccurred:
     An auction involving interest groups is taking place.
     These events are target-specific.
     """
-
     event_time: network.TimeSinceEpoch
     type_: InterestGroupAuctionEventType
     unique_auction_id: InterestGroupAuctionId
@@ -2034,7 +1945,6 @@ class InterestGroupAuctionNetworkRequestCreated:
     Network.requestWillBeSent (but will happen before loadingFinished
     loadingFailed).
     """
-
     type_: InterestGroupAuctionFetchType
     request_id: network.RequestId
     #: This is the set of the auctions using the worklet that issued this
@@ -2063,7 +1973,6 @@ class SharedStorageAccessed:
     Shared storage was accessed by the associated page.
     The following parameters are included in all events.
     """
-
     #: Time of the access.
     access_time: network.TimeSinceEpoch
     #: Enum value indicating the Shared Storage API method invoked.
@@ -2137,7 +2046,6 @@ class AttributionReportingTriggerRegistered:
     """
     **EXPERIMENTAL**
     """
-
     registration: AttributionReportingTriggerRegistration
     event_level: AttributionReportingEventLevelResult
     aggregatable: AttributionReportingAggregatableResult

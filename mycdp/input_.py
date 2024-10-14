@@ -17,42 +17,32 @@ class TouchPoint:
     #: X coordinate of the event relative to the main frame's viewport
     #: in CSS pixels.
     x: float
-
     #: Y coordinate of the event relative to the main frame's viewport
     #: in CSS pixels. 0 refers to the top of the viewport and Y increases
     #: as it proceeds towards the bottom of the viewport.
     y: float
-
     #: X radius of the touch area (default: 1.0).
     radius_x: typing.Optional[float] = None
-
     #: Y radius of the touch area (default: 1.0).
     radius_y: typing.Optional[float] = None
-
     #: Rotation angle (default: 0.0).
     rotation_angle: typing.Optional[float] = None
-
     #: Force (default: 1.0).
     force: typing.Optional[float] = None
-
     #: The normalized tangential pressure, which has a range of [-1,1]
     #: (default: 0).
     tangential_pressure: typing.Optional[float] = None
-
     #: The plane angle between the Y-Z plane and the plane containing both
     #: the stylus axis and the Y axis, in degrees of the range [-90,90],
     #: a positive tiltX is to the right (default: 0)
     tilt_x: typing.Optional[float] = None
-
     #: The plane angle between the X-Z plane and the plane containing both
     #: the stylus axis and the X axis, in degrees of the range [-90,90],
     #: a positive tiltY is towards the user (default: 0).
     tilt_y: typing.Optional[float] = None
-
     #: The clockwise rotation of a pen stylus around its own major axis,
     #: in degrees in the range [0,359] (default: 0).
     twist: typing.Optional[int] = None
-
     #: Identifier used to track touch sources between events,
     #: must be unique within an event.
     id_: typing.Optional[float] = None
@@ -179,15 +169,12 @@ class TimeSinceEpoch(float):
 class DragDataItem:
     #: Mime type of the dragged data.
     mime_type: str
-
     #: Depending of the value of ``mimeType``, it contains the dragged link,
     #: text, HTML markup or any other data.
     data: str
-
     #: Title associated with a link.
     #: Only valid when ``mimeType`` == "text/uri-list".
     title: typing.Optional[str] = None
-
     #: Stores the base URL for the contained markup.
     #: Only valid when ``mimeType`` == "text/html".
     base_url: typing.Optional[str] = None
@@ -223,11 +210,9 @@ class DragDataItem:
 @dataclass
 class DragData:
     items: typing.List[DragDataItem]
-
     #: Bit field representing allowed drag operations.
     #: Copy = 1, Link = 2, Move = 16
     drag_operations_mask: int
-
     #: List of filenames that should be included when dropping
     files: typing.Optional[typing.List[str]] = None
 
@@ -261,9 +246,7 @@ def dispatch_drag_event(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Dispatches a drag event into the page.
-
     **EXPERIMENTAL**
-
     :param type_: Type of the drag event.
     :param x: X coordinate of the event relative to the main frame's viewport
      in CSS pixels.
@@ -391,9 +374,7 @@ def insert_text(text: str) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     This method emulates inserting text that doesn't come from a key press,
     for example an emoji keyboard or an IME.
-
     **EXPERIMENTAL**
-
     :param text: The text to insert.
     """
     params: T_JSON_DICT = dict()
@@ -416,9 +397,7 @@ def ime_set_composition(
     This method sets the current candidate text for IME.
     Use imeCommitComposition to commit the final text.
     Use imeSetComposition with empty string as text to cancel composition.
-
     **EXPERIMENTAL**
-
     :param text: The text to insert
     :param selection_start: selection start
     :param selection_end: selection end
@@ -591,9 +570,7 @@ def emulate_touch_from_mouse_event(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Emulates touch event from the mouse event parameters.
-
     **EXPERIMENTAL**
-
     :param type_: Type of the mouse event.
     :param x: X coordinate of the mouse pointer in DIP.
     :param y: Y coordinate of the mouse pointer in DIP.
@@ -656,9 +633,7 @@ def set_intercept_drags(
     emits ``Input.dragIntercepted`` events.
     Drag and drop behavior can be directly controlled
     via ``Input.dispatchDragEvent``.
-
     **EXPERIMENTAL**
-
     :param enabled:
     """
     params: T_JSON_DICT = dict()
@@ -680,9 +655,7 @@ def synthesize_pinch_gesture(
     """
     Synthesizes a pinch gesture over a time period by issuing appropriate
     touch events.
-
     **EXPERIMENTAL**
-
     :param x: X coordinate of the start of the gesture in CSS pixels.
     :param y: Y coordinate of the start of the gesture in CSS pixels.
     :param scale_factor: Relative scale factor after zooming
@@ -726,9 +699,7 @@ def synthesize_scroll_gesture(
     """
     Synthesizes a scroll gesture over a time period by issuing appropriate
     touch events.
-
     **EXPERIMENTAL**
-
     :param x: X coordinate of the start of the gesture in CSS pixels.
     :param y: Y coordinate of the start of the gesture in CSS pixels.
     :param x_distance: *(Optional)* The distance to scroll along the X axis
@@ -792,9 +763,7 @@ def synthesize_tap_gesture(
     """
     Synthesizes a tap gesture over a time period by issuing appropriate
     touch events.
-
     **EXPERIMENTAL**
-
     :param x: X coordinate of the start of the gesture in CSS pixels.
     :param y: Y coordinate of the start of the gesture in CSS pixels.
     :param duration: *(Optional)* Duration between touchdown and touchup
@@ -827,12 +796,10 @@ def synthesize_tap_gesture(
 class DragIntercepted:
     """
     **EXPERIMENTAL**
-
     Emitted only when ``Input.setInterceptDrags`` is enabled.
     Use this data with ``Input.dispatchDragEvent`` to
     restore normal drag and drop behavior.
     """
-
     data: DragData
 
     @classmethod

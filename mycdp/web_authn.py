@@ -67,48 +67,37 @@ class AuthenticatorTransport(enum.Enum):
 class VirtualAuthenticatorOptions:
     protocol: AuthenticatorProtocol
     transport: AuthenticatorTransport
-
     #: Defaults to ctap2_0. Ignored if ``protocol`` == u2f.
     ctap2_version: typing.Optional[Ctap2Version] = None
-
     #: Defaults to false.
     has_resident_key: typing.Optional[bool] = None
-
     #: Defaults to false.
     has_user_verification: typing.Optional[bool] = None
-
     #: If set to true, the authenticator will support the largeBlob extension.
     #: https://w3c.github.io/webauthn#largeBlob
     #: Defaults to false.
     has_large_blob: typing.Optional[bool] = None
-
     #: If set to true, the authenticator will support the credBlob extension.
     #: Defaults to false.
     has_cred_blob: typing.Optional[bool] = None
-
     #: If set to true,
     #: the authenticator will support the minPinLength extension.
     #: Defaults to false.
     has_min_pin_length: typing.Optional[bool] = None
-
     #: If set to true, the authenticator will support the prf extension.
     #: https://w3c.github.io/webauthn/#prf-extension
     #: Defaults to false.
     has_prf: typing.Optional[bool] = None
-
     #: If set to true, tests of user presence will succeed immediately.
     #: Otherwise, they will not be resolved. Defaults to true.
     automatic_presence_simulation: typing.Optional[bool] = None
-
     #: Sets whether User Verification succeeds or fails for an authenticator.
     #: Defaults to false.
     is_user_verified: typing.Optional[bool] = None
-
     #: Credentials created by this authenticator will have the backup
     #: eligibility (BE) flag set to this value. Defaults to false.
     #: https://w3c.github.io/webauthn/#sctn-credential-backup
     default_backup_eligibility: typing.Optional[bool] = None
-
     #: Credentials created by this authenticator will have the backup state
     #: (BS) flag set to this value. Defaults to false.
     #: https://w3c.github.io/webauthn/#sctn-credential-backup
@@ -211,35 +200,27 @@ class VirtualAuthenticatorOptions:
 class Credential:
     credential_id: str
     is_resident_credential: bool
-
     #: The ECDSA P-256 private key in PKCS#8 format.
     #: (Encoded as a base64 string when passed over JSON)
     private_key: str
-
-    #: Signature counter. This is incremented by one for each successful
-    #: assertion.
+    #: Signature counter. Incremented by one for each successful assertion.
     #: See https://w3c.github.io/webauthn/#signature-counter
     sign_count: int
-
     #: Relying Party ID the credential is scoped to. Must be set when adding a
     #: credential.
     rp_id: typing.Optional[str] = None
-
     #: An opaque byte sequence with a maximum size of 64 bytes mapping the
     #: credential to a specific user.
     #: (Encoded as a base64 string when passed over JSON)
     user_handle: typing.Optional[str] = None
-
     #: The large blob associated with the credential.
     #: See https://w3c.github.io/webauthn/#sctn-large-blob-extension
     #: (Encoded as a base64 string when passed over JSON)
     large_blob: typing.Optional[str] = None
-
     #: Assertions returned by this credential will have the backup eligibility
     #: (BE) flag set to this value. Defaults to the authenticator's
     #: defaultBackupEligibility value.
     backup_eligibility: typing.Optional[bool] = None
-
     #: Assertions returned by this credential will have the backup state (BS)
     #: flag set to this value. Defaults to the authenticator's
     #: defaultBackupState value.
@@ -305,7 +286,7 @@ def enable(
     Enable the WebAuthn domain and start intercepting credential storage and
     retrieval with a virtual authenticator.
     :param enable_ui: *(Optional)*
-    Whether to enable the WebAuthn user interface.
+     Whether to enable the WebAuthn user interface.
     Enabling the UI is recommended for debugging and demo purposes,
     as it is closer to the real experience.
     Disabling the UI is recommended for automated testing.
@@ -336,7 +317,6 @@ def add_virtual_authenticator(
     """
     Creates and adds a virtual authenticator.
     :param options:
-    :returns:
     """
     params: T_JSON_DICT = dict()
     params["options"] = options.to_json()
@@ -425,7 +405,6 @@ def get_credential(
     matches the credential ID.
     :param authenticator_id:
     :param credential_id:
-    :returns:
     """
     params: T_JSON_DICT = dict()
     params["authenticatorId"] = authenticator_id.to_json()
@@ -444,7 +423,6 @@ def get_credentials(
     """
     Returns all the credentials stored in the given virtual authenticator.
     :param authenticator_id:
-    :returns:
     """
     params: T_JSON_DICT = dict()
     params["authenticatorId"] = authenticator_id.to_json()
@@ -561,7 +539,6 @@ def set_credential_properties(
 @dataclass
 class CredentialAdded:
     """Triggered when a credential is added to an authenticator."""
-
     authenticator_id: AuthenticatorId
     credential: Credential
 
@@ -579,7 +556,6 @@ class CredentialAdded:
 @dataclass
 class CredentialAsserted:
     """Triggered when a credential is used in a webauthn assertion."""
-
     authenticator_id: AuthenticatorId
     credential: Credential
 

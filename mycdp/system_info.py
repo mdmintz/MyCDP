@@ -15,7 +15,6 @@ from .util import T_JSON_DICT
 @dataclass
 class GPUDevice:
     """Describes a single graphics processor (GPU)."""
-
     #: PCI ID of the GPU vendor, if available; 0 otherwise.
     vendor_id: float
     #: PCI ID of the GPU device, if available; 0 otherwise.
@@ -72,7 +71,6 @@ class GPUDevice:
 @dataclass
 class Size:
     """Describes the width and height dimensions of an entity."""
-
     #: Width in pixels.
     width: int
     #: Height in pixels.
@@ -98,7 +96,6 @@ class VideoDecodeAcceleratorCapability:
     Describes a supported video decoding profile with its associated minimum
     and maximum resolutions.
     """
-
     #: Video codec profile that is supported, e.g. VP9 Profile 2.
     profile: str
     #: Maximum video dimensions in pixels supported for this ``profile``.
@@ -128,7 +125,6 @@ class VideoEncodeAcceleratorCapability:
     Describes a supported video encoding profile with its associated maximum
     resolution and maximum framerate.
     """
-
     #: Video codec profile that is supported, e.g H264 Main.
     profile: str
     #: Maximum video dimensions in pixels supported for this ``profile``.
@@ -191,7 +187,6 @@ class ImageDecodeAcceleratorCapability:
     Describes a supported image decoding profile with its associated minimum
     and maximum resolutions and subsampling.
     """
-
     #: Image coded, e.g. Jpeg.
     image_type: ImageType
     #: Maximum supported dimensions of the image in pixels.
@@ -224,7 +219,6 @@ class ImageDecodeAcceleratorCapability:
 @dataclass
 class GPUInfo:
     """Provides information about the GPU(s) on the system."""
-
     #: The graphics devices on the system. Element 0 is the primary GPU.
     devices: typing.List[GPUDevice]
     #: An optional array of GPU driver bug workarounds.
@@ -288,7 +282,6 @@ class GPUInfo:
 @dataclass
 class ProcessInfo:
     """Represents process info."""
-
     #: Specifies process type.
     type_: str
     #: Specifies process id.
@@ -352,7 +345,6 @@ def get_feature_state(
     """
     Returns information about the feature state.
     :param feature_state:
-    :returns:
     """
     params: T_JSON_DICT = dict()
     params["featureState"] = feature_state

@@ -32,7 +32,6 @@ class RuleSetId(str):
 @dataclass
 class RuleSet:
     """Corresponds to SpeculationRuleSet"""
-
     id_: RuleSetId
     #: Identifies a document which the rule set is associated with.
     loader_id: network.LoaderId
@@ -426,10 +425,7 @@ class PrefetchStatus(enum.Enum):
 
 @dataclass
 class PrerenderMismatchedHeaders:
-    """
-    Information of headers to be displayed when the header mismatch occurred.
-    """
-
+    """Info of headers to be displayed when the header mismatch occurred."""
     header_name: str
     initial_value: typing.Optional[str] = None
     activation_value: typing.Optional[str] = None

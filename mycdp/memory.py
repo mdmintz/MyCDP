@@ -28,7 +28,6 @@ class PressureLevel(enum.Enum):
 @dataclass
 class SamplingProfileNode:
     """Heap profile sample."""
-
     #: Size of the sampled allocation.
     size: float
     #: Total bytes attributed to this sample.
@@ -77,7 +76,6 @@ class SamplingProfile:
 @dataclass
 class Module:
     """Executable module information"""
-
     #: Name of the module.
     name: str
     #: UUID of the module.
@@ -215,7 +213,6 @@ def get_all_time_sampling_profile() -> (
     """
     Retrieve native memory allocations profile
     collected since renderer process startup.
-    :returns:
     """
     cmd_dict: T_JSON_DICT = {
         "method": "Memory.getAllTimeSamplingProfile",
@@ -230,7 +227,6 @@ def get_browser_sampling_profile() -> (
     """
     Retrieve native memory allocations profile
     collected since browser process startup.
-    :returns:
     """
     cmd_dict: T_JSON_DICT = {
         "method": "Memory.getBrowserSamplingProfile",
@@ -245,7 +241,6 @@ def get_sampling_profile() -> (
     """
     Retrieve native memory allocations profile collected since last
     ``startSampling`` call.
-    :returns:
     """
     cmd_dict: T_JSON_DICT = {
         "method": "Memory.getSamplingProfile",

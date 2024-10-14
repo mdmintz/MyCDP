@@ -42,30 +42,18 @@ class SessionID(str):
 @dataclass
 class TargetInfo:
     target_id: TargetID
-
-    #: List of types:
-    #: https://source.chromium.org/chromium/chromium/src/+/main:content/
-    #: browser/devtools/devtools_agent_host_impl.cc?ss=chromium
-    #: &q=f:devtools%20-f:out%20%22::kTypeTab%5B%5D%22
     type_: str
-
     title: str
     url: str
-
     #: Whether the target has an attached client.
     attached: bool
-
     #: Whether the target has access to the originating window.
     can_access_opener: bool
-
     #: Opener target Id
     opener_id: typing.Optional[TargetID] = None
-
     #: Frame id of originating window (is only set if target has an opener).
     opener_frame_id: typing.Optional[page.FrameId] = None
-
     browser_context_id: typing.Optional[browser.BrowserContextID] = None
-
     #: Provides additional details for specific target types. For example, for
     #: the type of "page", this may be set to "portal" or "prerender".
     subtype: typing.Optional[str] = None
@@ -123,10 +111,8 @@ class TargetInfo:
 @dataclass
 class FilterEntry:
     """A filter used by target query/discovery/auto-attach operations."""
-
     #: If set, causes exclusion of matching targets from the list.
     exclude: typing.Optional[bool] = None
-
     #: If not present, matches any type.
     type_: typing.Optional[str] = None
 
@@ -239,9 +225,7 @@ def attach_to_browser_target() -> (
 ):
     """
     Attaches to the browser target, only uses flat sessionId mode.
-
     **EXPERIMENTAL**
-
     :returns: Id assigned to the session.
     """
     cmd_dict: T_JSON_DICT = {
@@ -276,18 +260,14 @@ def expose_dev_tools_protocol(
     """
     Inject object to the target's main frame that provides a communication
     channel with browser target.
-
     Injected object will be available as ``window[bindingName]``.
-
     The object has the following API:
     - ``binding.send(json)`` -
      a method to send messages over the remote debugging protocol
     - ``binding.onmessage = json => handleMessage(json)`` -
      a callback that will be called for the protocol notifications
      and command responses.
-
     **EXPERIMENTAL**
-
     :param target_id:
     :param binding_name: *(Optional)* Binding name, 'cdp' if not specified.
     """
@@ -462,11 +442,8 @@ def get_target_info(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, TargetInfo]:
     """
     Returns information about a target.
-
     **EXPERIMENTAL**
-
     :param target_id: *(Optional)*
-    :returns:
     """
     params: T_JSON_DICT = dict()
     if target_id is not None:
@@ -499,33 +476,6 @@ def get_targets(
     }
     json = yield cmd_dict
     return [TargetInfo.from_json(i) for i in json["targetInfos"]]
-
-
-def send_message_to_target(
-    message: str,
-    session_id: typing.Optional[SessionID] = None,
-    target_id: typing.Optional[TargetID] = None,
-) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
-    """
-    Sends protocol message over session with given id.
-
-    .. deprecated:: 1.3
-
-    :param message:
-    :param session_id: *(Optional)* Identifier of the session.
-    :param target_id: **(DEPRECATED)** *(Optional)* Deprecated.
-    """
-    params: T_JSON_DICT = dict()
-    params["message"] = message
-    if session_id is not None:
-        params["sessionId"] = session_id.to_json()
-    if target_id is not None:
-        params["targetId"] = target_id.to_json()
-    cmd_dict: T_JSON_DICT = {
-        "method": "Target.sendMessageToTarget",
-        "params": params,
-    }
-    json = yield cmd_dict  # noqa
 
 
 def set_auto_attach(
@@ -581,9 +531,7 @@ def auto_attach_related(
     This cancels the effect of any previous ``setAutoAttach``
     and is also cancelled by subsequent ``setAutoAttach``.
     Only available at the Browser target.
-
     **EXPERIMENTAL**
-
     :param target_id:
     :param wait_for_debugger_on_start: Whether to pause new targets
      when attaching to them. Use ``Runtime.runIfWaitingForDebugger``
@@ -631,9 +579,7 @@ def set_remote_locations(
     """
     Enables target discovery for the specified locations,
     when ``setDiscoverTargets`` was set to ``true``.
-
     **EXPERIMENTAL**
-
     :param locations: List of remote locations.
     """
     params: T_JSON_DICT = dict()
@@ -650,11 +596,9 @@ def set_remote_locations(
 class AttachedToTarget:
     """
     **EXPERIMENTAL**
-
     Issued when attached to target because of auto-attach
     or ``attachToTarget`` command.
     """
-
     #: Identifier assigned to the session used to send/receive messages.
     session_id: SessionID
     target_info: TargetInfo
@@ -674,13 +618,11 @@ class AttachedToTarget:
 class DetachedFromTarget:
     """
     **EXPERIMENTAL**
-
     Issued when detached from target for any reason
     (including ``detachFromTarget`` command).
     Can be issued multiple times per target if multiple sessions
     have been attached to it.
     """
-
     #: Detached session identifier.
     session_id: SessionID
     #: Deprecated.
@@ -705,7 +647,6 @@ class ReceivedMessageFromTarget:
     Notifies about a new protocol message received from the session
     (as reported in ``attachedToTarget`` event).
     """
-
     #: Identifier of a session which sends a message.
     session_id: SessionID
     message: str
@@ -729,7 +670,6 @@ class ReceivedMessageFromTarget:
 @dataclass
 class TargetCreated:
     """Issued when a possible inspection target is created."""
-
     target_info: TargetInfo
 
     @classmethod
@@ -741,7 +681,6 @@ class TargetCreated:
 @dataclass
 class TargetDestroyed:
     """Issued when a target is destroyed."""
-
     target_id: TargetID
 
     @classmethod
@@ -753,7 +692,6 @@ class TargetDestroyed:
 @dataclass
 class TargetCrashed:
     """Issued when a target has crashed."""
-
     target_id: TargetID
     #: Termination status type.
     status: str
@@ -776,7 +714,6 @@ class TargetInfoChanged:
     Issued when some information about a target has changed.
     This only happens between ``targetCreated`` and ``targetDestroyed``.
     """
-
     target_info: TargetInfo
 
     @classmethod

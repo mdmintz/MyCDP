@@ -32,7 +32,6 @@ class MixedContentType(enum.Enum):
     A description of mixed content (HTTP resources on HTTPS pages),
     as defined by https://www.w3.org/TR/mixed-content/#categories
     """
-
     BLOCKABLE = "blockable"
     OPTIONALLY_BLOCKABLE = "optionally-blockable"
     NONE = "none"
@@ -47,7 +46,6 @@ class MixedContentType(enum.Enum):
 
 class SecurityState(enum.Enum):
     """The security level of a page or resource."""
-
     UNKNOWN = "unknown"
     NEUTRAL = "neutral"
     INSECURE = "insecure"
@@ -66,59 +64,41 @@ class SecurityState(enum.Enum):
 @dataclass
 class CertificateSecurityState:
     """Details about the security state of the page certificate."""
-
     #: Protocol name (e.g. "TLS 1.2" or "QUIC").
     protocol: str
-
     #: Key Exchange used by the connection,
     #: or the empty string if not applicable.
     key_exchange: str
-
     #: Cipher name.
     cipher: str
-
     #: Page certificate.
     certificate: typing.List[str]
-
     #: Certificate subject name.
     subject_name: str
-
     #: Name of the issuing CA.
     issuer: str
-
     #: Certificate valid from date.
     valid_from: network.TimeSinceEpoch
-
     #: Certificate valid to (expiration) date
     valid_to: network.TimeSinceEpoch
-
     #: True if the certificate uses a weak signature algorithm.
     certificate_has_weak_signature: bool
-
     #: True if the certificate has a SHA1 signature in the chain.
     certificate_has_sha1_signature: bool
-
     #: True if modern SSL
     modern_ssl: bool
-
     #: True if the connection is using an obsolete SSL protocol.
     obsolete_ssl_protocol: bool
-
     #: True if the connection is using an obsolete SSL key exchange.
     obsolete_ssl_key_exchange: bool
-
     #: True if the connection is using an obsolete SSL cipher.
     obsolete_ssl_cipher: bool
-
     #: True if the connection is using an obsolete SSL signature.
     obsolete_ssl_signature: bool
-
     #: (EC)DH group used by the connection, if applicable.
     key_exchange_group: typing.Optional[str] = None
-
     #: TLS MAC. Note that AEAD ciphers do not have separate MACs.
     mac: typing.Optional[str] = None
-
     #: The highest priority network error code, if the certificate has an error
     certificate_network_error: typing.Optional[str] = None
 
@@ -206,7 +186,6 @@ class SafetyTipInfo:
     #: Describes whether the page triggers any safety tips
     #: or reputation warnings. Default is unknown.
     safety_tip_status: SafetyTipStatus
-
     #: The URL the safety tip suggested ("Did you mean?").
     #: Only filled in for lookalike matches.
     safe_url: typing.Optional[str] = None
@@ -235,18 +214,14 @@ class SafetyTipInfo:
 @dataclass
 class VisibleSecurityState:
     """Security state information about the page."""
-
     #: The security level of the page.
     security_state: SecurityState
-
     #: Array of security state issues ids.
     security_state_issue_ids: typing.List[str]
-
     #: Security state details about the page certificate.
     certificate_security_state: typing.Optional[CertificateSecurityState] = (
         None
     )
-
     #: The type of Safety Tip triggered on the page.
     #: Note that this field will be set even if the Safety Tip UI
     #: was not actually shown.
@@ -291,25 +266,18 @@ class VisibleSecurityState:
 @dataclass
 class SecurityStateExplanation:
     """An explanation of an factor contributing to the security state."""
-
     #: Security state representing the severity of the factor being explained.
     security_state: SecurityState
-
     #: Title describing the type of factor.
     title: str
-
     #: Short phrase describing the type of factor.
     summary: str
-
     #: Full text explanation of the factor.
     description: str
-
     #: The type of mixed content described by the explanation.
     mixed_content_type: MixedContentType
-
     #: Page certificate.
     certificate: typing.List[str]
-
     #: Recommendations to fix any issues.
     recommendations: typing.Optional[typing.List[str]] = None
 
@@ -347,25 +315,18 @@ class SecurityStateExplanation:
 @dataclass
 class InsecureContentStatus:
     """Information about insecure content on the page."""
-
     #: Always false.
     ran_mixed_content: bool
-
     #: Always false.
     displayed_mixed_content: bool
-
     #: Always false.
     contained_mixed_form: bool
-
     #: Always false.
     ran_content_with_cert_errors: bool
-
     #: Always false.
     displayed_content_with_cert_errors: bool
-
     #: Always set to unknown.
     ran_insecure_content_style: SecurityState
-
     #: Always set to unknown.
     displayed_insecure_content_style: SecurityState
 
@@ -413,7 +374,6 @@ class CertificateErrorAction(enum.Enum):
     continue will continue processing the request
     and cancel will cancel the request.
     """
-
     CONTINUE = "continue"
     CANCEL = "cancel"
 
@@ -457,49 +417,6 @@ def set_ignore_certificate_errors(
     json = yield cmd_dict  # noqa
 
 
-def handle_certificate_error(
-    event_id: int, action: CertificateErrorAction
-) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
-    """
-    Handles a certificate error that fired a certificateError event.
-
-    .. deprecated:: 1.3
-
-    :param event_id: The ID of the event.
-    :param action: The action to take on the certificate error.
-    """
-    params: T_JSON_DICT = dict()
-    params["eventId"] = event_id
-    params["action"] = action.to_json()
-    cmd_dict: T_JSON_DICT = {
-        "method": "Security.handleCertificateError",
-        "params": params,
-    }
-    json = yield cmd_dict  # noqa
-
-
-def set_override_certificate_errors(
-    override: bool,
-) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
-    """
-    Enable/disable overriding certificate errors.
-    If enabled, all certificate error events need to be handled
-    by the DevTools client and should be answered
-    with ``handleCertificateError`` commands.
-
-    .. deprecated:: 1.3
-
-    :param override: If true, certificate errors will be overridden.
-    """
-    params: T_JSON_DICT = dict()
-    params["override"] = override
-    cmd_dict: T_JSON_DICT = {
-        "method": "Security.setOverrideCertificateErrors",
-        "params": params,
-    }
-    json = yield cmd_dict  # noqa
-
-
 @event_class("Security.certificateError")
 @dataclass
 class CertificateError:
@@ -510,7 +427,6 @@ class CertificateError:
     internally. Only one client per target should override certificate errors
     at the same time.
     """
-
     #: The ID of the event.
     event_id: int
     #: The type of the error.
@@ -532,10 +448,8 @@ class CertificateError:
 class VisibleSecurityStateChanged:
     """
     **EXPERIMENTAL**
-
     The security state of the page changed.
     """
-
     #: Security state information about the page.
     visible_security_state: VisibleSecurityState
 
@@ -552,7 +466,6 @@ class VisibleSecurityStateChanged:
 @dataclass
 class SecurityStateChanged:
     """The security state of the page changed. No longer being sent."""
-
     #: Security state.
     security_state: SecurityState
     #: True if the page was loaded over cryptographic transport such as HTTPS.

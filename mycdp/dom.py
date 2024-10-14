@@ -48,7 +48,6 @@ class BackendNodeId(int):
 @dataclass
 class BackendNode:
     """Backend node with a friendly name."""
-
     #: ``Node``'s nodeType.
     node_type: int
     #: ``Node``'s nodeName.
@@ -73,7 +72,6 @@ class BackendNode:
 
 class PseudoType(enum.Enum):
     """Pseudo element type."""
-
     FIRST_LINE = "first-line"
     FIRST_LETTER = "first-letter"
     BEFORE = "before"
@@ -113,7 +111,6 @@ class PseudoType(enum.Enum):
 
 class ShadowRootType(enum.Enum):
     """Shadow root type."""
-
     USER_AGENT = "user-agent"
     OPEN_ = "open"
     CLOSED = "closed"
@@ -128,7 +125,6 @@ class ShadowRootType(enum.Enum):
 
 class CompatibilityMode(enum.Enum):
     """Document compatibility mode."""
-
     QUIRKS_MODE = "QuirksMode"
     LIMITED_QUIRKS_MODE = "LimitedQuirksMode"
     NO_QUIRKS_MODE = "NoQuirksMode"
@@ -143,7 +139,6 @@ class CompatibilityMode(enum.Enum):
 
 class PhysicalAxes(enum.Enum):
     """ContainerSelector physical axes."""
-
     HORIZONTAL = "Horizontal"
     VERTICAL = "Vertical"
     BOTH = "Both"
@@ -158,7 +153,6 @@ class PhysicalAxes(enum.Enum):
 
 class LogicalAxes(enum.Enum):
     """ContainerSelector logical axes."""
-
     INLINE = "Inline"
     BLOCK = "Block"
     BOTH = "Both"
@@ -173,7 +167,6 @@ class LogicalAxes(enum.Enum):
 
 class ScrollOrientation(enum.Enum):
     """Physical scroll orientation."""
-
     HORIZONTAL = "horizontal"
     VERTICAL = "vertical"
 
@@ -192,7 +185,6 @@ class Node:
     the actual DOM nodes.
     DOMNode is a base node mirror type.
     """
-
     #: Node identifier that is passed into the rest of the DOM messages
     #: as the ``nodeId``. Backend will only push node with given ``id`` once.
     #: It is aware of all requested nodes and will only
@@ -466,7 +458,6 @@ class Node:
 @dataclass
 class RGBA:
     """A structure holding an RGBA color."""
-
     #: The red component, in the [0-255] range.
     r: int
     #: The green component, in the [0-255] range.
@@ -515,7 +506,6 @@ class Quad(list):
 @dataclass
 class BoxModel:
     """Box model."""
-
     #: Content box
     content: Quad
     #: Padding box
@@ -563,7 +553,6 @@ class BoxModel:
 @dataclass
 class ShapeOutsideInfo:
     """CSS Shape Outside details."""
-
     #: Shape bounds
     bounds: Quad
     #: Shape coordinate details
@@ -590,7 +579,6 @@ class ShapeOutsideInfo:
 @dataclass
 class Rect:
     """Rectangle."""
-
     #: X coordinate
     x: float
     #: Y coordinate
@@ -1569,7 +1557,6 @@ def get_file_info(
     File wrapper.
     **EXPERIMENTAL**
     :param object_id: JavaScript object id of the node wrapper.
-    :returns:
     """
     params: T_JSON_DICT = dict()
     params["objectId"] = object_id.to_json()
@@ -1718,8 +1705,7 @@ def get_container_for_node(
     :param container_name: *(Optional)*
     :param physical_axes: *(Optional)*
     :param logical_axes: *(Optional)*
-    :returns: *(Optional)*
-    The container node for the given node, or null if not found.
+    :returns: The container node for the given node, or null if not found.
     """
     params: T_JSON_DICT = dict()
     params["nodeId"] = node_id.to_json()
@@ -1793,7 +1779,6 @@ def get_anchor_element(
 @dataclass
 class AttributeModified:
     """Fired when ``Element``'s attribute is modified."""
-
     #: Id of the node that has changed.
     node_id: NodeId
     #: Attribute name.
@@ -1814,7 +1799,6 @@ class AttributeModified:
 @dataclass
 class AttributeRemoved:
     """Fired when ``Element``'s attribute is removed."""
-
     #: Id of the node that has changed.
     node_id: NodeId
     #: A ttribute name.
@@ -1831,7 +1815,6 @@ class AttributeRemoved:
 @dataclass
 class CharacterDataModified:
     """Mirrors ``DOMCharacterDataModified`` event."""
-
     #: Id of the node that has changed.
     node_id: NodeId
     #: New text value.
@@ -1849,7 +1832,6 @@ class CharacterDataModified:
 @dataclass
 class ChildNodeCountUpdated:
     """Fired when ``Container``'s child node count has changed."""
-
     #: Id of the node that has changed.
     node_id: NodeId
     #: New node count.
@@ -1867,7 +1849,6 @@ class ChildNodeCountUpdated:
 @dataclass
 class ChildNodeInserted:
     """Mirrors ``DOMNodeInserted`` event."""
-
     #: Id of the node that has changed.
     parent_node_id: NodeId
     #: Id of the previous sibling.
@@ -1888,7 +1869,6 @@ class ChildNodeInserted:
 @dataclass
 class ChildNodeRemoved:
     """Mirrors ``DOMNodeRemoved`` event."""
-
     #: Parent id.
     parent_node_id: NodeId
     #: Id of the node that has been removed.
@@ -1909,7 +1889,6 @@ class DistributedNodesUpdated:
     **EXPERIMENTAL**
     Called when distribution is changed.
     """
-
     #: Insertion point where distributed nodes were updated.
     insertion_point_id: NodeId
     #: Distributed nodes for given insertion point.
@@ -1946,7 +1925,6 @@ class InlineStyleInvalidated:
     Fired when ``Element``'s inline style is modified
     via a CSS property modification.
     """
-
     #: Ids of the nodes for which the inline styles have been invalidated.
     node_ids: typing.List[NodeId]
 
@@ -1962,7 +1940,6 @@ class PseudoElementAdded:
     **EXPERIMENTAL**
     Called when a pseudo element is added to an element.
     """
-
     #: Pseudo element's parent element id.
     parent_id: NodeId
     #: The added pseudo element.
@@ -1996,7 +1973,6 @@ class PseudoElementRemoved:
     **EXPERIMENTAL**
     Called when a pseudo element is removed from an element.
     """
-
     #: Pseudo element's parent element id.
     parent_id: NodeId
     #: The removed pseudo element id.
@@ -2017,7 +1993,6 @@ class SetChildNodes:
     Fired when backend wants to provide client with the missing DOM structure.
     This happens upon most of the calls requesting node ids.
     """
-
     #: Parent node id to populate with children.
     parent_id: NodeId
     #: Child nodes array.
@@ -2038,7 +2013,6 @@ class ShadowRootPopped:
     **EXPERIMENTAL**
     Called when shadow root is popped from the element.
     """
-
     #: Host element id.
     host_id: NodeId
     #: Shadow root id.
@@ -2059,7 +2033,6 @@ class ShadowRootPushed:
     **EXPERIMENTAL**
     Called when shadow root is pushed into the element.
     """
-
     #: Host element id.
     host_id: NodeId
     #: Shadow root.

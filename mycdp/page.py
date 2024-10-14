@@ -12,7 +12,6 @@ from dataclasses import dataclass
 from .util import event_class, T_JSON_DICT
 from . import debugger
 from . import dom
-from . import emulation
 from . import io
 from . import network
 from . import runtime
@@ -34,7 +33,6 @@ class FrameId(str):
 
 class AdFrameType(enum.Enum):
     """Indicates whether a frame has been identified as an ad."""
-
     NONE = "none"
     CHILD = "child"
     ROOT = "root"
@@ -63,7 +61,6 @@ class AdFrameExplanation(enum.Enum):
 @dataclass
 class AdFrameStatus:
     """Indicates whether a frame has been identified as an ad and why."""
-
     ad_frame_type: AdFrameType
     explanations: typing.Optional[typing.List[AdFrameExplanation]] = None
 
@@ -92,11 +89,9 @@ class AdScriptId:
     Identifies the bottom-most script which caused the frame
     to be labelled as an ad.
     """
-
     #: Script Id of the bottom-most script which caused the frame
     #: to be labelled as an ad.
     script_id: runtime.ScriptId
-
     #: Id of adScriptId's debugger.
     debugger_id: runtime.UniqueDebuggerId
 
@@ -118,7 +113,6 @@ class SecureContextType(enum.Enum):
     """
     Indicates whether the frame is a secure context and why it is the case.
     """
-
     SECURE = "Secure"
     SECURE_LOCALHOST = "SecureLocalhost"
     INSECURE_SCHEME = "InsecureScheme"
@@ -137,7 +131,6 @@ class CrossOriginIsolatedContextType(enum.Enum):
     Indicates whether the frame is cross-origin isolated
     and why it is the case.
     """
-
     ISOLATED = "Isolated"
     NOT_ISOLATED = "NotIsolated"
     NOT_ISOLATED_FEATURE_DISABLED = "NotIsolatedFeatureDisabled"
@@ -170,7 +163,6 @@ class PermissionsPolicyFeature(enum.Enum):
     third_party/blink/renderer/core/permissions_policy/
     permissions_policy_features.json5.
     """
-
     ACCELEROMETER = "accelerometer"
     AMBIENT_LIGHT_SENSOR = "ambient-light-sensor"
     ATTRIBUTION_REPORTING = "attribution-reporting"
@@ -267,7 +259,6 @@ class PermissionsPolicyFeature(enum.Enum):
 
 class PermissionsPolicyBlockReason(enum.Enum):
     """Reason for a permissions policy feature to be disabled."""
-
     HEADER = "Header"
     IFRAME_ATTRIBUTE = "IframeAttribute"
     IN_FENCED_FRAME_TREE = "InFencedFrameTree"
@@ -334,7 +325,6 @@ class OriginTrialTokenStatus(enum.Enum):
     Origin Trial(https://www.chromium.org/blink/origin-trials) support.
     Status for an Origin Trial token.
     """
-
     SUCCESS = "Success"
     NOT_SUPPORTED = "NotSupported"
     INSECURE = "Insecure"
@@ -358,7 +348,6 @@ class OriginTrialTokenStatus(enum.Enum):
 
 class OriginTrialStatus(enum.Enum):
     """Status for an Origin Trial."""
-
     ENABLED = "Enabled"
     VALID_TOKEN_NOT_PROVIDED = "ValidTokenNotProvided"
     OS_NOT_SUPPORTED = "OSNotSupported"
@@ -480,50 +469,37 @@ class Frame:
 
     #: Frame unique identifier.
     id_: FrameId
-
     #: Identifier of the loader associated with this frame.
     loader_id: network.LoaderId
-
     #: Frame document's URL without fragment.
     url: str
-
     #: Frame document's registered domain,
     #: taking the public suffixes list into account.
     #: Extracted from the Frame's url.
     #: Example URLs: http://www.google.com/file.html -> "google.com"
     #:               http://a.b.co.uk/file.html      -> "b.co.uk"
     domain_and_registry: str
-
     #: Frame document's security origin.
     security_origin: str
-
     #: Frame document's mimeType as determined by the browser.
     mime_type: str
-
     #: Indicates whether the main document is a secure context
     #: and explains why that is the case.
     secure_context_type: SecureContextType
-
     #: Indicates whether this is a cross origin isolated context.
     cross_origin_isolated_context_type: CrossOriginIsolatedContextType
-
     #: Indicated which gated APIs / features are available.
     gated_api_features: typing.List[GatedAPIFeatures]
-
     #: Parent frame identifier.
     parent_id: typing.Optional[FrameId] = None
-
     #: Frame's name as specified in the tag.
     name: typing.Optional[str] = None
-
     #: Frame document's URL fragment including the '#'.
     url_fragment: typing.Optional[str] = None
-
     #: If the frame failed to load, this contains the URL
     #: that could not be loaded. Note that unlike url above,
     #: this URL may contain a fragment.
     unreachable_url: typing.Optional[str] = None
-
     #: Indicates whether this frame was tagged as an ad and why.
     ad_frame_status: typing.Optional[AdFrameStatus] = None
 
@@ -606,22 +582,16 @@ class FrameResource:
 
     #: Resource URL.
     url: str
-
     #: Type of this resource.
     type_: network.ResourceType
-
     #: Resource mimeType as determined by the browser.
     mime_type: str
-
     #: last-modified timestamp as reported by server.
     last_modified: typing.Optional[network.TimeSinceEpoch] = None
-
     #: Resource content size.
     content_size: typing.Optional[float] = None
-
     #: True if the resource failed to load.
     failed: typing.Optional[bool] = None
-
     #: True if the resource was canceled during loading.
     canceled: typing.Optional[bool] = None
 
@@ -674,13 +644,10 @@ class FrameResourceTree:
     """
     Information about the Frame hierarchy along with their cached resources.
     """
-
     #: Frame information for this tree item.
     frame: Frame
-
     #: Information about frame resources.
     resources: typing.List[FrameResource]
-
     #: Child frames.
     child_frames: typing.Optional[typing.List[FrameResourceTree]] = None
 
@@ -711,7 +678,6 @@ class FrameTree:
 
     #: Frame information for this tree item.
     frame: Frame
-
     #: Child frames.
     child_frames: typing.Optional[typing.List[FrameTree]] = None
 
@@ -750,7 +716,6 @@ class ScriptIdentifier(str):
 
 class TransitionType(enum.Enum):
     """Transition type."""
-
     LINK = "link"
     TYPED = "typed"
     ADDRESS_BAR = "address_bar"
@@ -779,16 +744,12 @@ class NavigationEntry:
 
     #: Unique id of the navigation history entry.
     id_: int
-
     #: URL of the navigation history entry.
     url: str
-
     #: URL that the user typed in the url bar.
     user_typed_url: str
-
     #: Title of the navigation history entry.
     title: str
-
     #: Transition type.
     transition_type: TransitionType
 
@@ -818,22 +779,16 @@ class ScreencastFrameMetadata:
 
     #: Top offset in DIP.
     offset_top: float
-
     #: Page scale factor.
     page_scale_factor: float
-
     #: Device screen width in DIP.
     device_width: float
-
     #: Device screen height in DIP.
     device_height: float
-
     #: Position of horizontal scroll in CSS pixels.
     scroll_offset_x: float
-
     #: Position of vertical scroll in CSS pixels.
     scroll_offset_y: float
-
     #: Frame swap timestamp.
     timestamp: typing.Optional[network.TimeSinceEpoch] = None
 
@@ -868,7 +823,6 @@ class ScreencastFrameMetadata:
 
 class DialogType(enum.Enum):
     """Javascript dialog type."""
-
     ALERT = "alert"
     CONFIRM = "confirm"
     PROMPT = "prompt"
@@ -888,13 +842,10 @@ class AppManifestError:
 
     #: Error message.
     message: str
-
     #: If critical, this is a non-recoverable parse error.
     critical: int
-
     #: Error line.
     line: int
-
     #: Error column.
     column: int
 
@@ -941,13 +892,10 @@ class LayoutViewport:
 
     #: Horizontal offset relative to the document (CSS pixels).
     page_x: int
-
     #: Vertical offset relative to the document (CSS pixels).
     page_y: int
-
     #: Width (CSS pixels), excludes scrollbar if present.
     client_width: int
-
     #: Height (CSS pixels), excludes scrollbar if present.
     client_height: int
 
@@ -975,25 +923,18 @@ class VisualViewport:
 
     #: Horizontal offset relative to the layout viewport (CSS pixels).
     offset_x: float
-
     #: Vertical offset relative to the layout viewport (CSS pixels).
     offset_y: float
-
     #: Horizontal offset relative to the document (CSS pixels).
     page_x: float
-
     #: Vertical offset relative to the document (CSS pixels).
     page_y: float
-
     #: Width (CSS pixels), excludes scrollbar if present.
     client_width: float
-
     #: Height (CSS pixels), excludes scrollbar if present.
     client_height: float
-
     #: Scale relative to the ideal viewport (size at width=device-width).
     scale: float
-
     #: Page zoom factor (CSS to device independent pixels ratio).
     zoom: typing.Optional[float] = None
 
@@ -1034,16 +975,12 @@ class Viewport:
 
     #: X offset in device independent pixels (dip).
     x: float
-
     #: Y offset in device independent pixels (dip).
     y: float
-
     #: Rectangle width in device independent pixels (dip).
     width: float
-
     #: Rectangle height in device independent pixels (dip).
     height: float
-
     #: Page scale factor.
     scale: float
 
@@ -1073,22 +1010,16 @@ class FontFamilies:
 
     #: The standard font-family.
     standard: typing.Optional[str] = None
-
     #: The fixed font-family.
     fixed: typing.Optional[str] = None
-
     #: The serif font-family.
     serif: typing.Optional[str] = None
-
     #: The sansSerif font-family.
     sans_serif: typing.Optional[str] = None
-
     #: The cursive font-family.
     cursive: typing.Optional[str] = None
-
     #: The fantasy font-family.
     fantasy: typing.Optional[str] = None
-
     #: The math font-family.
     math: typing.Optional[str] = None
 
@@ -1157,7 +1088,6 @@ class ScriptFontFamilies:
 
     #: Name of the script which these font families are defined for.
     script: str
-
     #: Generic font families collection for the script.
     font_families: FontFamilies
 
@@ -1181,7 +1111,6 @@ class FontSizes:
 
     #: Default standard font size.
     standard: typing.Optional[int] = None
-
     #: Default fixed font size.
     fixed: typing.Optional[int] = None
 
@@ -1245,7 +1174,6 @@ class ClientNavigationDisposition(enum.Enum):
 class InstallabilityErrorArgument:
     #: Argument name (e.g. name:'minimum-icon-size-in-pixels').
     name: str
-
     #: Argument value (e.g. value:'64').
     value: str
 
@@ -1269,7 +1197,6 @@ class InstallabilityError:
 
     #: The error id (e.g. 'manifest-missing-suitable-icon').
     error_id: str
-
     #: The list of error arguments
     #: (e.g. {name:'minimum-icon-size-in-pixels', value:'64'}).
     error_arguments: typing.List[InstallabilityErrorArgument]
@@ -1293,7 +1220,6 @@ class InstallabilityError:
 
 class ReferrerPolicy(enum.Enum):
     """The referring-policy used for the navigation."""
-
     NO_REFERRER = "noReferrer"
     NO_REFERRER_WHEN_DOWNGRADE = "noReferrerWhenDowngrade"
     ORIGIN = "origin"
@@ -1316,10 +1242,8 @@ class CompilationCacheParams:
     """
     Per-script compilation cache parameters for `Page.produceCompilationCache`.
     """
-
     #: The URL of the script to produce a compilation cache entry for.
     url: str
-
     #: A hint to the backend whether eager compilation is recommended.
     #: (the actual compilation mode used is upon backend discretion).
     eager: typing.Optional[bool] = None
@@ -1376,13 +1300,10 @@ class FileFilter:
 class FileHandler:
     action: str
     name: str
-
     #: Won't repeat the enums, using string for easy comparison. Same as the
     #: other enums below.
     launch_type: str
-
     icons: typing.Optional[typing.List[ImageResource]] = None
-
     #: Mimic a map, name is the key, accepts is the value.
     accepts: typing.Optional[typing.List[FileFilter]] = None
 
@@ -1423,9 +1344,7 @@ class ImageResource:
     #: The src field in the definition, but changing to url in favor of
     #: consistency.
     url: str
-
     sizes: typing.Optional[str] = None
-
     type_: typing.Optional[str] = None
 
     def to_json(self) -> T_JSON_DICT:
@@ -1562,7 +1481,6 @@ class ShareTarget:
     action: str
     method: str
     enctype: str
-
     #: Embed the ShareTargetParams
     title: typing.Optional[str] = None
     text: typing.Optional[str] = None
@@ -1636,53 +1554,32 @@ class WebAppManifest:
 
     #: The extra description provided by the manifest.
     description: typing.Optional[str] = None
-
     dir_: typing.Optional[str] = None
-
     display: typing.Optional[str] = None
-
     #: The overrided display mode controlled by the user.
     display_overrides: typing.Optional[typing.List[str]] = None
-
     #: The handlers to open files.
     file_handlers: typing.Optional[typing.List[FileHandler]] = None
-
     icons: typing.Optional[typing.List[ImageResource]] = None
-
     id_: typing.Optional[str] = None
-
     lang: typing.Optional[str] = None
-
     launch_handler: typing.Optional[LaunchHandler] = None
-
     name: typing.Optional[str] = None
-
     orientation: typing.Optional[str] = None
-
     prefer_related_applications: typing.Optional[bool] = None
-
     #: The handlers to open protocols.
     protocol_handlers: typing.Optional[typing.List[ProtocolHandler]] = None
-
     related_applications: typing.Optional[typing.List[RelatedApplication]] = (
         None
     )
-
     scope: typing.Optional[str] = None
-
     scope_extensions: typing.Optional[typing.List[ScopeExtension]] = None
-
     #: The screenshots used by chromium.
     screenshots: typing.Optional[typing.List[Screenshot]] = None
-
     share_target: typing.Optional[ShareTarget] = None
-
     short_name: typing.Optional[str] = None
-
     shortcuts: typing.Optional[typing.List[Shortcut]] = None
-
     start_url: typing.Optional[str] = None
-
     theme_color: typing.Optional[str] = None
 
     def to_json(self) -> T_JSON_DICT:
@@ -1882,7 +1779,6 @@ class AutoResponseMode(enum.Enum):
 
 class NavigationType(enum.Enum):
     """The type of a frameNavigated event."""
-
     NAVIGATION = "Navigation"
     BACK_FORWARD_CACHE_RESTORE = "BackForwardCacheRestore"
 
@@ -1896,7 +1792,6 @@ class NavigationType(enum.Enum):
 
 class BackForwardCacheNotRestoredReason(enum.Enum):
     """List of not restored reasons for back-forward cache."""
-
     NOT_PRIMARY_MAIN_FRAME = "NotPrimaryMainFrame"
     BACK_FORWARD_CACHE_DISABLED = "BackForwardCacheDisabled"
     RELATED_ACTIVE_CONTENTS_EXIST = "RelatedActiveContentsExist"
@@ -2092,7 +1987,6 @@ class BackForwardCacheNotRestoredReason(enum.Enum):
 
 class BackForwardCacheNotRestoredReasonType(enum.Enum):
     """Types of not restored reasons for back-forward cache."""
-
     SUPPORT_PENDING = "SupportPending"
     PAGE_SUPPORT_NEEDED = "PageSupportNeeded"
     CIRCUMSTANTIAL = "Circumstantial"
@@ -2109,13 +2003,10 @@ class BackForwardCacheNotRestoredReasonType(enum.Enum):
 class BackForwardCacheBlockingDetails:
     #: Line number in the script (0-based).
     line_number: int
-
     #: Column number in the script (0-based).
     column_number: int
-
     #: Url of the file where blockage happened. Optional because of tests.
     url: typing.Optional[str] = None
-
     #: Function name where blockage happened.
     #: Optional because of anonymous functions and tests.
     function: typing.Optional[str] = None
@@ -2150,15 +2041,12 @@ class BackForwardCacheBlockingDetails:
 class BackForwardCacheNotRestoredExplanation:
     #: Type of the reason
     type_: BackForwardCacheNotRestoredReasonType
-
     #: Not restored reason
     reason: BackForwardCacheNotRestoredReason
-
     #: Context associated with the reason. The meaning of this context is
     #: dependent on the reason:
     #: - EmbedderExtensionSentMessageToCachedFrame: the extension ID.
     context: typing.Optional[str] = None
-
     details: typing.Optional[typing.List[BackForwardCacheBlockingDetails]] = (
         None
     )
@@ -2202,10 +2090,8 @@ class BackForwardCacheNotRestoredExplanation:
 class BackForwardCacheNotRestoredExplanationTree:
     #: URL of each frame
     url: str
-
     #: Not restored reasons of each frame
     explanations: typing.List[BackForwardCacheNotRestoredExplanation]
-
     #: Array of children frame
     children: typing.List[BackForwardCacheNotRestoredExplanationTree]
 
@@ -2233,29 +2119,6 @@ class BackForwardCacheNotRestoredExplanationTree:
         )
 
 
-def add_script_to_evaluate_on_load(
-    script_source: str,
-) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, ScriptIdentifier]:
-    """
-    Deprecated, please use addScriptToEvaluateOnNewDocument instead.
-
-    .. deprecated:: 1.3
-
-    **EXPERIMENTAL**
-
-    :param script_source:
-    :returns: Identifier of the added script.
-    """
-    params: T_JSON_DICT = dict()
-    params["scriptSource"] = script_source
-    cmd_dict: T_JSON_DICT = {
-        "method": "Page.addScriptToEvaluateOnLoad",
-        "params": params,
-    }
-    json = yield cmd_dict
-    return ScriptIdentifier.from_json(json["identifier"])
-
-
 def add_script_to_evaluate_on_new_document(
     source: str,
     world_name: typing.Optional[str] = None,
@@ -2265,7 +2128,6 @@ def add_script_to_evaluate_on_new_document(
     """
     Evaluates given script in every frame upon creation
     (before loading frame's scripts).
-
     :param source:
     :param world_name: **(EXPERIMENTAL)** *(Optional)*
      If specified, creates an isolated world with the given name
@@ -2359,9 +2221,7 @@ def capture_snapshot(
     Returns a snapshot of the page as a string.
     For MHTML format, the serialization includes iframes,
     shadow DOM, external resources, and element-inline styles.
-
     **EXPERIMENTAL**
-
     :param format_: *(Optional)* Format (defaults to mhtml).
     :returns: Serialized page data.
     """
@@ -2374,52 +2234,6 @@ def capture_snapshot(
     }
     json = yield cmd_dict
     return str(json["data"])
-
-
-def clear_device_metrics_override() -> (
-    typing.Generator[T_JSON_DICT, T_JSON_DICT, None]
-):
-    """
-    Clears the overridden device metrics.
-
-    .. deprecated:: 1.3
-
-    **EXPERIMENTAL**
-    """
-    cmd_dict: T_JSON_DICT = {
-        "method": "Page.clearDeviceMetricsOverride",
-    }
-    json = yield cmd_dict  # noqa
-
-
-def clear_device_orientation_override() -> (
-    typing.Generator[T_JSON_DICT, T_JSON_DICT, None]
-):
-    """
-    Clears the overridden Device Orientation.
-
-    .. deprecated:: 1.3
-
-    **EXPERIMENTAL**
-    """
-    cmd_dict: T_JSON_DICT = {
-        "method": "Page.clearDeviceOrientationOverride",
-    }
-    json = yield cmd_dict  # noqa
-
-
-def clear_geolocation_override() -> (
-    typing.Generator[T_JSON_DICT, T_JSON_DICT, None]
-):
-    """
-    Clears the overridden Geolocation Position and Error.
-
-    .. deprecated:: 1.3
-    """
-    cmd_dict: T_JSON_DICT = {
-        "method": "Page.clearGeolocationOverride",
-    }
-    json = yield cmd_dict  # noqa
 
 
 def create_isolated_world(
@@ -2450,29 +2264,6 @@ def create_isolated_world(
     }
     json = yield cmd_dict
     return runtime.ExecutionContextId.from_json(json["executionContextId"])
-
-
-def delete_cookie(
-    cookie_name: str, url: str
-) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
-    """
-    Deletes browser cookie with given name, domain and path.
-
-    .. deprecated:: 1.3
-
-    **EXPERIMENTAL**
-
-    :param cookie_name: Name of the cookie to remove.
-    :param url: URL to match cooke domain and path.
-    """
-    params: T_JSON_DICT = dict()
-    params["cookieName"] = cookie_name
-    params["url"] = url
-    cmd_dict: T_JSON_DICT = {
-        "method": "Page.deleteCookie",
-        "params": params,
-    }
-    json = yield cmd_dict  # noqa
 
 
 def disable() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
@@ -2547,8 +2338,6 @@ def get_installability_errors() -> (
 ):
     """
     **EXPERIMENTAL**
-
-    :returns:
     """
     cmd_dict: T_JSON_DICT = {
         "method": "Page.getInstallabilityErrors",
@@ -2559,30 +2348,6 @@ def get_installability_errors() -> (
     ]
 
 
-def get_manifest_icons() -> (
-    typing.Generator[T_JSON_DICT, T_JSON_DICT, typing.Optional[str]]
-):
-    """
-    Deprecated because it's not guaranteed that the returned icon
-    is in fact the one used for PWA installation.
-
-    .. deprecated:: 1.3
-
-    **EXPERIMENTAL**
-
-    :returns:
-    """
-    cmd_dict: T_JSON_DICT = {
-        "method": "Page.getManifestIcons",
-    }
-    json = yield cmd_dict
-    return (
-        str(json["primaryIcon"])
-        if json.get("primaryIcon", None) is not None
-        else None
-    )
-
-
 def get_app_id() -> typing.Generator[
     T_JSON_DICT,
     T_JSON_DICT,
@@ -2591,11 +2356,8 @@ def get_app_id() -> typing.Generator[
     """
     Returns the unique (PWA) app id.
     Only returns values if the feature flag 'WebAppEnableManifestId' is enabled
-
     **EXPERIMENTAL**
-
     :returns: A tuple with the following items:
-
         0. **appId** - *(Optional)*
          App id, either from manifest's id attribute or computed from start_url
         1. **recommendedId** - *(Optional)*
@@ -2621,7 +2383,6 @@ def get_ad_script_id(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, typing.Optional[AdScriptId]]:
     """
     **EXPERIMENTAL**
-
     :param frame_id:
     :returns: *(Optional)*
     Identifies the bottom-most script which caused the frame
@@ -2735,13 +2496,10 @@ def get_resource_content(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, typing.Tuple[str, bool]]:
     """
     Returns content of the given resource.
-
     **EXPERIMENTAL**
-
     :param frame_id: Frame id to get resource for.
     :param url: URL of the resource to get content for.
     :returns: A tuple with the following items:
-
         0. **content** - Resource content.
         1. **base64Encoded** - True, if content was served as base64.
     """
@@ -2761,9 +2519,7 @@ def get_resource_tree() -> (
 ):
     """
     Returns present frame / resource tree structure.
-
     **EXPERIMENTAL**
-
     :returns: Present frame / resource tree structure.
     """
     cmd_dict: T_JSON_DICT = {
@@ -3036,27 +2792,6 @@ def reload(
     json = yield cmd_dict  # noqa
 
 
-def remove_script_to_evaluate_on_load(
-    identifier: ScriptIdentifier,
-) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
-    """
-    Deprecated, please use removeScriptToEvaluateOnNewDocument instead.
-
-    .. deprecated:: 1.3
-
-    **EXPERIMENTAL**
-
-    :param identifier:
-    """
-    params: T_JSON_DICT = dict()
-    params["identifier"] = identifier.to_json()
-    cmd_dict: T_JSON_DICT = {
-        "method": "Page.removeScriptToEvaluateOnLoad",
-        "params": params,
-    }
-    json = yield cmd_dict  # noqa
-
-
 def remove_script_to_evaluate_on_new_document(
     identifier: ScriptIdentifier,
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
@@ -3078,9 +2813,7 @@ def screencast_frame_ack(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Acknowledges that a screencast frame has been received by the frontend.
-
     **EXPERIMENTAL**
-
     :param session_id: Frame number.
     """
     params: T_JSON_DICT = dict()
@@ -3103,9 +2836,7 @@ def search_in_resource(
 ]:
     """
     Searches for given string in resource content.
-
     **EXPERIMENTAL**
-
     :param frame_id: Frame id for resource to search in.
     :param url: URL of the resource to search in.
     :param query: String to search for.
@@ -3134,9 +2865,7 @@ def set_ad_blocking_enabled(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Enable Chrome's experimental ad filter on all sites.
-
     **EXPERIMENTAL**
-
     :param enabled: Whether to block ads.
     """
     params: T_JSON_DICT = dict()
@@ -3171,11 +2900,8 @@ def get_permissions_policy_state(
 ]:
     """
     Get Permissions Policy state on given frame.
-
     **EXPERIMENTAL**
-
     :param frame_id:
-    :returns:
     """
     params: T_JSON_DICT = dict()
     params["frameId"] = frame_id.to_json()
@@ -3192,11 +2918,8 @@ def get_origin_trials(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, typing.List[OriginTrial]]:
     """
     Get Origin Trials on given frame.
-
     **EXPERIMENTAL**
-
     :param frame_id:
-    :returns:
     """
     params: T_JSON_DICT = dict()
     params["frameId"] = frame_id.to_json()
@@ -3208,118 +2931,13 @@ def get_origin_trials(
     return [OriginTrial.from_json(i) for i in json["originTrials"]]
 
 
-def set_device_metrics_override(
-    width: int,
-    height: int,
-    device_scale_factor: float,
-    mobile: bool,
-    scale: typing.Optional[float] = None,
-    screen_width: typing.Optional[int] = None,
-    screen_height: typing.Optional[int] = None,
-    position_x: typing.Optional[int] = None,
-    position_y: typing.Optional[int] = None,
-    dont_set_visible_size: typing.Optional[bool] = None,
-    screen_orientation: typing.Optional[emulation.ScreenOrientation] = None,
-    viewport: typing.Optional[Viewport] = None,
-) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
-    """
-    Overrides the values of device screen dimensions
-    (window.screen.width, window.screen.height, window.innerWidth,
-     window.innerHeight, and "device-width"/"device-height"-related
-     CSS media query results).
-
-    .. deprecated:: 1.3
-
-    **EXPERIMENTAL**
-
-    :param width: Overriding width value in pixels
-     (minimum 0, maximum 10000000). 0 disables the override.
-    :param height: Overriding height value in pixels
-     (minimum 0, maximum 10000000). 0 disables the override.
-    :param device_scale_factor:
-     Overriding device scale factor value. 0 disables the override.
-    :param mobile: Whether to emulate mobile device.
-     This includes viewport meta tag, overlay scrollbars,
-     text autosizing and more.
-    :param scale: *(Optional)* Scale to apply to resulting view image.
-    :param screen_width: *(Optional)*
-     Overriding screen width value in pixels (minimum 0, maximum 10000000).
-    :param screen_height: *(Optional)*
-     Overriding screen height value in pixels (minimum 0, maximum 10000000).
-    :param position_x: *(Optional)*
-     Overriding view X position on screen in pixels
-     (minimum 0, maximum 10000000).
-    :param position_y: *(Optional)*
-     Overriding view Y position on screen in pixels
-     (minimum 0, maximum 10000000).
-    :param dont_set_visible_size: *(Optional)*
-     Do not set visible view size, rely upon explicit setVisibleSize call.
-    :param screen_orientation: *(Optional)* Screen orientation override.
-    :param viewport: *(Optional)*
-     The viewport dimensions and scale. If not set, the override is cleared.
-    """
-    params: T_JSON_DICT = dict()
-    params["width"] = width
-    params["height"] = height
-    params["deviceScaleFactor"] = device_scale_factor
-    params["mobile"] = mobile
-    if scale is not None:
-        params["scale"] = scale
-    if screen_width is not None:
-        params["screenWidth"] = screen_width
-    if screen_height is not None:
-        params["screenHeight"] = screen_height
-    if position_x is not None:
-        params["positionX"] = position_x
-    if position_y is not None:
-        params["positionY"] = position_y
-    if dont_set_visible_size is not None:
-        params["dontSetVisibleSize"] = dont_set_visible_size
-    if screen_orientation is not None:
-        params["screenOrientation"] = screen_orientation.to_json()
-    if viewport is not None:
-        params["viewport"] = viewport.to_json()
-    cmd_dict: T_JSON_DICT = {
-        "method": "Page.setDeviceMetricsOverride",
-        "params": params,
-    }
-    json = yield cmd_dict  # noqa
-
-
-def set_device_orientation_override(
-    alpha: float, beta: float, gamma: float
-) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
-    """
-    Overrides the Device Orientation.
-
-    .. deprecated:: 1.3
-
-    **EXPERIMENTAL**
-
-    :param alpha: Mock alpha
-    :param beta: Mock beta
-    :param gamma: Mock gamma
-    """
-    params: T_JSON_DICT = dict()
-    params["alpha"] = alpha
-    params["beta"] = beta
-    params["gamma"] = gamma
-    cmd_dict: T_JSON_DICT = {
-        "method": "Page.setDeviceOrientationOverride",
-        "params": params,
-    }
-    json = yield cmd_dict  # noqa
-
-
 def set_font_families(
     font_families: FontFamilies,
     for_scripts: typing.Optional[typing.List[ScriptFontFamilies]] = None,
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Set generic font families.
-
     **EXPERIMENTAL**
-
     :param font_families: Specifies font families to set.
      If a font family is not specified, it won't be changed.
     :param for_scripts: *(Optional)*
@@ -3341,9 +2959,7 @@ def set_font_sizes(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Set default font sizes.
-
     **EXPERIMENTAL**
-
     :param font_sizes: Specifies font sizes to set.
     If a font size is not specified, it won't be changed.
     """
@@ -3374,62 +2990,6 @@ def set_document_content(
     json = yield cmd_dict  # noqa
 
 
-def set_download_behavior(
-    behavior: str, download_path: typing.Optional[str] = None
-) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
-    """
-    Set the behavior when downloading a file.
-
-    .. deprecated:: 1.3
-
-    **EXPERIMENTAL**
-
-    :param behavior: Whether to allow all or deny all download requests,
-     or use default Chrome behavior if available (otherwise deny).
-    :param download_path: *(Optional)*
-     The default path to save downloaded files to.
-     This is required if behavior is set to 'allow'.
-    """
-    params: T_JSON_DICT = dict()
-    params["behavior"] = behavior
-    if download_path is not None:
-        params["downloadPath"] = download_path
-    cmd_dict: T_JSON_DICT = {
-        "method": "Page.setDownloadBehavior",
-        "params": params,
-    }
-    json = yield cmd_dict  # noqa
-
-
-def set_geolocation_override(
-    latitude: typing.Optional[float] = None,
-    longitude: typing.Optional[float] = None,
-    accuracy: typing.Optional[float] = None,
-) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
-    """
-    Overrides the Geolocation Position or Error.
-    Omitting any of the parameters emulates position unavailable.
-
-    .. deprecated:: 1.3
-
-    :param latitude: *(Optional)* Mock latitude
-    :param longitude: *(Optional)* Mock longitude
-    :param accuracy: *(Optional)* Mock accuracy
-    """
-    params: T_JSON_DICT = dict()
-    if latitude is not None:
-        params["latitude"] = latitude
-    if longitude is not None:
-        params["longitude"] = longitude
-    if accuracy is not None:
-        params["accuracy"] = accuracy
-    cmd_dict: T_JSON_DICT = {
-        "method": "Page.setGeolocationOverride",
-        "params": params,
-    }
-    json = yield cmd_dict  # noqa
-
-
 def set_lifecycle_events_enabled(
     enabled: bool,
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
@@ -3446,31 +3006,6 @@ def set_lifecycle_events_enabled(
     json = yield cmd_dict  # noqa
 
 
-def set_touch_emulation_enabled(
-    enabled: bool, configuration: typing.Optional[str] = None
-) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
-    """
-    Toggles mouse event-based touch event emulation.
-
-    .. deprecated:: 1.3
-
-    **EXPERIMENTAL**
-
-    :param enabled: Whether the touch event emulation should be enabled.
-    :param configuration: *(Optional)* Touch/gesture events configuration.
-    Default: current platform.
-    """
-    params: T_JSON_DICT = dict()
-    params["enabled"] = enabled
-    if configuration is not None:
-        params["configuration"] = configuration
-    cmd_dict: T_JSON_DICT = {
-        "method": "Page.setTouchEmulationEnabled",
-        "params": params,
-    }
-    json = yield cmd_dict  # noqa
-
-
 def start_screencast(
     format_: typing.Optional[str] = None,
     quality: typing.Optional[int] = None,
@@ -3480,9 +3015,7 @@ def start_screencast(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Starts sending each frame using the ``screencastFrame`` event.
-
     **EXPERIMENTAL**
-
     :param format_: *(Optional)* Image compression format.
     :param quality: *(Optional)* Compression quality from range [0..100].
     :param max_width: *(Optional)* Maximum screenshot width.
@@ -3518,7 +3051,6 @@ def stop_loading() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
 def crash() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Crashes renderer on the IO thread, generates minidumps.
-
     **EXPERIMENTAL**
     """
     cmd_dict: T_JSON_DICT = {
@@ -3542,9 +3074,7 @@ def set_web_lifecycle_state(
     Tries to update the web lifecycle state of the page.
     It will transition the page to the given state according to:
     https://github.com/WICG/web-lifecycle/
-
     **EXPERIMENTAL**
-
     :param state: Target lifecycle state
     """
     params: T_JSON_DICT = dict()
@@ -3559,7 +3089,6 @@ def set_web_lifecycle_state(
 def stop_screencast() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Stops sending each frame in the ``screencastFrame``.
-
     **EXPERIMENTAL**
     """
     cmd_dict: T_JSON_DICT = {
@@ -3578,9 +3107,7 @@ def produce_compilation_cache(
     When script with a matching URL is encountered, the cache is optionally
     produced upon backend discretion, based on internal heuristics.
     See also: ``Page.compilationCacheProduced``.
-
     **EXPERIMENTAL**
-
     :param scripts:
     """
     params: T_JSON_DICT = dict()
@@ -3598,9 +3125,7 @@ def add_compilation_cache(
     """
     Seeds compilation cache for given url.
     Compilation cache does not survive cross-process navigation.
-
     **EXPERIMENTAL**
-
     :param url:
     :param data: Base64-encoded data
      (Encoded as a base64 string when passed over JSON)
@@ -3620,7 +3145,6 @@ def clear_compilation_cache() -> (
 ):
     """
     Clears seeded compilation cache.
-
     **EXPERIMENTAL**
     """
     cmd_dict: T_JSON_DICT = {
@@ -3636,9 +3160,7 @@ def set_spc_transaction_mode(
     Sets the Secure Payment Confirmation transaction mode.
     https://w3c.github.io/secure-payment-confirmation
     /#sctn-automation-set-spc-transaction-mode
-
     **EXPERIMENTAL**
-
     :param mode:
     """
     params: T_JSON_DICT = dict()
@@ -3656,9 +3178,7 @@ def set_rph_registration_mode(
     """
     Extensions for Custom Handlers API:
     https://html.spec.whatwg.org/multipage/system-state.html#rph-automation
-
     **EXPERIMENTAL**
-
     :param mode:
     """
     params: T_JSON_DICT = dict()
@@ -3675,9 +3195,7 @@ def generate_test_report(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Generates a report for testing.
-
     **EXPERIMENTAL**
-
     :param message: Message to be displayed in the report.
     :param group: *(Optional)*
      Specifies the endpoint group to deliver the report to.
@@ -3697,7 +3215,6 @@ def wait_for_debugger() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Pauses page execution.
     Can be resumed using generic Runtime.runIfWaitingForDebugger.
-
     **EXPERIMENTAL**
     """
     cmd_dict: T_JSON_DICT = {
@@ -3730,13 +3247,7 @@ def set_prerendering_allowed(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Enable/disable prerendering manually.
-
-    This command is a short-term solution for https://crbug.com/1440085.
-    See https://docs.google.com/document/d/
-    12HVmFxYj5Jc-eJr5OmWsa2bqTJsbgGLKI6ZIyx0_wpA for more details.
-
     **EXPERIMENTAL**
-
     :param is_allowed:
     """
     params: T_JSON_DICT = dict()
@@ -3850,7 +3361,6 @@ class FrameNavigated:
     Fired once navigation of the frame has completed.
     Frame is now associated with the new loader.
     """
-
     #: Frame object.
     frame: Frame
     type_: NavigationType
@@ -3868,10 +3378,8 @@ class FrameNavigated:
 class DocumentOpened:
     """
     **EXPERIMENTAL**
-
     Fired when opening document to write to.
     """
-
     #: Frame object.
     frame: Frame
 
@@ -3886,7 +3394,6 @@ class FrameResized:
     """
     **EXPERIMENTAL**
     """
-
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> FrameResized:
         return cls()
@@ -3897,11 +3404,9 @@ class FrameResized:
 class FrameRequestedNavigation:
     """
     **EXPERIMENTAL**
-
     Fired when a renderer-initiated navigation is requested.
     Navigation may still be cancelled after the event is issued.
     """
-
     #: Id of the frame that is being navigated.
     frame_id: FrameId
     #: The reason for the navigation.
@@ -3953,10 +3458,8 @@ class FrameScheduledNavigation:
 class FrameStartedLoading:
     """
     **EXPERIMENTAL**
-
     Fired when frame has started loading.
     """
-
     #: Id of the frame that has started loading.
     frame_id: FrameId
 
@@ -3970,75 +3473,14 @@ class FrameStartedLoading:
 class FrameStoppedLoading:
     """
     **EXPERIMENTAL**
-
     Fired when frame has stopped loading.
     """
-
     #: Id of the frame that has stopped loading.
     frame_id: FrameId
 
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> FrameStoppedLoading:
         return cls(frame_id=FrameId.from_json(json["frameId"]))
-
-
-@event_class("Page.downloadWillBegin")
-@dataclass
-class DownloadWillBegin:
-    """
-    **EXPERIMENTAL**
-
-    Fired when page is about to start a download.
-    Deprecated. Use Browser.downloadWillBegin instead.
-    """
-
-    #: Id of the frame that caused download to begin.
-    frame_id: FrameId
-    #: Global unique identifier of the download.
-    guid: str
-    #: URL of the resource being downloaded.
-    url: str
-    #: Suggested file name of the resource.
-    #: (the actual name of the file saved on disk may differ)
-    suggested_filename: str
-
-    @classmethod
-    def from_json(cls, json: T_JSON_DICT) -> DownloadWillBegin:
-        return cls(
-            frame_id=FrameId.from_json(json["frameId"]),
-            guid=str(json["guid"]),
-            url=str(json["url"]),
-            suggested_filename=str(json["suggestedFilename"]),
-        )
-
-
-@event_class("Page.downloadProgress")
-@dataclass
-class DownloadProgress:
-    """
-    **EXPERIMENTAL**
-
-    Fired when download makes progress. Last call has ``done`` == true.
-    Deprecated. Use Browser.downloadProgress instead.
-    """
-
-    #: Global unique identifier of the download.
-    guid: str
-    #: Total expected bytes to download.
-    total_bytes: float
-    #: Total bytes received.
-    received_bytes: float
-    #: Download status.
-    state: str
-
-    @classmethod
-    def from_json(cls, json: T_JSON_DICT) -> DownloadProgress:
-        return cls(
-            guid=str(json["guid"]),
-            total_bytes=float(json["totalBytes"]),
-            received_bytes=float(json["receivedBytes"]),
-            state=str(json["state"]),
-        )
 
 
 @event_class("Page.interstitialHidden")
@@ -4069,7 +3511,6 @@ class JavascriptDialogClosed:
     (alert, confirm, prompt, or onbeforeunload)
     has been closed.
     """
-
     #: Whether dialog was confirmed.
     result: bool
     #: User input in case of prompt.
@@ -4090,7 +3531,6 @@ class JavascriptDialogOpening:
     (alert, confirm, prompt, or onbeforeunload)
     is about to open.
     """
-
     #: Frame url.
     url: str
     #: Message that will be displayed by the dialog.
@@ -4127,7 +3567,6 @@ class LifecycleEvent:
     Fired for top level page lifecycle events such as navigation,
     load, paint, etc.
     """
-
     #: Id of the frame.
     frame_id: FrameId
     #: Loader identifier. Empty string if the request is fetched from worker.
@@ -4150,14 +3589,12 @@ class LifecycleEvent:
 class BackForwardCacheNotUsed:
     """
     **EXPERIMENTAL**
-
     Fired for failed bfcache history navigations if BackForwardCache feature
     is enabled. Do not assume any ordering with the Page.frameNavigated event.
     This event is fired only for main-frame history navigation where the
     document changes (non-same-document navigations),
     when bfcache navigation fails.
     """
-
     #: The loader id for the associated navigation.
     loader_id: network.LoaderId
     #: The frame id of the associated frame.
@@ -4209,11 +3646,9 @@ class LoadEventFired:
 class NavigatedWithinDocument:
     """
     **EXPERIMENTAL**
-
     Fired when same-document navigation happens,
     e.g. due to history API usage or anchor navigation.
     """
-
     #: Id of the frame.
     frame_id: FrameId
     #: Frame's new url.
@@ -4231,10 +3666,8 @@ class NavigatedWithinDocument:
 class ScreencastFrame:
     """
     **EXPERIMENTAL**
-
     Compressed image data requested by the ``startScreencast``.
     """
-
     #: Base64-encoded compressed image.
     #: (Encoded as a base64 string when passed over JSON)
     data: str
@@ -4257,10 +3690,8 @@ class ScreencastFrame:
 class ScreencastVisibilityChanged:
     """
     **EXPERIMENTAL**
-
-    Fired when the page with currently enabled screencast was shown or hidden .
+    Fired when the page with currently enabled screencast was shown or hidden.
     """
-
     #: True if the page is visible.
     visible: bool
 
@@ -4276,7 +3707,6 @@ class WindowOpen:
     Fired when a new window is going to be opened, via window.open(),
     link click, form submission, etc.
     """
-
     #: The URL for the new window.
     url: str
     #: Window name.
@@ -4301,11 +3731,9 @@ class WindowOpen:
 class CompilationCacheProduced:
     """
     **EXPERIMENTAL**
-
     Issued for every compilation cache generated. Is only available
     if Page.setGenerateCompilationCache is enabled.
     """
-
     url: str
     #: Base64-encoded data (Encoded as a base64 string when passed over JSON)
     data: str

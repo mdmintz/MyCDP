@@ -157,9 +157,7 @@ class Headers(dict):
 
 
 class ConnectionType(enum.Enum):
-    """
-    The underlying connection technology that the browser is supposedly using.
-    """
+    """Underlying connection technology supposedly used by the browser."""
     NONE = "none"
     CELLULAR2G = "cellular2g"
     CELLULAR3G = "cellular3g"
@@ -234,7 +232,6 @@ class CookieSourceScheme(enum.Enum):
 @dataclass
 class ResourceTiming:
     """Timing information for the request."""
-
     #: Timing's requestTime is a baseline in seconds,
     #: while the other numbers are ticks in
     #: milliseconds relatively to this requestTime.
@@ -387,7 +384,6 @@ class PostDataEntry:
 @dataclass
 class Request:
     """HTTP request data."""
-
     #: Request URL (without fragment).
     url: str
     #: HTTP request method.
@@ -505,7 +501,6 @@ class Request:
 @dataclass
 class SignedCertificateTimestamp:
     """Details of a signed certificate timestamp (SCT)."""
-
     #: Validation status.
     status: str
     #: Origin.
@@ -553,7 +548,6 @@ class SignedCertificateTimestamp:
 @dataclass
 class SecurityDetails:
     """Security details about a request."""
-
     #: Protocol name (e.g. "TLS 1.2" or "QUIC").
     protocol: str
     #: Key Exchange used by the connection,
@@ -852,9 +846,7 @@ class TrustTokenOperationType(enum.Enum):
 
 
 class AlternateProtocolUsage(enum.Enum):
-    """
-    The reason why Chrome uses a specific transport protocol for HTTP semantics
-    """
+    """The reason Chrome uses specific transport protocol for HTTP semantics"""
     ALTERNATIVE_JOB_WON_WITHOUT_RACE = "alternativeJobWonWithoutRace"
     ALTERNATIVE_JOB_WON_RACE = "alternativeJobWonRace"
     MAIN_JOB_WON_RACE = "mainJobWonRace"
@@ -932,7 +924,6 @@ class ServiceWorkerRouterInfo:
 @dataclass
 class Response:
     """HTTP response data."""
-
     #: Response URL. This URL can be different from CachedResource.url
     # in case of redirect.
     url: str
@@ -1168,7 +1159,6 @@ class Response:
 @dataclass
 class WebSocketRequest:
     """WebSocket request data."""
-
     #: HTTP request headers.
     headers: Headers
 
@@ -1187,7 +1177,6 @@ class WebSocketRequest:
 @dataclass
 class WebSocketResponse:
     """WebSocket response data."""
-
     #: HTTP response status code.
     status: int
     #: HTTP response status text.
@@ -1274,7 +1263,6 @@ class WebSocketFrame:
 @dataclass
 class CachedResource:
     """Information about the cached resource."""
-
     #: Resource URL. This is the url of the original network request.
     url: str
     #: Type of this resource.
@@ -1310,7 +1298,6 @@ class CachedResource:
 @dataclass
 class Initiator:
     """Information about the request initiator."""
-
     #: Type of this initiator.
     type_: str
     #: Initiator JavaScript stack trace, set for Script only.
@@ -1404,7 +1391,6 @@ class CookiePartitionKey:
 @dataclass
 class Cookie:
     """Cookie object"""
-
     #: Cookie name.
     name: str
     #: Cookie value.
@@ -1710,7 +1696,6 @@ class AssociatedCookie:
 @dataclass
 class CookieParam:
     """Cookie parameter object"""
-
     #: Cookie name.
     name: str
     #: Cookie value.
@@ -1846,7 +1831,6 @@ class CookieParam:
 @dataclass
 class AuthChallenge:
     """Authorization challenge for HTTP status code 401 or 407."""
-
     #: Origin of the challenger.
     origin: str
     #: The authentication scheme used, such as basic or digest
@@ -1882,7 +1866,6 @@ class AuthChallenge:
 @dataclass
 class AuthChallengeResponse:
     """Response to an AuthChallenge."""
-
     #: The decision on what to do in response to the authorization challenge.
     #: Default means deferring to the default behavior of the net stack,
     #: which will likely either the Cancel
@@ -1941,7 +1924,6 @@ class InterceptionStage(enum.Enum):
 @dataclass
 class RequestPattern:
     """Request pattern for interception."""
-
     #: Wildcards (``'*'`` -> zero or more, ``'?'`` -> exactly one) are allowed.
     #: Escape character is backslash. Omitting is equivalent to ``"*"``.
     url_pattern: typing.Optional[str] = None
@@ -1988,7 +1970,6 @@ class SignedExchangeSignature:
     https://wicg.github.io/webpackage/
     draft-yasskin-httpbis-origin-signed-exchanges-impl.html#rfc.section.3.1
     """
-
     #: Signed exchange signature label.
     label: str
     #: The hex string of signed exchange signature.
@@ -2058,7 +2039,6 @@ class SignedExchangeHeader:
     https://wicg.github.io/webpackage/
     draft-yasskin-httpbis-origin-signed-exchanges-impl.html#cbor-representation
     """
-
     #: Signed exchange request URL.
     request_url: str
     #: Signed exchange response code.
@@ -2114,7 +2094,6 @@ class SignedExchangeErrorField(enum.Enum):
 @dataclass
 class SignedExchangeError:
     """Information about a signed exchange response."""
-
     #: Error message.
     message: str
     #: The index of the signature which caused the error.
@@ -2151,7 +2130,6 @@ class SignedExchangeError:
 @dataclass
 class SignedExchangeInfo:
     """Information about a signed exchange response."""
-
     #: The outer response of signed HTTP exchange which was
     #: received from network.
     outer_response: Response
@@ -2629,8 +2607,8 @@ class LoadNetworkResourcePageResult:
 @dataclass
 class LoadNetworkResourceOptions:
     """
-    An options object that may be extended later to better support CORS,
-    CORB and streaming.
+    An options object that may be extended later
+    to better support CORS, CORB and streaming.
     """
     disable_cache: bool
     include_credentials: bool
@@ -2678,51 +2656,6 @@ def clear_accepted_encodings_override() -> (
         "method": "Network.clearAcceptedEncodingsOverride",
     }
     json = yield cmd_dict  # noqa
-
-
-def can_clear_browser_cache() -> (
-    typing.Generator[T_JSON_DICT, T_JSON_DICT, bool]
-):
-    """
-    Tells whether clearing browser cache is supported.
-    .. deprecated:: 1.3
-    :returns: True if browser cache can be cleared.
-    """
-    cmd_dict: T_JSON_DICT = {
-        "method": "Network.canClearBrowserCache",
-    }
-    json = yield cmd_dict
-    return bool(json["result"])
-
-
-def can_clear_browser_cookies() -> (
-    typing.Generator[T_JSON_DICT, T_JSON_DICT, bool]
-):
-    """
-    Tells whether clearing browser cookies is supported.
-    .. deprecated:: 1.3
-    :returns: True if browser cookies can be cleared.
-    """
-    cmd_dict: T_JSON_DICT = {
-        "method": "Network.canClearBrowserCookies",
-    }
-    json = yield cmd_dict
-    return bool(json["result"])
-
-
-def can_emulate_network_conditions() -> (
-    typing.Generator[T_JSON_DICT, T_JSON_DICT, bool]
-):
-    """
-    Tells whether emulation of network conditions is supported.
-    .. deprecated:: 1.3
-    :returns: True if emulation of network conditions is supported.
-    """
-    cmd_dict: T_JSON_DICT = {
-        "method": "Network.canEmulateNetworkConditions",
-    }
-    json = yield cmd_dict
-    return bool(json["result"])
 
 
 def clear_browser_cache() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
@@ -2855,8 +2788,8 @@ def delete_cookies(
 
 def disable() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
-    Disables network tracking, prevents network events from being sent
-    to the client.
+    Disables network tracking.
+    Prevents network events from being sent to the client.
     """
     cmd_dict: T_JSON_DICT = {
         "method": "Network.disable",
@@ -2970,7 +2903,6 @@ def get_certificate(
     Returns the DER-encoded certificate.
     **EXPERIMENTAL**
     :param origin: Origin to get certificate for.
-    :returns:
     """
     params: T_JSON_DICT = dict()
     params["origin"] = origin
@@ -3078,7 +3010,6 @@ def take_response_body_for_interception_as_stream(
     IO.read will fail if the position is specified.
     **EXPERIMENTAL**
     :param interception_id:
-    :returns:
     """
     params: T_JSON_DICT = dict()
     params["interceptionId"] = interception_id.to_json()
@@ -3407,7 +3338,6 @@ def get_security_isolation_status(
     **EXPERIMENTAL**
     :param frame_id: *(Optional)*
     If no frameId is provided, the status of the target is provided.
-    :returns:
     """
     params: T_JSON_DICT = dict()
     if frame_id is not None:
@@ -3451,7 +3381,6 @@ def load_network_resource(
      Mandatory for frame targets, and should be omitted for worker targets.
     :param url: URL of the resource to get content for.
     :param options: Options for the request.
-    :returns:
     """
     params: T_JSON_DICT = dict()
     if frame_id is not None:
@@ -3470,7 +3399,6 @@ def load_network_resource(
 @dataclass
 class DataReceived:
     """Fired when data chunk was received over the network."""
-
     #: Request identifier.
     request_id: RequestId
     #: Timestamp.
@@ -3503,7 +3431,6 @@ class DataReceived:
 @dataclass
 class EventSourceMessageReceived:
     """Fired when EventSource message is received."""
-
     #: Request identifier.
     request_id: RequestId
     #: Timestamp.
@@ -3530,7 +3457,6 @@ class EventSourceMessageReceived:
 @dataclass
 class LoadingFailed:
     """Fired when HTTP request has failed to load."""
-
     #: Request identifier.
     request_id: RequestId
     #: Timestamp.
@@ -3576,7 +3502,6 @@ class LoadingFailed:
 @dataclass
 class LoadingFinished:
     """Fired when HTTP request has finished loading."""
-
     #: Request identifier.
     request_id: RequestId
     #: Timestamp.
@@ -3689,7 +3614,6 @@ class RequestIntercepted:
 @dataclass
 class RequestServedFromCache:
     """Fired if request ended up loading from cache."""
-
     #: Request identifier.
     request_id: RequestId
 
@@ -3702,7 +3626,6 @@ class RequestServedFromCache:
 @dataclass
 class RequestWillBeSent:
     """Fired when page is about to send HTTP request."""
-
     #: Request identifier.
     request_id: RequestId
     #: Loader identifier. Empty string if the request is fetched from worker.
@@ -3770,7 +3693,7 @@ class RequestWillBeSent:
 class ResourceChangedPriority:
     """
     **EXPERIMENTAL**
-    Fired when resource loading priority is changed
+    Fired when resource loading priority is changed.
     """
     #: Request identifier.
     request_id: RequestId
@@ -3793,7 +3716,7 @@ class ResourceChangedPriority:
 class SignedExchangeReceived:
     """
     **EXPERIMENTAL**
-    Fired when a signed exchange was received over the network
+    Fired when a signed exchange was received over the network.
     """
     #: Request identifier.
     request_id: RequestId
@@ -3812,7 +3735,6 @@ class SignedExchangeReceived:
 @dataclass
 class ResponseReceived:
     """Fired when HTTP response is available."""
-
     #: Request identifier.
     request_id: RequestId
     #: Loader identifier. Empty string if the request is fetched from worker.
@@ -3851,7 +3773,6 @@ class ResponseReceived:
 @dataclass
 class WebSocketClosed:
     """Fired when WebSocket is closed."""
-
     #: Request identifier.
     request_id: RequestId
     #: Timestamp.
@@ -3869,7 +3790,6 @@ class WebSocketClosed:
 @dataclass
 class WebSocketCreated:
     """Fired upon WebSocket creation."""
-
     #: Request identifier.
     request_id: RequestId
     #: WebSocket request URL.
@@ -3894,7 +3814,6 @@ class WebSocketCreated:
 @dataclass
 class WebSocketFrameError:
     """Fired when WebSocket message error occurs."""
-
     #: Request identifier.
     request_id: RequestId
     #: Timestamp.
@@ -3915,7 +3834,6 @@ class WebSocketFrameError:
 @dataclass
 class WebSocketFrameReceived:
     """Fired when WebSocket message is received."""
-
     #: Request identifier.
     request_id: RequestId
     #: Timestamp.
@@ -3936,7 +3854,6 @@ class WebSocketFrameReceived:
 @dataclass
 class WebSocketFrameSent:
     """Fired when WebSocket message is sent."""
-
     #: Request identifier.
     request_id: RequestId
     #: Timestamp.
@@ -3957,7 +3874,6 @@ class WebSocketFrameSent:
 @dataclass
 class WebSocketHandshakeResponseReceived:
     """Fired when WebSocket handshake response becomes available."""
-
     #: Request identifier.
     request_id: RequestId
     #: Timestamp.
@@ -3980,7 +3896,6 @@ class WebSocketHandshakeResponseReceived:
 @dataclass
 class WebSocketWillSendHandshakeRequest:
     """Fired when WebSocket is about to initiate handshake."""
-
     #: Request identifier.
     request_id: RequestId
     #: Timestamp.
@@ -4004,7 +3919,6 @@ class WebSocketWillSendHandshakeRequest:
 @dataclass
 class WebTransportCreated:
     """Fired upon WebTransport creation."""
-
     #: WebTransport identifier.
     transport_id: RequestId
     #: WebTransport request URL.
@@ -4032,7 +3946,6 @@ class WebTransportCreated:
 @dataclass
 class WebTransportConnectionEstablished:
     """Fired when WebTransport handshake is finished."""
-
     #: WebTransport identifier.
     transport_id: RequestId
     #: Timestamp.
@@ -4050,7 +3963,6 @@ class WebTransportConnectionEstablished:
 @dataclass
 class WebTransportClosed:
     """Fired when WebTransport is disposed."""
-
     #: WebTransport identifier.
     transport_id: RequestId
     #: Timestamp.

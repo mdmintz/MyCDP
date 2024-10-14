@@ -34,30 +34,22 @@ class MemoryDumpConfig(dict):
 class TraceConfig:
     #: Controls how the trace buffer stores data.
     record_mode: typing.Optional[str] = None
-
     #: Size of the trace buffer in kilobytes.
     #: If not specified or zero is passed,
     #: a default value of 200 MB would be used.
     trace_buffer_size_in_kb: typing.Optional[float] = None
-
     #: Turns on JavaScript stack sampling.
     enable_sampling: typing.Optional[bool] = None
-
     #: Turns on system tracing.
     enable_systrace: typing.Optional[bool] = None
-
     #: Turns on argument filter.
     enable_argument_filter: typing.Optional[bool] = None
-
     #: Included category filters.
     included_categories: typing.Optional[typing.List[str]] = None
-
     #: Excluded category filters.
     excluded_categories: typing.Optional[typing.List[str]] = None
-
     #: Configuration to synthesize the delays in tracing.
     synthetic_delays: typing.Optional[typing.List[str]] = None
-
     #: Configuration for memory dump triggers.
     #: Used only when "memory-infra" category is enabled.
     memory_dump_config: typing.Optional[MemoryDumpConfig] = None
@@ -140,7 +132,6 @@ class StreamFormat(enum.Enum):
     Data format of a trace. Can be either the legacy JSON format or the
     protocol buffer format. Note that the JSON format will be deprecated soon.
     """
-
     JSON = "json"
     PROTO = "proto"
 
@@ -154,7 +145,6 @@ class StreamFormat(enum.Enum):
 
 class StreamCompression(enum.Enum):
     """Compression type to use for traces returned via streams."""
-
     NONE = "none"
     GZIP = "gzip"
 
@@ -172,7 +162,6 @@ class MemoryDumpLevelOfDetail(enum.Enum):
     Keep consistent with memory_dump_request_args.h and
     memory_instrumentation.mojom
     """
-
     BACKGROUND = "background"
     LIGHT = "light"
     DETAILED = "detailed"
@@ -194,7 +183,6 @@ class TracingBackend(enum.Enum):
     to Tracing.start specifies at least one non-Chrome data source;
     otherwise uses ``chrome``.
     """
-
     AUTO = "auto"
     CHROME = "chrome"
     SYSTEM = "system"
@@ -220,9 +208,7 @@ def get_categories() -> (
 ):
     """
     Gets supported tracing categories.
-
     **EXPERIMENTAL**
-
     :returns: A list of supported tracing categories.
     """
     cmd_dict: T_JSON_DICT = {
@@ -237,9 +223,7 @@ def record_clock_sync_marker(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Record a clock sync marker in the trace.
-
     **EXPERIMENTAL**
-
     :param sync_id: The ID of this clock sync marker
     """
     params: T_JSON_DICT = dict()
@@ -257,9 +241,7 @@ def request_memory_dump(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, typing.Tuple[str, bool]]:
     """
     Request a global memory dump.
-
     **EXPERIMENTAL**
-
     :param deterministic: *(Optional)*
      Enables more deterministic results by forcing garbage collection
     :param level_of_detail: *(Optional)*
@@ -352,7 +334,6 @@ class BufferUsage:
     """
     **EXPERIMENTAL**
     """
-
     #: A number in range [0..1] that indicates the used size
     #: of event buffer as a fraction of its total size.
     percent_full: typing.Optional[float]
@@ -388,12 +369,10 @@ class BufferUsage:
 class DataCollected:
     """
     **EXPERIMENTAL**
-
     Contains a bucket of collected trace events.
     When tracing is stopped collected events will be sent as a sequence
     of dataCollected events followed by tracingComplete event.
     """
-
     value: typing.List[dict]
 
     @classmethod
@@ -405,11 +384,9 @@ class DataCollected:
 @dataclass
 class TracingComplete:
     """
-    Signals that tracing is stopped
-    and there is no trace buffers pending flush,
-    all data were delivered via dataCollected events.
+    Signals that tracing is stopped, no trace buffers pending flush,
+    and that all data was delivered via dataCollected events.
     """
-
     #: Indicates whether some trace data is known to have been lost,
     #: e.g. because the trace ring buffer wrapped around.
     data_loss_occurred: bool

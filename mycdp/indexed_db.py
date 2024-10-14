@@ -16,14 +16,11 @@ from . import storage
 @dataclass
 class DatabaseWithObjectStores:
     """Database with an array of object stores."""
-
     #: Database name.
     name: str
-
     #: Database version (type is not 'integer', as the standard
     #: requires the version number to be 'unsigned long long')
     version: float
-
     #: Object stores in this database.
     object_stores: typing.List[ObjectStore]
 
@@ -48,16 +45,12 @@ class DatabaseWithObjectStores:
 @dataclass
 class ObjectStore:
     """Object store."""
-
     #: Object store name.
     name: str
-
     #: Object store key path.
     key_path: KeyPath
-
     #: If true, object store has auto increment flag set.
     auto_increment: bool
-
     #: Indexes in this object store.
     indexes: typing.List[ObjectStoreIndex]
 
@@ -82,16 +75,12 @@ class ObjectStore:
 @dataclass
 class ObjectStoreIndex:
     """Object store index."""
-
     #: Index name.
     name: str
-
     #: Index key path.
     key_path: KeyPath
-
     #: If true, index is unique.
     unique: bool
-
     #: If true, index allows multiple entries for a key.
     multi_entry: bool
 
@@ -116,19 +105,14 @@ class ObjectStoreIndex:
 @dataclass
 class Key:
     """Key."""
-
     #: Key type.
     type_: str
-
     #: Number value.
     number: typing.Optional[float] = None
-
     #: String value.
     string: typing.Optional[str] = None
-
     #: Date value.
     date: typing.Optional[float] = None
-
     #: Array value.
     array: typing.Optional[typing.List[Key]] = None
 
@@ -175,16 +159,12 @@ class Key:
 @dataclass
 class KeyRange:
     """Key range."""
-
     #: If true lower bound is open.
     lower_open: bool
-
     #: If true upper bound is open.
     upper_open: bool
-
     #: Lower bound.
     lower: typing.Optional[Key] = None
-
     #: Upper bound.
     upper: typing.Optional[Key] = None
 
@@ -219,13 +199,10 @@ class KeyRange:
 @dataclass
 class DataEntry:
     """Data entry."""
-
     #: Key object.
     key: runtime.RemoteObject
-
     #: Primary key object.
     primary_key: runtime.RemoteObject
-
     #: Value object.
     value: runtime.RemoteObject
 
@@ -248,13 +225,10 @@ class DataEntry:
 @dataclass
 class KeyPath:
     """Key path."""
-
     #: Key path type.
     type_: str
-
     #: String value.
     string: typing.Optional[str] = None
-
     #: Array value.
     array: typing.Optional[typing.List[str]] = None
 

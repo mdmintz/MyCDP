@@ -15,7 +15,6 @@ from .util import event_class, T_JSON_DICT
 class Sink:
     name: str
     id_: str
-
     #: Text describing the current session. Present only if there is an active
     #: session on the sink.
     session: typing.Optional[str] = None
