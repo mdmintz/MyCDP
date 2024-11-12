@@ -1986,6 +1986,26 @@ class PseudoElementRemoved:
         )
 
 
+@event_class("DOM.scrollableFlagUpdated")
+@dataclass
+class ScrollableFlagUpdated:
+    """
+    **EXPERIMENTAL**
+    Called when a node's scrollability state changes.
+    """
+    #: Id of the node whose scrollability state changed
+    node_id: NodeId
+    #: Whether the item is scrollable
+    is_scrollable: bool
+
+    @classmethod
+    def from_json(cls, json: T_JSON_DICT) -> ScrollableFlagUpdated:
+        return cls(
+            node_id=NodeId.from_json(json["nodeId"]),
+            is_scrollable=bool(json["isScrollable"]),
+        )
+
+
 @event_class("DOM.setChildNodes")
 @dataclass
 class SetChildNodes:
