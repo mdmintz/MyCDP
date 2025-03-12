@@ -5,7 +5,10 @@
 
 from . import (
     dom,
+    dom_storage,
+    cache_storage,
     fetch,
+    storage,
     target,
 )
 
