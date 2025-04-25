@@ -78,7 +78,10 @@ class Bounds:
         if self.height is not None:
             json["height"] = self.height
         if self.window_state is not None:
-            json["windowState"] = self.window_state.to_json()
+            try:
+                json["windowState"] = self.window_state.to_json()
+            except Exception:
+                json["windowState"] = self.window_state  # if str
         return json
 
     @classmethod
@@ -285,7 +288,10 @@ class Histogram:
         json["name"] = self.name
         json["sum"] = self.sum_
         json["count"] = self.count
-        json["buckets"] = [i.to_json() for i in self.buckets]
+        try:
+            json["buckets"] = [i.to_json() for i in self.buckets]
+        except Exception:
+            json["buckets"] = [i for i in self.buckets]  # if str
         return json
 
     @classmethod
@@ -315,12 +321,21 @@ def set_permission(
     When omitted, default browser context is used.
     """
     params: T_JSON_DICT = dict()
-    params["permission"] = permission.to_json()
-    params["setting"] = setting.to_json()
+    try:
+        params["permission"] = permission.to_json()
+    except Exception:
+        params["permission"] = permission  # if str
+    try:
+        params["setting"] = setting.to_json()
+    except Exception:
+        params["setting"] = setting  # if str
     if origin is not None:
         params["origin"] = origin
     if browser_context_id is not None:
-        params["browserContextId"] = browser_context_id.to_json()
+        try:
+            params["browserContextId"] = browser_context_id.to_json()
+        except Exception:
+            params["browserContextId"] = browser_context_id  # if str
     cmd_dict: T_JSON_DICT = {
         "method": "Browser.setPermission",
         "params": params,
@@ -343,11 +358,17 @@ def grant_permissions(
      override permissions. When omitted, default browser context is used.
     """
     params: T_JSON_DICT = dict()
-    params["permissions"] = [i.to_json() for i in permissions]
+    try:
+        params["permissions"] = [i.to_json() for i in permissions]
+    except Exception:
+        params["permissions"] = [i for i in permissions]  # if str
     if origin is not None:
         params["origin"] = origin
     if browser_context_id is not None:
-        params["browserContextId"] = browser_context_id.to_json()
+        try:
+            params["browserContextId"] = browser_context_id.to_json()
+        except Exception:
+            params["browserContextId"] = browser_context_id  # if str
     cmd_dict: T_JSON_DICT = {
         "method": "Browser.grantPermissions",
         "params": params,
@@ -365,7 +386,10 @@ def reset_permissions(
     """
     params: T_JSON_DICT = dict()
     if browser_context_id is not None:
-        params["browserContextId"] = browser_context_id.to_json()
+        try:
+            params["browserContextId"] = browser_context_id.to_json()
+        except Exception:
+            params["browserContextId"] = browser_context_id  # if str
     cmd_dict: T_JSON_DICT = {
         "method": "Browser.resetPermissions",
         "params": params,
@@ -398,7 +422,10 @@ def set_download_behavior(
     params: T_JSON_DICT = dict()
     params["behavior"] = behavior
     if browser_context_id is not None:
-        params["browserContextId"] = browser_context_id.to_json()
+        try:
+            params["browserContextId"] = browser_context_id.to_json()
+        except Exception:
+            params["browserContextId"] = browser_context_id  # if str
     if download_path is not None:
         params["downloadPath"] = download_path
     if events_enabled is not None:
@@ -424,7 +451,10 @@ def cancel_download(
     params: T_JSON_DICT = dict()
     params["guid"] = guid
     if browser_context_id is not None:
-        params["browserContextId"] = browser_context_id.to_json()
+        try:
+            params["browserContextId"] = browser_context_id.to_json()
+        except Exception:
+            params["browserContextId"] = browser_context_id  # if str
     cmd_dict: T_JSON_DICT = {
         "method": "Browser.cancelDownload",
         "params": params,
@@ -564,7 +594,10 @@ def get_window_bounds(
     the restored window position and size are returned.
     """
     params: T_JSON_DICT = dict()
-    params["windowId"] = window_id.to_json()
+    try:
+        params["windowId"] = window_id.to_json()
+    except Exception:
+        params["windowId"] = window_id  # if str
     cmd_dict: T_JSON_DICT = {
         "method": "Browser.getWindowBounds",
         "params": params,
@@ -591,7 +624,10 @@ def get_window_for_target(
     """
     params: T_JSON_DICT = dict()
     if target_id is not None:
-        params["targetId"] = target_id.to_json()
+        try:
+            params["targetId"] = target_id.to_json()
+        except Exception:
+            params["targetId"] = target_id  # if str
     cmd_dict: T_JSON_DICT = {
         "method": "Browser.getWindowForTarget",
         "params": params,
@@ -616,8 +652,14 @@ def set_window_bounds(
     Leaves unspecified fields unchanged.
     """
     params: T_JSON_DICT = dict()
-    params["windowId"] = window_id.to_json()
-    params["bounds"] = bounds.to_json()
+    try:
+        params["windowId"] = window_id.to_json()
+    except Exception:
+        params["windowId"] = window_id  # if str
+    try:
+        params["bounds"] = bounds.to_json()
+    except Exception:
+        params["bounds"] = bounds  # if str
     cmd_dict: T_JSON_DICT = {
         "method": "Browser.setWindowBounds",
         "params": params,
@@ -657,7 +699,10 @@ def execute_browser_command(
     :param command_id:
     """
     params: T_JSON_DICT = dict()
-    params["commandId"] = command_id.to_json()
+    try:
+        params["commandId"] = command_id.to_json()
+    except Exception:
+        params["commandId"] = command_id  # if str
     cmd_dict: T_JSON_DICT = {
         "method": "Browser.executeBrowserCommand",
         "params": params,
