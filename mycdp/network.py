@@ -3074,7 +3074,7 @@ def search_in_response_body(
     return [debugger.SearchMatch.from_json(i) for i in json["result"]]
 
 
-def set_blocked_ur_ls(
+def set_blocked_urls(
     urls: typing.List[str],
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
