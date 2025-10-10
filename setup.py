@@ -24,11 +24,13 @@ if sys.argv[-1] == "publish":
     confirm_text = ">>> Confirm release PUBLISH to PyPI? (yes/no): "
     reply = str(input_method(confirm_text)).lower().strip()
     if reply == "yes":
-        if sys.version_info < (3, 9):
-            print("\nERROR! Publishing to PyPI requires Python>=3.9")
+        if sys.version_info < (3, 10):
+            current_ver = ".".join(str(ver) for ver in sys.version_info[:3])
+            print("\nERROR! Publishing to PyPI requires Python>=3.10")
+            print("You are currently using Python %s\n" % current_ver)
             sys.exit()
         print("\n*** Checking code health with flake8:\n")
-        os.system("python -m pip install 'flake8==7.2.0'")
+        os.system("python -m pip install 'flake8==7.3.0'")
         flake8_status = os.system("flake8 --exclude=recordings,temp")
         if flake8_status != 0:
             print("\nERROR! Fix flake8 issues before publishing to PyPI!\n")
