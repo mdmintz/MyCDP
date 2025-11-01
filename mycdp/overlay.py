@@ -1231,7 +1231,7 @@ def set_inspect_mode(
     :param mode: Set an inspection mode.
     :param highlight_config: *(Optional)*
     A descriptor for the highlight appearance of hovered-over nodes.
-    May be omitted if ``enabled == false``.
+    May be omitted if `enabled == false`.
     """
     params: T_JSON_DICT = dict()
     params["mode"] = mode.to_json()
@@ -1529,7 +1529,7 @@ def set_show_window_controls_overlay(
 class InspectNodeRequested:
     """
     Fired when the node should be inspected.
-    This happens after call to ``setInspectMode``
+    This happens after call to `setInspectMode`
     or when user manually inspects an element.
     """
     #: Id of the node to inspect.
@@ -1547,7 +1547,7 @@ class InspectNodeRequested:
 class NodeHighlightRequested:
     """
     Fired when the node should be highlighted.
-    This happens after call to ``setInspectMode``.
+    This happens after call to `setInspectMode`.
     """
     node_id: dom.NodeId
 

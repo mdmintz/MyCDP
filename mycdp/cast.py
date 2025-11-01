@@ -45,10 +45,10 @@ def enable(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Starts observing for sinks that can be used for tab mirroring, and if set,
-    sinks compatible with ``presentationUrl`` as well. When sinks are found, a
-    ``sinksUpdated`` event is fired.
+    sinks compatible with `presentationUrl` as well. When sinks are found, a
+    `sinksUpdated` event is fired.
     Also starts observing for issue messages.
-    When an issue is added or removed, an ``issueUpdated`` event is fired.
+    When an issue is added or removed, an `issueUpdated` event is fired.
     :param presentation_url: *(Optional)*
     """
     params: T_JSON_DICT = dict()
@@ -153,7 +153,7 @@ class SinksUpdated:
 class IssueUpdated:
     """
     This is fired whenever the outstanding issue/error message changes.
-    ``issueMessage`` is empty if there is no issue.
+    `issueMessage` is empty if there is no issue.
     """
     issue_message: str
 

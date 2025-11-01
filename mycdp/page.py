@@ -164,7 +164,9 @@ class PermissionsPolicyFeature(enum.Enum):
     permissions_policy_features.json5.
     """
     ACCELEROMETER = "accelerometer"
+    ALL_SCREENS_CAPTURE = "all-screens-capture"
     AMBIENT_LIGHT_SENSOR = "ambient-light-sensor"
+    ARIA_NOTIFY = "aria-notify"
     ATTRIBUTION_REPORTING = "attribution-reporting"
     AUTOPLAY = "autoplay"
     BLUETOOTH = "bluetooth"
@@ -183,6 +185,7 @@ class PermissionsPolicyFeature(enum.Enum):
     CH_UA = "ch-ua"
     CH_UA_ARCH = "ch-ua-arch"
     CH_UA_BITNESS = "ch-ua-bitness"
+    CH_UA_HIGH_ENTROPY_VALUES = "ch-ua-high-entropy-values"
     CH_UA_PLATFORM = "ch-ua-platform"
     CH_UA_MODEL = "ch-ua-model"
     CH_UA_MOBILE = "ch-ua-mobile"
@@ -197,14 +200,22 @@ class PermissionsPolicyFeature(enum.Enum):
     CLIPBOARD_READ = "clipboard-read"
     CLIPBOARD_WRITE = "clipboard-write"
     COMPUTE_PRESSURE = "compute-pressure"
+    CONTROLLED_FRAME = "controlled-frame"
     CROSS_ORIGIN_ISOLATED = "cross-origin-isolated"
     DEFERRED_FETCH = "deferred-fetch"
+    DEFERRED_FETCH_MINIMAL = "deferred-fetch-minimal"
+    DEVICE_ATTRIBUTES = "device-attributes"
+    DIGITAL_CREDENTIALS_CREATE = "digital-credentials-create"
+    DIGITAL_CREDENTIALS_GET = "digital-credentials-get"
     DIRECT_SOCKETS = "direct-sockets"
+    DIRECT_SOCKETS_MULTICAST = "direct-sockets-multicast"
+    DIRECT_SOCKETS_PRIVATE = "direct-sockets-private"
     DISPLAY_CAPTURE = "display-capture"
     DOCUMENT_DOMAIN = "document-domain"
     ENCRYPTED_MEDIA = "encrypted-media"
     EXECUTION_WHILE_OUT_OF_VIEWPORT = "execution-while-out-of-viewport"
     EXECUTION_WHILE_NOT_RENDERED = "execution-while-not-rendered"
+    FENCED_UNPARTITIONED_STORAGE_READ = "fenced-unpartitioned-storage-read"
     FOCUS_WITHOUT_USER_ACTIVATION = "focus-without-user-activation"
     FULLSCREEN = "fullscreen"
     FROBULATE = "frobulate"
@@ -217,18 +228,26 @@ class PermissionsPolicyFeature(enum.Enum):
     INTEREST_COHORT = "interest-cohort"
     JOIN_AD_INTEREST_GROUP = "join-ad-interest-group"
     KEYBOARD_MAP = "keyboard-map"
+    LANGUAGE_DETECTOR = "language-detector"
+    LANGUAGE_MODEL = "language-model"
     LOCAL_FONTS = "local-fonts"
+    LOCAL_NETWORK_ACCESS = "local-network-access"
     MAGNETOMETER = "magnetometer"
+    MEDIA_PLAYBACK_WHILE_NOT_VISIBLE = "media-playback-while-not-visible"
     MICROPHONE = "microphone"
     MIDI = "midi"
+    ON_DEVICE_SPEECH_RECOGNITION = "on-device-speech-recognition"
     OTP_CREDENTIALS = "otp-credentials"
     PAYMENT = "payment"
     PICTURE_IN_PICTURE = "picture-in-picture"
+    POPINS = "popins"
     PRIVATE_AGGREGATION = "private-aggregation"
     PRIVATE_STATE_TOKEN_ISSUANCE = "private-state-token-issuance"
     PRIVATE_STATE_TOKEN_REDEMPTION = "private-state-token-redemption"
     PUBLICKEY_CREDENTIALS_CREATE = "publickey-credentials-create"
     PUBLICKEY_CREDENTIALS_GET = "publickey-credentials-get"
+    RECORD_AD_AUCTION_EVENTS = "record-ad-auction-events"
+    REWRITER = "rewriter"
     RUN_AD_AUCTION = "run-ad-auction"
     SCREEN_WAKE_LOCK = "screen-wake-lock"
     SERIAL = "serial"
@@ -239,14 +258,18 @@ class PermissionsPolicyFeature(enum.Enum):
     SPEAKER_SELECTION = "speaker-selection"
     STORAGE_ACCESS = "storage-access"
     SUB_APPS = "sub-apps"
+    SUMMARIZER = "summarizer"
     SYNC_XHR = "sync-xhr"
+    TRANSLATOR = "translator"
     UNLOAD = "unload"
     USB = "usb"
     USB_UNRESTRICTED = "usb-unrestricted"
     VERTICAL_SCROLL = "vertical-scroll"
+    WEB_APP_INSTALLATION = "web-app-installation"
     WEB_PRINTING = "web-printing"
     WEB_SHARE = "web-share"
     WINDOW_MANAGEMENT = "window-management"
+    WRITER = "writer"
     XR_SPATIAL_TRACKING = "xr-spatial-tracking"
 
     def to_json(self) -> str:
@@ -411,7 +434,7 @@ class OriginTrialTokenWithStatus:
     raw_token_text: str
     status: OriginTrialTokenStatus
 
-    #: ``parsedToken`` is present only when the token is extractable and
+    #: `parsedToken` is present only when the token is extractable and
     #: parsable.
     parsed_token: typing.Optional[OriginTrialToken] = None
 
@@ -466,7 +489,6 @@ class OriginTrial:
 @dataclass
 class Frame:
     """Information about the Frame on the page."""
-
     #: Frame unique identifier.
     id_: FrameId
     #: Identifier of the loader associated with this frame.
@@ -579,7 +601,6 @@ class Frame:
 @dataclass
 class FrameResource:
     """Information about the Resource on the page."""
-
     #: Resource URL.
     url: str
     #: Type of this resource.
@@ -675,7 +696,6 @@ class FrameResourceTree:
 @dataclass
 class FrameTree:
     """Information about the Frame hierarchy."""
-
     #: Frame information for this tree item.
     frame: Frame
     #: Child frames.
@@ -741,7 +761,6 @@ class TransitionType(enum.Enum):
 @dataclass
 class NavigationEntry:
     """Navigation history entry."""
-
     #: Unique id of the navigation history entry.
     id_: int
     #: URL of the navigation history entry.
@@ -776,7 +795,6 @@ class NavigationEntry:
 @dataclass
 class ScreencastFrameMetadata:
     """Screencast frame metadata."""
-
     #: Top offset in DIP.
     offset_top: float
     #: Page scale factor.
@@ -839,7 +857,6 @@ class DialogType(enum.Enum):
 @dataclass
 class AppManifestError:
     """Error while paring app manifest."""
-
     #: Error message.
     message: str
     #: If critical, this is a non-recoverable parse error.
@@ -870,7 +887,6 @@ class AppManifestError:
 @dataclass
 class AppManifestParsedProperties:
     """Parsed app manifest properties."""
-
     #: Computed scope value
     scope: str
 
@@ -889,7 +905,6 @@ class AppManifestParsedProperties:
 @dataclass
 class LayoutViewport:
     """Layout viewport position and dimensions."""
-
     #: Horizontal offset relative to the document (CSS pixels).
     page_x: int
     #: Vertical offset relative to the document (CSS pixels).
@@ -920,7 +935,6 @@ class LayoutViewport:
 @dataclass
 class VisualViewport:
     """Visual viewport position, dimensions, and scale."""
-
     #: Horizontal offset relative to the layout viewport (CSS pixels).
     offset_x: float
     #: Vertical offset relative to the layout viewport (CSS pixels).
@@ -972,7 +986,6 @@ class VisualViewport:
 @dataclass
 class Viewport:
     """Viewport for capturing screenshot."""
-
     #: X offset in device independent pixels (dip).
     x: float
     #: Y offset in device independent pixels (dip).
@@ -1007,7 +1020,6 @@ class Viewport:
 @dataclass
 class FontFamilies:
     """Generic font families collection."""
-
     #: The standard font-family.
     standard: typing.Optional[str] = None
     #: The fixed font-family.
@@ -1085,7 +1097,6 @@ class FontFamilies:
 @dataclass
 class ScriptFontFamilies:
     """Font families collection for a script."""
-
     #: Name of the script which these font families are defined for.
     script: str
     #: Generic font families collection for the script.
@@ -1108,7 +1119,6 @@ class ScriptFontFamilies:
 @dataclass
 class FontSizes:
     """Default font sizes."""
-
     #: Default standard font size.
     standard: typing.Optional[int] = None
     #: Default fixed font size.
@@ -1194,7 +1204,6 @@ class InstallabilityErrorArgument:
 @dataclass
 class InstallabilityError:
     """The installability error."""
-
     #: The error id (e.g. 'manifest-missing-suitable-icon').
     error_id: str
     #: The list of error arguments
@@ -1340,7 +1349,6 @@ class FileHandler:
 @dataclass
 class ImageResource:
     """The image definition used in both icon and screenshot."""
-
     #: The src field in the definition, but changing to url in favor of
     #: consistency.
     url: str
@@ -1551,7 +1559,6 @@ class Shortcut:
 @dataclass
 class WebAppManifest:
     background_color: typing.Optional[str] = None
-
     #: The extra description provided by the manifest.
     description: typing.Optional[str] = None
     dir_: typing.Optional[str] = None
@@ -1933,9 +1940,9 @@ class BackForwardCacheNotRestoredReason(enum.Enum):
     JS_NETWORK_REQUEST_RECEIVED_CACHE_CONTROL_NO_STORE_RESOURCE = (
         "JsNetworkRequestReceivedCacheControlNoStoreResource"
     )
-    WEB_RTC_STICKY = "WebRTCSticky"
-    WEB_TRANSPORT_STICKY = "WebTransportSticky"
-    WEB_SOCKET_STICKY = "WebSocketSticky"
+    WEB_RTC_USED_WITH_CCNS = "WebRTCUsedWithCCNS"
+    WEB_TRANSPORT_USED_WITH_CCNS = "WebTransportUsedWithCCNS"
+    WEB_SOCKET_USED_WITH_CCNS = "WebSocketUsedWithCCNS"
     SMART_CARD = "SmartCard"
     LIVE_MEDIA_STREAM_TRACK = "LiveMediaStreamTrack"
     UNLOAD_HANDLER = "UnloadHandler"
@@ -2336,9 +2343,6 @@ def get_installability_errors() -> (
         T_JSON_DICT, T_JSON_DICT, typing.List[InstallabilityError]
     ]
 ):
-    """
-    **EXPERIMENTAL**
-    """
     cmd_dict: T_JSON_DICT = {
         "method": "Page.getInstallabilityErrors",
     }
@@ -2382,7 +2386,6 @@ def get_ad_script_id(
     frame_id: FrameId,
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, typing.Optional[AdScriptId]]:
     """
-    **EXPERIMENTAL**
     :param frame_id:
     :returns: *(Optional)*
     Identifies the bottom-most script which caused the frame
@@ -2433,13 +2436,13 @@ def get_layout_metrics() -> typing.Generator[
     :returns: A tuple with the following items:
         0. **layoutViewport** -
          Deprecated metrics relating to the layout viewport.
-         Is in device pixels. Use ``cssLayoutViewport`` instead.
+         Is in device pixels. Use `cssLayoutViewport` instead.
         1. **visualViewport** -
          Deprecated metrics relating to the visual viewport.
-         Is in device pixels. Use ``cssVisualViewport`` instead.
+         Is in device pixels. Use `cssVisualViewport` instead.
         2. **contentSize** -
          Deprecated size of scrollable area.
-         Is in DP. Use ``cssContentSize`` instead.
+         Is in DP. Use `cssContentSize` instead.
         3. **cssLayoutViewport** -
          Metrics relating to the layout viewport in CSS pixels.
         4. **cssVisualViewport** -
@@ -2561,7 +2564,10 @@ def navigate(
     T_JSON_DICT,
     T_JSON_DICT,
     typing.Tuple[
-        FrameId, typing.Optional[network.LoaderId], typing.Optional[str]
+        FrameId,
+        typing.Optional[network.LoaderId],
+        typing.Optional[str],
+        typing.Optional[bool]
     ],
 ]:
     """
@@ -2581,6 +2587,8 @@ def navigate(
         2. **errorText** - *(Optional)*
          User friendly error message,
          present if and only if navigation has failed.
+        3. **isDownload** - *(Optional)*
+         Whether the navigation resulted in a download.
     """
     params: T_JSON_DICT = dict()
     params["url"] = url
@@ -2607,6 +2615,11 @@ def navigate(
         (
             str(json["errorText"])
             if json.get("errorText", None) is not None
+            else None
+        ),
+        (
+            bool(json['isDownload'])
+            if json.get('isDownload', None) is not None
             else None
         ),
     )
@@ -2683,15 +2696,15 @@ def print_to_pdf(
     :param header_template: *(Optional)*
      HTML template for the print header.
      Should be valid HTML markup with following classes used to inject printing
-     values into them: - ``date``: formatted print date -
-     ``title``: document title - ``url``: document location -
-     ``pageNumber``: current page number -
-     ``totalPages``: total pages in the document.
-     For example, ``<span class=title></span>`` would generate span
+     values into them: - `date`: formatted print date -
+     `title`: document title - `url`: document location -
+     `pageNumber`: current page number -
+     `totalPages`: total pages in the document.
+     For example, `<span class=title></span>` would generate span
      containing the title.
     :param footer_template: *(Optional)*
      HTML template for the print footer.
-     Should use the same format as the ``headerTemplate``.
+     Should use the same format as the `headerTemplate`.
     :param prefer_css_page_size: *(Optional)*
      Whether or not to prefer page size as defined by css.
      Defaults to false,
@@ -2704,7 +2717,7 @@ def print_to_pdf(
      Whether or not to embed the document outline into the PDF.
     :returns: A tuple with the following items:
         0. **data** - Base64-encoded pdf data.
-        Empty if `` returnAsStream` is specified.
+        Empty if `returnAsStream` is specified.
         (Encoded as a base64 string when passed over JSON)
         1. **stream** - *(Optional)*
         A handle of the stream that holds resulting PDF data.
@@ -2813,7 +2826,6 @@ def screencast_frame_ack(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Acknowledges that a screencast frame has been received by the frontend.
-    **EXPERIMENTAL**
     :param session_id: Frame number.
     """
     params: T_JSON_DICT = dict()
@@ -2836,7 +2848,6 @@ def search_in_resource(
 ]:
     """
     Searches for given string in resource content.
-    **EXPERIMENTAL**
     :param frame_id: Frame id for resource to search in.
     :param url: URL of the resource to search in.
     :param query: String to search for.
@@ -2865,7 +2876,6 @@ def set_ad_blocking_enabled(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Enable Chrome's experimental ad filter on all sites.
-    **EXPERIMENTAL**
     :param enabled: Whether to block ads.
     """
     params: T_JSON_DICT = dict()
@@ -2900,7 +2910,6 @@ def get_permissions_policy_state(
 ]:
     """
     Get Permissions Policy state on given frame.
-    **EXPERIMENTAL**
     :param frame_id:
     """
     params: T_JSON_DICT = dict()
@@ -2918,7 +2927,6 @@ def get_origin_trials(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, typing.List[OriginTrial]]:
     """
     Get Origin Trials on given frame.
-    **EXPERIMENTAL**
     :param frame_id:
     """
     params: T_JSON_DICT = dict()
@@ -2937,7 +2945,6 @@ def set_font_families(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Set generic font families.
-    **EXPERIMENTAL**
     :param font_families: Specifies font families to set.
      If a font family is not specified, it won't be changed.
     :param for_scripts: *(Optional)*
@@ -2959,7 +2966,6 @@ def set_font_sizes(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Set default font sizes.
-    **EXPERIMENTAL**
     :param font_sizes: Specifies font sizes to set.
     If a font size is not specified, it won't be changed.
     """
@@ -3014,8 +3020,7 @@ def start_screencast(
     every_nth_frame: typing.Optional[int] = None,
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
-    Starts sending each frame using the ``screencastFrame`` event.
-    **EXPERIMENTAL**
+    Starts sending each frame using the `screencastFrame` event.
     :param format_: *(Optional)* Image compression format.
     :param quality: *(Optional)* Compression quality from range [0..100].
     :param max_width: *(Optional)* Maximum screenshot width.
@@ -3051,7 +3056,6 @@ def stop_loading() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
 def crash() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Crashes renderer on the IO thread, generates minidumps.
-    **EXPERIMENTAL**
     """
     cmd_dict: T_JSON_DICT = {
         "method": "Page.crash",
@@ -3074,7 +3078,6 @@ def set_web_lifecycle_state(
     Tries to update the web lifecycle state of the page.
     It will transition the page to the given state according to:
     https://github.com/WICG/web-lifecycle/
-    **EXPERIMENTAL**
     :param state: Target lifecycle state
     """
     params: T_JSON_DICT = dict()
@@ -3088,8 +3091,7 @@ def set_web_lifecycle_state(
 
 def stop_screencast() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
-    Stops sending each frame in the ``screencastFrame``.
-    **EXPERIMENTAL**
+    Stops sending each frame in the `screencastFrame`.
     """
     cmd_dict: T_JSON_DICT = {
         "method": "Page.stopScreencast",
@@ -3102,11 +3104,11 @@ def produce_compilation_cache(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Requests backend to produce compilation cache for the specified scripts.
-    ``scripts`` are appended to the list of scripts for which the cache
+    `scripts` are appended to the list of scripts for which the cache
     would be produced. The list may be reset during page navigation.
     When script with a matching URL is encountered, the cache is optionally
     produced upon backend discretion, based on internal heuristics.
-    See also: ``Page.compilationCacheProduced``.
+    See also: `Page.compilationCacheProduced`.
     **EXPERIMENTAL**
     :param scripts:
     """
@@ -3125,7 +3127,6 @@ def add_compilation_cache(
     """
     Seeds compilation cache for given url.
     Compilation cache does not survive cross-process navigation.
-    **EXPERIMENTAL**
     :param url:
     :param data: Base64-encoded data
      (Encoded as a base64 string when passed over JSON)
@@ -3143,10 +3144,7 @@ def add_compilation_cache(
 def clear_compilation_cache() -> (
     typing.Generator[T_JSON_DICT, T_JSON_DICT, None]
 ):
-    """
-    Clears seeded compilation cache.
-    **EXPERIMENTAL**
-    """
+    """Clears seeded compilation cache."""
     cmd_dict: T_JSON_DICT = {
         "method": "Page.clearCompilationCache",
     }
@@ -3160,7 +3158,6 @@ def set_spc_transaction_mode(
     Sets the Secure Payment Confirmation transaction mode.
     https://w3c.github.io/secure-payment-confirmation
     /#sctn-automation-set-spc-transaction-mode
-    **EXPERIMENTAL**
     :param mode:
     """
     params: T_JSON_DICT = dict()
@@ -3178,7 +3175,6 @@ def set_rph_registration_mode(
     """
     Extensions for Custom Handlers API:
     https://html.spec.whatwg.org/multipage/system-state.html#rph-automation
-    **EXPERIMENTAL**
     :param mode:
     """
     params: T_JSON_DICT = dict()
@@ -3215,7 +3211,6 @@ def wait_for_debugger() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Pauses page execution.
     Can be resumed using generic Runtime.runIfWaitingForDebugger.
-    **EXPERIMENTAL**
     """
     cmd_dict: T_JSON_DICT = {
         "method": "Page.waitForDebugger",
@@ -3230,7 +3225,7 @@ def set_intercept_file_chooser_dialog(
     Intercept file chooser requests and transfer control to protocol clients.
     When file chooser interception is enabled,
     native file chooser dialog is not shown.
-    Instead, a protocol event ``Page.fileChooserOpened`` is emitted.
+    Instead, a protocol event `Page.fileChooserOpened` is emitted.
     :param enabled:
     """
     params: T_JSON_DICT = dict()
@@ -3247,7 +3242,6 @@ def set_prerendering_allowed(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Enable/disable prerendering manually.
-    **EXPERIMENTAL**
     :param is_allowed:
     """
     params: T_JSON_DICT = dict()
@@ -3274,15 +3268,14 @@ class DomContentEventFired:
 @event_class("Page.fileChooserOpened")
 @dataclass
 class FileChooserOpened:
-    """Emitted only when ``page.interceptFileChooser`` is enabled."""
-
+    """Emitted only when `page.interceptFileChooser` is enabled."""
     #: Id of the frame containing input node.
     frame_id: FrameId
     #: Input mode.
     mode: str
     #: Input node id.
     #: Only present for file choosers opened
-    #: via an ``<input type="file">`` element.
+    #: via an `<input type="file">` element.
     backend_node_id: typing.Optional[dom.BackendNodeId]
 
     @classmethod
@@ -3302,7 +3295,6 @@ class FileChooserOpened:
 @dataclass
 class FrameAttached:
     """Fired when frame has been attached to its parent."""
-
     #: Id of the frame that has been attached.
     frame_id: FrameId
     #: Parent frame identifier.
@@ -3328,7 +3320,6 @@ class FrameAttached:
 @dataclass
 class FrameClearedScheduledNavigation:
     """Fired when frame no longer has a scheduled navigation."""
-
     #: Id of the frame that has cleared its scheduled navigation.
     frame_id: FrameId
 
@@ -3376,10 +3367,7 @@ class FrameNavigated:
 @event_class("Page.documentOpened")
 @dataclass
 class DocumentOpened:
-    """
-    **EXPERIMENTAL**
-    Fired when opening document to write to.
-    """
+    """Fired when opening document to write to."""
     #: Frame object.
     frame: Frame
 
@@ -3391,9 +3379,7 @@ class DocumentOpened:
 @event_class("Page.frameResized")
 @dataclass
 class FrameResized:
-    """
-    **EXPERIMENTAL**
-    """
+    """**EXPERIMENTAL**"""
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> FrameResized:
         return cls()
@@ -3403,7 +3389,6 @@ class FrameResized:
 @dataclass
 class FrameRequestedNavigation:
     """
-    **EXPERIMENTAL**
     Fired when a renderer-initiated navigation is requested.
     Navigation may still be cancelled after the event is issued.
     """
@@ -3432,7 +3417,6 @@ class FrameRequestedNavigation:
 @dataclass
 class FrameScheduledNavigation:
     """Fired when frame schedules a potential navigation."""
-
     #: Id of the frame that has scheduled a navigation.
     frame_id: FrameId
     #: Delay (in seconds) until the navigation is scheduled to begin.
@@ -3456,10 +3440,7 @@ class FrameScheduledNavigation:
 @event_class("Page.frameStartedLoading")
 @dataclass
 class FrameStartedLoading:
-    """
-    **EXPERIMENTAL**
-    Fired when frame has started loading.
-    """
+    """Fired when frame has started loading."""
     #: Id of the frame that has started loading.
     frame_id: FrameId
 
@@ -3471,10 +3452,7 @@ class FrameStartedLoading:
 @event_class("Page.frameStoppedLoading")
 @dataclass
 class FrameStoppedLoading:
-    """
-    **EXPERIMENTAL**
-    Fired when frame has stopped loading.
-    """
+    """Fired when frame has stopped loading."""
     #: Id of the frame that has stopped loading.
     frame_id: FrameId
 
@@ -3588,7 +3566,6 @@ class LifecycleEvent:
 @dataclass
 class BackForwardCacheNotUsed:
     """
-    **EXPERIMENTAL**
     Fired for failed bfcache history navigations if BackForwardCache feature
     is enabled. Do not assume any ordering with the Page.frameNavigated event.
     This event is fired only for main-frame history navigation where the
@@ -3645,7 +3622,6 @@ class LoadEventFired:
 @dataclass
 class NavigatedWithinDocument:
     """
-    **EXPERIMENTAL**
     Fired when same-document navigation happens,
     e.g. due to history API usage or anchor navigation.
     """
@@ -3664,10 +3640,7 @@ class NavigatedWithinDocument:
 @event_class("Page.screencastFrame")
 @dataclass
 class ScreencastFrame:
-    """
-    **EXPERIMENTAL**
-    Compressed image data requested by the ``startScreencast``.
-    """
+    """Compressed image data requested by the `startScreencast`."""
     #: Base64-encoded compressed image.
     #: (Encoded as a base64 string when passed over JSON)
     data: str
@@ -3689,7 +3662,6 @@ class ScreencastFrame:
 @dataclass
 class ScreencastVisibilityChanged:
     """
-    **EXPERIMENTAL**
     Fired when the page with currently enabled screencast was shown or hidden.
     """
     #: True if the page is visible.
@@ -3730,7 +3702,6 @@ class WindowOpen:
 @dataclass
 class CompilationCacheProduced:
     """
-    **EXPERIMENTAL**
     Issued for every compilation cache generated. Is only available
     if Page.setGenerateCompilationCache is enabled.
     """

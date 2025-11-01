@@ -36,20 +36,20 @@ class RuleSet:
     #: Identifies a document which the rule set is associated with.
     loader_id: network.LoaderId
     #: Source text of JSON representing the rule set. If it comes from
-    #: ``<script>`` tag, it is the textContent of the node. Note that it is
+    #: `<script>` tag, it is the textContent of the node. Note that it is
     #: a JSON for valid case.
     source_text: str
     #: A speculation rule set is either added through an inline
-    #: ``<script>`` tag or through an external resource via the
+    #: `<script>` tag or through an external resource via the
     #: 'Speculation-Rules' HTTP header. For the first case, we include
-    #: the BackendNodeId of the relevant ``<script>`` tag. For the second
+    #: the BackendNodeId of the relevant `<script>` tag. For the second
     #: case, we include the external URL where the rule set was loaded
     #: from, and also RequestId if Network domain is enabled.
     backend_node_id: typing.Optional[dom.BackendNodeId] = None
     url: typing.Optional[str] = None
     request_id: typing.Optional[network.RequestId] = None
     #: Error information
-    #: ``errorMessage`` is null iff ``errorType`` is null.
+    #: `errorMessage` is null if `errorType` is null.
     error_type: typing.Optional[RuleSetErrorType] = None
     error_message: typing.Optional[str] = None
 
@@ -105,6 +105,7 @@ class RuleSet:
 class RuleSetErrorType(enum.Enum):
     SOURCE_IS_NOT_JSON_OBJECT = "SourceIsNotJsonObject"
     INVALID_RULES_SKIPPED = "InvalidRulesSkipped"
+    INVALID_RULESET_LEVEL_TAG = "InvalidRulesetLevelTag"
 
     def to_json(self) -> str:
         return self.value
@@ -325,6 +326,13 @@ class PrerenderFinalStatus(enum.Enum):
     JAVA_SCRIPT_INTERFACE_ADDED = "JavaScriptInterfaceAdded"
     JAVA_SCRIPT_INTERFACE_REMOVED = "JavaScriptInterfaceRemoved"
     ALL_PRERENDERING_CANCELED = "AllPrerenderingCanceled"
+    WINDOW_CLOSED = "WindowClosed"
+    SLOW_NETWORK = "SlowNetwork"
+    OTHER_PRERENDERED_PAGE_ACTIVATED = "OtherPrerenderedPageActivated"
+    V8_OPTIMIZER_DISABLED = "V8OptimizerDisabled"
+    PRERENDER_FAILED_DURING_PREFETCH = "PrerenderFailedDuringPrefetch"
+    BROWSING_DATA_REMOVED = "BrowsingDataRemoved"
+    PRERENDER_HOST_REUSED = "PrerenderHostReused"
 
     def to_json(self) -> str:
         return self.value

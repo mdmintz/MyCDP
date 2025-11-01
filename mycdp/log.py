@@ -147,7 +147,7 @@ def disable() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
 def enable() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Enables log domain, sends the entries collected so far
-    to the client by means of the ``entryAdded`` notification.
+    to the client by means of the `entryAdded` notification.
     """
     cmd_dict: T_JSON_DICT = {
         "method": "Log.enable",

@@ -83,7 +83,7 @@ def disable() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
 def enable() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Enables console domain, sends the messages collected so far
-    to the client by means of the ``messageAdded`` notification.
+    to the client by means of the `messageAdded` notification.
     """
     cmd_dict: T_JSON_DICT = {
         "method": "Console.enable",

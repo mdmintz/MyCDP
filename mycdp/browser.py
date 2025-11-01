@@ -312,13 +312,12 @@ def set_permission(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Set permission settings for given origin.
-    **EXPERIMENTAL**
     :param permission: Descriptor of permission to override.
     :param setting: Setting of the permission.
     :param origin: *(Optional)* Origin the permission applies to,
      all origins if not specified.
     :param browser_context_id: *(Optional)* Context to override.
-    When omitted, default browser context is used.
+     When omitted, default browser context is used.
     """
     params: T_JSON_DICT = dict()
     try:
@@ -350,7 +349,6 @@ def grant_permissions(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Grant specific permissions to the given origin and reject all others.
-    **EXPERIMENTAL**
     :param permissions:
     :param origin: *(Optional)* Origin the permission applies to,
      all origins if not specified.
@@ -382,7 +380,7 @@ def reset_permissions(
     """
     Reset all permission management for all origins.
     :param browser_context_id: *(Optional)* BrowserContext
-    to reset permissions. When omitted, default browser context is used.
+     to reset permissions. When omitted, default browser context is used.
     """
     params: T_JSON_DICT = dict()
     if browser_context_id is not None:
@@ -405,10 +403,9 @@ def set_download_behavior(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Set the behavior when downloading a file.
-    **EXPERIMENTAL**
     :param behavior: Whether to allow all or deny all download requests,
      or use default Chrome behavior if available (otherwise deny).
-     ``allowAndName`` allows download and names files
+     `allowAndName` allows download and names files
      according to their download guids.
     :param browser_context_id: *(Optional)*
      BrowserContext to set download behavior.
@@ -442,7 +439,6 @@ def cancel_download(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Cancel a download if in progress.
-    **EXPERIMENTAL**
     :param guid: Global unique identifier of the download.
     :param browser_context_id: *(Optional)*
      BrowserContext to perform the action in.
@@ -471,10 +467,7 @@ def close() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
 
 
 def crash() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
-    """
-    Crashes browser on the main thread.
-    **EXPERIMENTAL**
-    """
+    """Crashes browser on the main thread."""
     cmd_dict: T_JSON_DICT = {
         "method": "Browser.crash",
     }
@@ -482,10 +475,7 @@ def crash() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
 
 
 def crash_gpu_process() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
-    """
-    Crashes GPU process.
-    **EXPERIMENTAL**
-    """
+    """Crashes GPU process."""
     cmd_dict: T_JSON_DICT = {
         "method": "Browser.crashGpuProcess",
     }
@@ -540,7 +530,6 @@ def get_histograms(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, typing.List[Histogram]]:
     """
     Get Chrome histograms.
-    **EXPERIMENTAL**
     :param query: *(Optional)* Requested substring in name.
      Only histograms which have query as a substring in their name
      are extracted. An empty or absent query returns all histograms.
@@ -590,8 +579,8 @@ def get_window_bounds(
     **EXPERIMENTAL**
     :param window_id: Browser window id.
     :returns: Bounds information of the window.
-    When window state is 'minimized',
-    the restored window position and size are returned.
+     When window state is 'minimized',
+     the restored window position and size are returned.
     """
     params: T_JSON_DICT = dict()
     try:
@@ -613,7 +602,6 @@ def get_window_for_target(
 ]:
     """
     Get the browser window that contains the devtools target.
-    **EXPERIMENTAL**
     :param target_id: *(Optional)* Devtools agent host id.
      If called as a part of the session, associated targetId is used.
     :returns: A tuple with the following items:
@@ -644,12 +632,11 @@ def set_window_bounds(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Set position and/or size of the browser window.
-    **EXPERIMENTAL**
     :param window_id: Browser window id.
     :param bounds: New window bounds.
-    The 'minimized', 'maximized' and 'fullscreen' states
-    cannot be combined with 'left', 'top', 'width' or 'height'.
-    Leaves unspecified fields unchanged.
+     The 'minimized', 'maximized' and 'fullscreen' states
+     cannot be combined with 'left', 'top', 'width' or 'height'.
+     Leaves unspecified fields unchanged.
     """
     params: T_JSON_DICT = dict()
     try:
@@ -673,10 +660,9 @@ def set_dock_tile(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Set dock tile details, platform-specific.
-    **EXPERIMENTAL**
     :param badge_label: *(Optional)*
     :param image: *(Optional)* Png encoded image.
-    (Encoded as a base64 string when passed over JSON)
+     (Encoded as a base64 string when passed over JSON)
     """
     params: T_JSON_DICT = dict()
     if badge_label is not None:
@@ -695,7 +681,6 @@ def execute_browser_command(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Invoke custom browser commands used by telemetry.
-    **EXPERIMENTAL**
     :param command_id:
     """
     params: T_JSON_DICT = dict()
@@ -730,10 +715,7 @@ def add_privacy_sandbox_enrollment_override(
 @event_class("Browser.downloadWillBegin")
 @dataclass
 class DownloadWillBegin:
-    """
-    **EXPERIMENTAL**
-    Fired when page is about to start a download.
-    """
+    """Fired when page is about to start a download."""
     #: Id of the frame that caused the download to begin.
     frame_id: page.FrameId
     #: Global unique identifier of the download.
@@ -758,8 +740,7 @@ class DownloadWillBegin:
 @dataclass
 class DownloadProgress:
     """
-    **EXPERIMENTAL**
-    Fired when download makes progress. Last call has ``done`` == true.
+    Fired when download makes progress. Last call has `done` == true.
     """
     #: Global unique identifier of the download.
     guid: str

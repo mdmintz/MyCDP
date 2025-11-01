@@ -48,9 +48,9 @@ class BackendNodeId(int):
 @dataclass
 class BackendNode:
     """Backend node with a friendly name."""
-    #: ``Node``'s nodeType.
+    #: `Node`'s nodeType.
     node_type: int
-    #: ``Node``'s nodeName.
+    #: `Node`'s nodeName.
     node_name: str
     backend_node_id: BackendNodeId
 
@@ -74,10 +74,14 @@ class PseudoType(enum.Enum):
     """Pseudo element type."""
     FIRST_LINE = "first-line"
     FIRST_LETTER = "first-letter"
+    CHECKMARK = "checkmark"
     BEFORE = "before"
     AFTER = "after"
+    PICKER_ICON = "picker-icon"
+    INTEREST_HINT = "interest-hint"
     MARKER = "marker"
     BACKDROP = "backdrop"
+    COLUMN = "column"
     SELECTION = "selection"
     SEARCH_TEXT = "search-text"
     TARGET_TEXT = "target-text"
@@ -87,6 +91,7 @@ class PseudoType(enum.Enum):
     FIRST_LINE_INHERITED = "first-line-inherited"
     SCROLL_MARKER = "scroll-marker"
     SCROLL_MARKER_GROUP = "scroll-marker-group"
+    SCROLL_BUTTON = "scroll-button"
     SCROLLBAR = "scrollbar"
     SCROLLBAR_THUMB = "scrollbar-thumb"
     SCROLLBAR_BUTTON = "scrollbar-button"
@@ -98,8 +103,14 @@ class PseudoType(enum.Enum):
     VIEW_TRANSITION = "view-transition"
     VIEW_TRANSITION_GROUP = "view-transition-group"
     VIEW_TRANSITION_IMAGE_PAIR = "view-transition-image-pair"
+    VIEW_TRANSITION_GROUP_CHILDREN = "view-transition-group-children"
     VIEW_TRANSITION_OLD = "view-transition-old"
     VIEW_TRANSITION_NEW = "view-transition-new"
+    PLACEHOLDER = "placeholder"
+    FILE_SELECTOR_BUTTON = "file-selector-button"
+    DETAILS_CONTENT = "details-content"
+    PICKER = "picker"
+    PERMISSION_ICON = "permission-icon"
 
     def to_json(self) -> str:
         return self.value
@@ -186,44 +197,44 @@ class Node:
     DOMNode is a base node mirror type.
     """
     #: Node identifier that is passed into the rest of the DOM messages
-    #: as the ``nodeId``. Backend will only push node with given ``id`` once.
+    #: as the `nodeId`. Backend will only push node with given `id` once.
     #: It is aware of all requested nodes and will only
     #: fire DOM events for nodes known to the client.
     node_id: NodeId
     #: The BackendNodeId for this node.
     backend_node_id: BackendNodeId
-    #: ``Node``'s nodeType.
+    #: `Node`'s nodeType.
     node_type: int
-    #: ``Node``'s nodeName.
+    #: `Node`'s nodeName.
     node_name: str
-    #: ``Node``'s localName.
+    #: `Node`'s localName.
     local_name: str
-    #: ``Node``'s nodeValue.
+    #: `Node`'s nodeValue.
     node_value: str
     #: The id of the parent node if any.
     parent_id: typing.Optional[NodeId] = None
-    #: Child count for ``Container`` nodes.
+    #: Child count for `Container` nodes.
     child_node_count: typing.Optional[int] = None
     #: Child nodes of this node when requested with children.
     children: typing.Optional[typing.List[Node]] = None
-    #: Attributes of the ``Element`` node in the form
-    #: of flat array ``[name1, value1, name2, value2]``.
+    #: Attributes of the `Element` node in the form
+    #: of flat array `[name1, value1, name2, value2]`.
     attributes: typing.Optional[typing.List[str]] = None
-    #: Document URL that ``Document`` or ``FrameOwner`` node points to.
+    #: Document URL that `Document` or `FrameOwner` node points to.
     document_url: typing.Optional[str] = None
     #: Base URL that `Document` or `FrameOwner` node uses for URL completion.
     base_url: typing.Optional[str] = None
-    #: ``DocumentType``'s publicId.
+    #: `DocumentType`'s publicId.
     public_id: typing.Optional[str] = None
-    #: ``DocumentType``'s systemId.
+    #: `DocumentType`'s systemId.
     system_id: typing.Optional[str] = None
-    #: ``DocumentType``'s internalSubset.
+    #: `DocumentType`'s internalSubset.
     internal_subset: typing.Optional[str] = None
-    #: ``Document``'s XML version in case of XML documents.
+    #: `Document`'s XML version in case of XML documents.
     xml_version: typing.Optional[str] = None
-    #: ``Attr``'s name.
+    #: `Attr`'s name.
     name: typing.Optional[str] = None
-    #: ``Attr``'s value.
+    #: `Attr`'s value.
     value: typing.Optional[str] = None
     #: Pseudo element type for this node.
     pseudo_type: typing.Optional[PseudoType] = None
@@ -654,11 +665,10 @@ def copy_to(
     """
     Creates a deep copy of the specified node and places it into the
     target container before the given anchor.
-    **EXPERIMENTAL**
     :param node_id: Id of the node to copy.
     :param target_node_id: Id of the element to drop the copy into.
     :param insert_before_node_id: *(Optional)* Drop the copy before this node
-     (if absent, the copy becomes the last child of ``targetNodeId``).
+     (if absent, the copy becomes the last child of `targetNodeId`).
     :returns: Id of the node clone.
     """
     params: T_JSON_DICT = dict()
@@ -762,8 +772,7 @@ def discard_search_results(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Discards search results from the session with the given id.
-    ``getSearchResults`` should no longer be called for that search.
-    **EXPERIMENTAL**
+    `getSearchResults` should no longer be called for that search.
     :param search_id: Unique search session identifier.
     """
     params: T_JSON_DICT = dict()
@@ -780,8 +789,8 @@ def enable(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Enables DOM agent for the given page.
-    :param include_whitespace: **(EXPERIMENTAL)** *(Optional)*
-    Whether to include whitespaces in the children array of returned Nodes.
+    :param include_whitespace: *(Optional)*
+     Whether to include whitespaces in the children array of returned Nodes.
     """
     params: T_JSON_DICT = dict()
     if include_whitespace is not None:
@@ -1031,12 +1040,14 @@ def get_outer_html(
     node_id: typing.Optional[NodeId] = None,
     backend_node_id: typing.Optional[BackendNodeId] = None,
     object_id: typing.Optional[runtime.RemoteObjectId] = None,
+    include_shadow_dom: typing.Optional[bool] = None,
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, str]:
     """
     Returns node's HTML markup.
     :param node_id: *(Optional)* Identifier of the node.
     :param backend_node_id: *(Optional)* Identifier of the backend node.
     :param object_id: *(Optional)* JavaScript object id of the node wrapper.
+    :param include_shadow_dom: *(Optional)* Include all shadow roots.
     :returns: Outer HTML markup.
     """
     params: T_JSON_DICT = dict()
@@ -1046,6 +1057,8 @@ def get_outer_html(
         params["backendNodeId"] = backend_node_id.to_json()
     if object_id is not None:
         params["objectId"] = object_id.to_json()
+    if include_shadow_dom is not None:
+        params["includeShadowDOM"] = include_shadow_dom
     cmd_dict: T_JSON_DICT = {
         "method": "DOM.getOuterHTML",
         "params": params,
@@ -1077,9 +1090,8 @@ def get_search_results(
     search_id: str, from_index: int, to_index: int
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, typing.List[NodeId]]:
     """
-    Returns search results from given ``fromIndex`` to given ``toIndex``
+    Returns search results from given `fromIndex` to given `toIndex`
     from the search with the given identifier.
-    **EXPERIMENTAL**
     :param search_id: Unique search session identifier.
     :param from_index: Start index of the search result to be returned.
     :param to_index: End index of the search result to be returned.
@@ -1122,10 +1134,7 @@ def highlight_rect() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
 
 
 def mark_undoable_state() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
-    """
-    Marks last undoable state.
-    **EXPERIMENTAL**
-    """
+    """Marks last undoable state."""
     cmd_dict: T_JSON_DICT = {
         "method": "DOM.markUndoableState",
     }
@@ -1142,7 +1151,7 @@ def move_to(
     :param node_id: Id of the node to move.
     :param target_node_id: Id of the element to drop the moved node into.
     :param insert_before_node_id: *(Optional)* Drop node before this one
-     (if absent, the moved node becomes the last child of ``targetNodeId``).
+     (if absent, the moved node becomes the last child of `targetNodeId`).
     :returns: New id of the moved node.
     """
     params: T_JSON_DICT = dict()
@@ -1163,9 +1172,8 @@ def perform_search(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, typing.Tuple[str, int]]:
     """
     Searches for a given string in the DOM tree.
-    Use ``getSearchResults`` to access search results
-    or ``cancelSearch`` to end this search session.
-    **EXPERIMENTAL**
+    Use `getSearchResults` to access search results
+    or `cancelSearch` to end this search session.
     :param query: Plain text or query selector or XPath search query.
     :param include_user_agent_shadow_dom: *(Optional)*
      True to search in user agent shadow DOM.
@@ -1190,7 +1198,6 @@ def push_node_by_path_to_frontend(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, NodeId]:
     """
     Requests that the node is sent to the caller given its path.
-    **EXPERIMENTAL**
     :param path: Path to node in the proprietary format.
     :returns: Id of the node for given path.
     """
@@ -1210,7 +1217,6 @@ def push_nodes_by_backend_ids_to_frontend(
     """
     Requests that a batch of nodes is sent to the caller
     given their backend node ids.
-    **EXPERIMENTAL**
     :param backend_node_ids: The array of backend node ids.
     :returns: The array of ids of pushed nodes that correspond
     to the backend ids specified in backendNodeIds.
@@ -1229,7 +1235,7 @@ def query_selector(
     node_id: NodeId, selector: str
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, NodeId]:
     """
-    Executes ``querySelector`` on a given node.
+    Executes `querySelector` on a given node.
     :param node_id: Id of the node to query upon.
     :param selector: Selector string.
     :returns: Query selector result.
@@ -1249,7 +1255,7 @@ def query_selector_all(
     node_id: NodeId, selector: str
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, typing.List[NodeId]]:
     """
-    Executes ``querySelectorAll`` on a given node.
+    Executes `querySelectorAll` on a given node.
     :param node_id: Id of the node to query upon.
     :param selector: Selector string.
     :returns: Query selector result.
@@ -1272,7 +1278,6 @@ def get_top_layer_elements() -> (
     Returns NodeIds of current top layer elements.
     Top layer is rendered closest to the user within a viewport,
     therefore its elements always appear on top of all other content.
-    **EXPERIMENTAL**
     :returns: NodeIds of top layer elements
     """
     cmd_dict: T_JSON_DICT = {
@@ -1287,7 +1292,6 @@ def get_element_by_relation(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, NodeId]:
     """
     Returns the NodeId of the matched element according to certain relations.
-    **EXPERIMENTAL**
     :param node_id: Id of the node from which to query the relation.
     :param relation: Type of relation to get.
     :returns: NodeId of the element matching the queried relation.
@@ -1304,10 +1308,7 @@ def get_element_by_relation(
 
 
 def redo() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
-    """
-    Re-does the last undone action.
-    **EXPERIMENTAL**
-    """
+    """Re-does the last undone action."""
     cmd_dict: T_JSON_DICT = {
         "method": "DOM.redo",
     }
@@ -1355,7 +1356,7 @@ def request_child_nodes(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Requests that children of the node with given id are returned to the caller
-    in form of ``setChildNodes`` events where not only immediate children are
+    in form of `setChildNodes` events where not only immediate children are
     retrieved, but all children down to the specified depth.
     :param node_id: Id of the node to get children for.
     :param depth: *(Optional)*
@@ -1510,8 +1511,7 @@ def set_node_stack_traces_enabled(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Sets if stack traces should be captured for Nodes.
-    See ``Node.getNodeStackTraces``. Default is disabled.
-    **EXPERIMENTAL**
+    See `Node.getNodeStackTraces`. Default is disabled.
     :param enable: Enable or disable.
     """
     params: T_JSON_DICT = dict()
@@ -1531,7 +1531,6 @@ def get_node_stack_traces(
     """
     Gets stack traces associated with a Node.
     As of now, only provides stack trace for Node creation.
-    **EXPERIMENTAL**
     :param node_id: Id of the node to get stack traces for.
     :returns: *(Optional)* Creation stack trace, if available.
     """
@@ -1553,9 +1552,7 @@ def get_file_info(
     object_id: runtime.RemoteObjectId,
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, str]:
     """
-    Returns file information for the given
-    File wrapper.
-    **EXPERIMENTAL**
+    Returns file information for the given file wrapper.
     :param object_id: JavaScript object id of the node wrapper.
     """
     params: T_JSON_DICT = dict()
@@ -1574,9 +1571,8 @@ def set_inspected_node(
     """
     Enables console to refer to the node with given id via $x
     (see Command Line API for more details $x functions).
-    **EXPERIMENTAL**
     :param node_id:
-    DOM node id to be accessible by means of $x command line API.
+     DOM node id to be accessible by means of $x command line API.
     """
     params: T_JSON_DICT = dict()
     params["nodeId"] = node_id.to_json()
@@ -1644,10 +1640,7 @@ def set_outer_html(
 
 
 def undo() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
-    """
-    Undoes the last performed action.
-    **EXPERIMENTAL**
-    """
+    """Undoes the last performed action."""
     cmd_dict: T_JSON_DICT = {
         "method": "DOM.undo",
     }
@@ -1663,7 +1656,6 @@ def get_frame_owner(
 ]:
     """
     Returns iframe node that owns iframe with the given domain.
-    **EXPERIMENTAL**
     :param frame_id:
     :returns: A tuple with the following items:
         0. **backendNodeId** - Resulting node.
@@ -1693,18 +1685,21 @@ def get_container_for_node(
     container_name: typing.Optional[str] = None,
     physical_axes: typing.Optional[PhysicalAxes] = None,
     logical_axes: typing.Optional[LogicalAxes] = None,
+    queries_scroll_state: typing.Optional[bool] = None,
+    queries_anchored: typing.Optional[bool] = None,
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, typing.Optional[NodeId]]:
     """
     Returns the query container of the given node based on container query
-    conditions: containerName, physical, and logical axes. If no axes are
-    provided, the style container is returned,
-    which is the direct parent or the closest element
-    with a matching container-name.
-    **EXPERIMENTAL**
+    conditions: containerName, physical and logical axes, and whether
+    it queries scroll-state or anchored elements. If no axes are provided and
+    queriesScrollState is False, the style container is returned, which is the
+    direct parent or the closest element with a matching container-name.
     :param node_id:
     :param container_name: *(Optional)*
     :param physical_axes: *(Optional)*
     :param logical_axes: *(Optional)*
+    :param queries_scroll_state: *(Optional)*
+    :param queries_anchored: *(Optional)*
     :returns: The container node for the given node, or null if not found.
     """
     params: T_JSON_DICT = dict()
@@ -1715,14 +1710,18 @@ def get_container_for_node(
         params["physicalAxes"] = physical_axes.to_json()
     if logical_axes is not None:
         params["logicalAxes"] = logical_axes.to_json()
+    if queries_scroll_state is not None:
+        params["queriesScrollState"] = queries_scroll_state
+    if queries_anchored is not None:
+        params["queriesAnchored"] = queries_anchored
     cmd_dict: T_JSON_DICT = {
         "method": "DOM.getContainerForNode",
         "params": params,
     }
     json = yield cmd_dict
     return (
-        NodeId.from_json(json["nodeId"])
-        if json.get("nodeId", None) is not None
+        NodeId.from_json(json['nodeId'])
+        if json.get('nodeId', None) is not None
         else None
     )
 
@@ -1733,7 +1732,6 @@ def get_querying_descendants_for_container(
     """
     Returns the descendants of a container query container that have
     container queries against this container.
-    **EXPERIMENTAL**
     :param node_id: Id of the container node to find querying descendants from.
     :returns: Descendant nodes with container queries
      against the given container.
@@ -1754,12 +1752,11 @@ def get_anchor_element(
     """
     Returns the target anchor element of the given anchor query according to
     https://www.w3.org/TR/css-anchor-position-1/#target.
-    **EXPERIMENTAL**
     :param node_id: Id of the positioned element from which to find the anchor.
     :param anchor_specifier: *(Optional)*
      An optional anchor specifier, as defined in
      https://www.w3.org/TR/css-anchor-position-1/#anchor-specifier.
-    If not provided, it will return the implicit anchor element for the given
+     If not provided, it will return the implicit anchor element for the given
      positioned element.
     :returns: The anchor element of the given anchor query.
     """
@@ -1775,10 +1772,34 @@ def get_anchor_element(
     return NodeId.from_json(json["nodeId"])
 
 
+def force_show_popover(
+    node_id: NodeId,
+    enable: bool,
+) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, typing.List[NodeId]]:
+    """
+    When enabling, this API force-opens the popover identified by nodeId
+    and keeps it open until disabled.
+    :param node_id: The id of the popover HTMLElement.
+    :param enable: If true, opens the popover and keeps it open.
+     If False, closes the popover if it was previously force-opened.
+    :returns: List of popovers that were closed
+     in order to respect popover stacking order.
+    """
+    params: T_JSON_DICT = dict()
+    params["nodeId"] = node_id.to_json()
+    params["enable"] = enable
+    cmd_dict: T_JSON_DICT = {
+        "method": "DOM.forceShowPopover",
+        "params": params,
+    }
+    json = yield cmd_dict
+    return [NodeId.from_json(i) for i in json["nodeIds"]]
+
+
 @event_class("DOM.attributeModified")
 @dataclass
 class AttributeModified:
-    """Fired when ``Element``'s attribute is modified."""
+    """Fired when `Element`'s attribute is modified."""
     #: Id of the node that has changed.
     node_id: NodeId
     #: Attribute name.
@@ -1798,7 +1819,7 @@ class AttributeModified:
 @event_class("DOM.attributeRemoved")
 @dataclass
 class AttributeRemoved:
-    """Fired when ``Element``'s attribute is removed."""
+    """Fired when `Element`'s attribute is removed."""
     #: Id of the node that has changed.
     node_id: NodeId
     #: A ttribute name.
@@ -1814,7 +1835,7 @@ class AttributeRemoved:
 @event_class("DOM.characterDataModified")
 @dataclass
 class CharacterDataModified:
-    """Mirrors ``DOMCharacterDataModified`` event."""
+    """Mirrors `DOMCharacterDataModified` event."""
     #: Id of the node that has changed.
     node_id: NodeId
     #: New text value.
@@ -1831,7 +1852,7 @@ class CharacterDataModified:
 @event_class("DOM.childNodeCountUpdated")
 @dataclass
 class ChildNodeCountUpdated:
-    """Fired when ``Container``'s child node count has changed."""
+    """Fired when `Container`'s child node count has changed."""
     #: Id of the node that has changed.
     node_id: NodeId
     #: New node count.
@@ -1848,7 +1869,7 @@ class ChildNodeCountUpdated:
 @event_class("DOM.childNodeInserted")
 @dataclass
 class ChildNodeInserted:
-    """Mirrors ``DOMNodeInserted`` event."""
+    """Mirrors `DOMNodeInserted` event."""
     #: Id of the node that has changed.
     parent_node_id: NodeId
     #: Id of the previous sibling.
@@ -1868,7 +1889,7 @@ class ChildNodeInserted:
 @event_class("DOM.childNodeRemoved")
 @dataclass
 class ChildNodeRemoved:
-    """Mirrors ``DOMNodeRemoved`` event."""
+    """Mirrors `DOMNodeRemoved` event."""
     #: Parent id.
     parent_node_id: NodeId
     #: Id of the node that has been removed.
@@ -1885,10 +1906,7 @@ class ChildNodeRemoved:
 @event_class("DOM.distributedNodesUpdated")
 @dataclass
 class DistributedNodesUpdated:
-    """
-    **EXPERIMENTAL**
-    Called when distribution is changed.
-    """
+    """Called when distribution is changed."""
     #: Insertion point where distributed nodes were updated.
     insertion_point_id: NodeId
     #: Distributed nodes for given insertion point.
@@ -1908,7 +1926,7 @@ class DistributedNodesUpdated:
 @dataclass
 class DocumentUpdated:
     """
-    Fired when ``Document`` has been totally updated.
+    Fired when `Document` has been totally updated.
     Node IDs are no longer valid.
     """
 
@@ -1921,8 +1939,7 @@ class DocumentUpdated:
 @dataclass
 class InlineStyleInvalidated:
     """
-    **EXPERIMENTAL**
-    Fired when ``Element``'s inline style is modified
+    Fired when `Element`'s inline style is modified
     via a CSS property modification.
     """
     #: Ids of the nodes for which the inline styles have been invalidated.
@@ -1936,10 +1953,7 @@ class InlineStyleInvalidated:
 @event_class("DOM.pseudoElementAdded")
 @dataclass
 class PseudoElementAdded:
-    """
-    **EXPERIMENTAL**
-    Called when a pseudo element is added to an element.
-    """
+    """Called when a pseudo element is added to an element."""
     #: Pseudo element's parent element id.
     parent_id: NodeId
     #: The added pseudo element.
@@ -1956,10 +1970,7 @@ class PseudoElementAdded:
 @event_class("DOM.topLayerElementsUpdated")
 @dataclass
 class TopLayerElementsUpdated:
-    """
-    **EXPERIMENTAL**
-    Called when top layer elements are changed.
-    """
+    """Called when top layer elements are changed."""
 
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> TopLayerElementsUpdated:
@@ -1969,10 +1980,7 @@ class TopLayerElementsUpdated:
 @event_class("DOM.pseudoElementRemoved")
 @dataclass
 class PseudoElementRemoved:
-    """
-    **EXPERIMENTAL**
-    Called when a pseudo element is removed from an element.
-    """
+    """Called when a pseudo element is removed from an element."""
     #: Pseudo element's parent element id.
     parent_id: NodeId
     #: The removed pseudo element id.
@@ -1989,10 +1997,7 @@ class PseudoElementRemoved:
 @event_class("DOM.scrollableFlagUpdated")
 @dataclass
 class ScrollableFlagUpdated:
-    """
-    **EXPERIMENTAL**
-    Called when a node's scrollability state changes.
-    """
+    """Called when a node's scrollability state changes."""
     #: Id of the node whose scrollability state changed
     node_id: NodeId
     #: Whether the item is scrollable
@@ -2029,10 +2034,7 @@ class SetChildNodes:
 @event_class("DOM.shadowRootPopped")
 @dataclass
 class ShadowRootPopped:
-    """
-    **EXPERIMENTAL**
-    Called when shadow root is popped from the element.
-    """
+    """Called when shadow root is popped from the element."""
     #: Host element id.
     host_id: NodeId
     #: Shadow root id.
@@ -2049,10 +2051,7 @@ class ShadowRootPopped:
 @event_class("DOM.shadowRootPushed")
 @dataclass
 class ShadowRootPushed:
-    """
-    **EXPERIMENTAL**
-    Called when shadow root is pushed into the element.
-    """
+    """Called when shadow root is pushed into the element."""
     #: Host element id.
     host_id: NodeId
     #: Shadow root.

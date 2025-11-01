@@ -44,13 +44,13 @@ class CSPViolationType(enum.Enum):
 @dataclass
 class EventListener:
     """Object event listener."""
-    #: ``EventListener``'s type.
+    #: `EventListener`'s type.
     type_: str
-    #: ``EventListener``'s useCapture.
+    #: `EventListener`'s useCapture.
     use_capture: bool
-    #: ``EventListener``'s passive flag.
+    #: `EventListener`'s passive flag.
     passive: bool
-    #: ``EventListener``'s once flag.
+    #: `EventListener`'s once flag.
     once: bool
     #: Script id of the handler code.
     script_id: runtime.ScriptId
@@ -146,7 +146,7 @@ def remove_dom_breakpoint(
     node_id: dom.NodeId, type_: DOMBreakpointType
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
-    Removes DOM breakpoint that was set using ``setDOMBreakpoint``.
+    Removes DOM breakpoint that was set using `setDOMBreakpoint`.
     :param node_id: Identifier of the node to remove breakpoint from.
     :param type_: Type of the breakpoint to remove.
     """
@@ -239,7 +239,7 @@ def set_event_listener_breakpoint(
     :param event_name: DOM Event name to stop on (any DOM event will do).
     :param target_name: **(EXPERIMENTAL)** *(Optional)*
     EventTarget interface name to stop on.
-    If equal to ```"*"``` or not provided, will stop on any EventTarget.
+    If equal to `"*"` or not provided, will stop on any EventTarget.
     """
     params: T_JSON_DICT = dict()
     params["eventName"] = event_name

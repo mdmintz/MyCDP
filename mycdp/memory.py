@@ -240,7 +240,7 @@ def get_sampling_profile() -> (
 ):
     """
     Retrieve native memory allocations profile collected since last
-    ``startSampling`` call.
+    `startSampling` call.
     """
     cmd_dict: T_JSON_DICT = {
         "method": "Memory.getSamplingProfile",

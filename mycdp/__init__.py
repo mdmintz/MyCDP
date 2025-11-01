@@ -4,11 +4,23 @@
 # changes, edit the generator and regenerate all of the modules.
 
 from . import (
-    dom,
-    dom_storage,
+    browser,
     cache_storage,
+    debugger,
+    dom,
+    dom_debugger,
+    dom_snapshot,
+    dom_storage,
+    emulation,
+    extensions,
     fetch,
+    io,
+    network,
+    page,
+    runtime,
+    security,
     storage,
+    system_info,
     target,
 )
 

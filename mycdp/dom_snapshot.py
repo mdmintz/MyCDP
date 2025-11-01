@@ -17,13 +17,13 @@ from . import page
 @dataclass
 class DOMNode:
     """A Node in the DOM tree."""
-    #: ``Node``'s nodeType.
+    #: `Node`'s nodeType.
     node_type: int
-    #: ``Node``'s nodeName.
+    #: `Node`'s nodeName.
     node_name: str
-    #: ``Node``'s nodeValue.
+    #: `Node`'s nodeValue.
     node_value: str
-    #: ``Node``'s id, corresponds to DOM.Node.backendNodeId.
+    #: `Node`'s id, corresponds to DOM.Node.backendNodeId.
     backend_node_id: dom.BackendNodeId
     #: Only set for textarea elements, contains the text value.
     text_value: typing.Optional[str] = None
@@ -36,18 +36,18 @@ class DOMNode:
     #: Only set for option elements,
     #: indicates if the element has been selected
     option_selected: typing.Optional[bool] = None
-    #: The indexes of the node's child nodes in the ``domNodes`` array
-    #: returned by ``getSnapshot``, if any.
+    #: The indexes of the node's child nodes in the `domNodes` array
+    #: returned by `getSnapshot`, if any.
     child_node_indexes: typing.Optional[typing.List[int]] = None
-    #: Attributes of an ``Element`` node.
+    #: Attributes of an `Element` node.
     attributes: typing.Optional[typing.List[NameValue]] = None
     #: Indexes of pseudo elements associated with this node
-    #: in the ``domNodes`` array returned by ``getSnapshot``, if any.
+    #: in the `domNodes` array returned by `getSnapshot`, if any.
     pseudo_element_indexes: typing.Optional[typing.List[int]] = None
     #: The index of the node's related layout tree node
-    #: in the ``layoutTreeNodes`` array returned by ``getSnapshot``, if any.
+    #: in the `layoutTreeNodes` array returned by `getSnapshot`, if any.
     layout_node_index: typing.Optional[int] = None
-    #: Document URL that ``Document`` or ``FrameOwner`` node points to.
+    #: Document URL that `Document` or `FrameOwner` node points to.
     document_url: typing.Optional[str] = None
     #: Base URL that `Document` or `FrameOwner` node uses for URL completion.
     base_url: typing.Optional[str] = None
@@ -55,14 +55,14 @@ class DOMNode:
     content_language: typing.Optional[str] = None
     #: Only set for documents, contains the document's character set encoding.
     document_encoding: typing.Optional[str] = None
-    #: ``DocumentType`` node's publicId.
+    #: `DocumentType` node's publicId.
     public_id: typing.Optional[str] = None
-    #: ``DocumentType`` node's systemId.
+    #: `DocumentType` node's systemId.
     system_id: typing.Optional[str] = None
     #: Frame ID for frame owner elements and also for the document node.
     frame_id: typing.Optional[page.FrameId] = None
     #: The index of a frame owner element's content document
-    #: in the ``domNodes`` array returned by ``getSnapshot``, if any.
+    #: in the `domNodes` array returned by `getSnapshot`, if any.
     content_document_index: typing.Optional[int] = None
     #: Type of a pseudo element node.
     pseudo_type: typing.Optional[dom.PseudoType] = None
@@ -317,8 +317,8 @@ class InlineTextBox:
 @dataclass
 class LayoutTreeNode:
     """Details of an element in the DOM tree with a LayoutObject."""
-    #: The index of the related DOM node in the ``domNodes`` array
-    #: returned by ``getSnapshot``.
+    #: The index of the related DOM node in the `domNodes` array
+    #: returned by `getSnapshot`.
     dom_node_index: int
     #: The bounding box in document coordinates.
     #: Note that scroll offset of the document is ignored.
@@ -327,7 +327,7 @@ class LayoutTreeNode:
     layout_text: typing.Optional[str] = None
     #: The post-layout inline text nodes, if any.
     inline_text_nodes: typing.Optional[typing.List[InlineTextBox]] = None
-    #: Index into the ``computedStyles`` array returned by ``getSnapshot``.
+    #: Index into the `computedStyles` array returned by `getSnapshot`.
     style_index: typing.Optional[int] = None
     #: Global paint order index, which is determined by the stacking order
     #: of the nodes. Nodes that are painted together will have the same index.
@@ -527,7 +527,7 @@ class Rectangle(list):
 @dataclass
 class DocumentSnapshot:
     """Document snapshot."""
-    #: Document URL that ``Document`` or ``FrameOwner`` node points to.
+    #: Document URL that `Document` or `FrameOwner` node points to.
     document_url: StringIndex
     #: Document title.
     title: StringIndex
@@ -537,9 +537,9 @@ class DocumentSnapshot:
     content_language: StringIndex
     #: Contains the document's character set encoding.
     encoding_name: StringIndex
-    #: ``DocumentType`` node's publicId.
+    #: `DocumentType` node's publicId.
     public_id: StringIndex
-    #: ``DocumentType`` node's systemId.
+    #: `DocumentType` node's systemId.
     system_id: StringIndex
     #: Frame ID for frame owner elements and also for the document node.
     frame_id: StringIndex
@@ -623,18 +623,18 @@ class NodeTreeSnapshot:
     """Table containing nodes."""
     #: Parent node index.
     parent_index: typing.Optional[typing.List[int]] = None
-    #: ``Node``'s nodeType.
+    #: `Node`'s nodeType.
     node_type: typing.Optional[typing.List[int]] = None
-    #: Type of the shadow root the ``Node`` is in.
-    #: String values are equal to the ``ShadowRootType`` enum.
+    #: Type of the shadow root the `Node` is in.
+    #: String values are equal to the `ShadowRootType` enum.
     shadow_root_type: typing.Optional[RareStringData] = None
-    #: ``Node``'s nodeName.
+    #: `Node`'s nodeName.
     node_name: typing.Optional[typing.List[StringIndex]] = None
-    #: ``Node``'s nodeValue.
+    #: `Node`'s nodeValue.
     node_value: typing.Optional[typing.List[StringIndex]] = None
-    #: ``Node``'s id, corresponds to DOM.Node.backendNodeId.
+    #: `Node`'s id, corresponds to DOM.Node.backendNodeId.
     backend_node_id: typing.Optional[typing.List[dom.BackendNodeId]] = None
-    #: Attributes of an ``Element`` node. Flatten name, value pairs.
+    #: Attributes of an `Element` node. Flatten name, value pairs.
     attributes: typing.Optional[typing.List[ArrayOfStrings]] = None
     #: Only set for textarea elements, contains the text value.
     text_value: typing.Optional[RareStringData] = None
@@ -796,12 +796,12 @@ class NodeTreeSnapshot:
 @dataclass
 class LayoutTreeSnapshot:
     """Table of details of an element in the DOM tree with a LayoutObject."""
-    #: Index of the corresponding node in the ``NodeTreeSnapshot``
-    #: array returned by ``captureSnapshot``.
+    #: Index of the corresponding node in the `NodeTreeSnapshot`
+    #: array returned by `captureSnapshot`.
     node_index: typing.List[int]
     #: Array of indexes specifying computed style strings,
-    #: filtered according to the ``computedStyles`` parameter
-    #: passed to ``captureSnapshot``.
+    #: filtered according to the `computedStyles` parameter
+    #: passed to `captureSnapshot`.
     styles: typing.List[ArrayOfStrings]
     #: The absolute position bounding box.
     bounds: typing.List[Rectangle]

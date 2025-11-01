@@ -29,15 +29,15 @@ class ScriptId(str):
 class SerializationOptions:
     """
     Represents options for serialization.
-    Overrides ``generatePreview`` and ``returnByValue``.
+    Overrides `generatePreview` and `returnByValue`.
     """
     serialization: str
     #: Deep serialization depth. Default is full depth.
-    #: Respected only in ``deep`` serialization mode.
+    #: Respected only in `deep` serialization mode.
     max_depth: typing.Optional[int] = None
     #: Embedder-specific parameters.
     #: For example if connected to V8 in Chrome these control DOM
-    #: serialization via ``maxNodeDepth: integer``
+    #: serialization via `maxNodeDepth: integer`
     #: and ``includeShadowTree: "none" `` "open" `` "all"``.
     #: Values can be only of type string or integer.
     additional_parameters: typing.Optional[dict] = None
@@ -127,7 +127,7 @@ class RemoteObjectId(str):
 class UnserializableValue(str):
     """
     Primitive value which cannot be JSON-stringified.
-    Includes values ``-0``, ``NaN``, ``Infinity``, ``-Infinity``,
+    Includes values `-0`, `NaN`, `Infinity`, `-Infinity`,
     and bigint literals.
     """
 
@@ -147,18 +147,18 @@ class RemoteObject:
     """Mirror object referencing original JavaScript object."""
     #: Object type.
     type_: str
-    #: Object subtype hint. Specified for ``object`` type values only.
+    #: Object subtype hint. Specified for `object` type values only.
     #: NOTE: If you change anything here, make sure to also update
-    #: ``subtype`` in ``ObjectPreview`` and ``PropertyPreview`` below.
+    #: `subtype` in `ObjectPreview` and `PropertyPreview` below.
     subtype: typing.Optional[str] = None
     #: Object class (constructor) name.
-    #: Specified for ``object`` type values only.
+    #: Specified for `object` type values only.
     class_name: typing.Optional[str] = None
     #: Remote object value in case of primitive values or JSON values
     #: (if it was requested).
     value: typing.Optional[typing.Any] = None
     #: Primitive value which can not be JSON-stringified
-    #: does not have ``value``, but gets this property.
+    #: does not have `value`, but gets this property.
     unserializable_value: typing.Optional[UnserializableValue] = None
     #: String representation of the object.
     description: typing.Optional[str] = None
@@ -167,7 +167,7 @@ class RemoteObject:
     #: Unique object identifier (for non-primitive values).
     object_id: typing.Optional[RemoteObjectId] = None
     #: Preview containing abbreviated property values.
-    #: Specified for ``object`` type values only.
+    #: Specified for `object` type values only.
     preview: typing.Optional[ObjectPreview] = None
     custom_preview: typing.Optional[CustomPreview] = None
 
@@ -284,12 +284,12 @@ class ObjectPreview:
     overflow: bool
     #: List of the properties.
     properties: typing.List[PropertyPreview]
-    #: Object subtype hint. Specified for ``object`` type values only.
+    #: Object subtype hint. Specified for `object` type values only.
     subtype: typing.Optional[str] = None
     #: String representation of the object.
     description: typing.Optional[str] = None
     #: List of the entries.
-    #: Specified for ``map`` and ``set`` subtype values only.
+    #: Specified for `map` and `set` subtype values only.
     entries: typing.Optional[typing.List[EntryPreview]] = None
 
     def to_json(self) -> T_JSON_DICT:
@@ -342,7 +342,7 @@ class PropertyPreview:
     value: typing.Optional[str] = None
     #: Nested value preview.
     value_preview: typing.Optional[ObjectPreview] = None
-    #: Object subtype hint. Specified for ``object`` type values only.
+    #: Object subtype hint. Specified for `object` type values only.
     subtype: typing.Optional[str] = None
 
     def to_json(self) -> T_JSON_DICT:
@@ -423,16 +423,16 @@ class PropertyDescriptor:
     #: (data descriptors only).
     writable: typing.Optional[bool] = None
     #: A function which serves as a getter for the property,
-    #: or ``undefined`` if there is no getter (accessor descriptors only).
+    #: or `undefined` if there is no getter (accessor descriptors only).
     get: typing.Optional[RemoteObject] = None
     #: A function which serves as a setter for the property,
-    #: or ``undefined`` if there is no setter (accessor descriptors only).
+    #: or `undefined` if there is no setter (accessor descriptors only).
     set_: typing.Optional[RemoteObject] = None
     #: True if the result was thrown during the evaluation.
     was_thrown: typing.Optional[bool] = None
     #: True if the property is owned for the object.
     is_own: typing.Optional[bool] = None
-    #: Property symbol object, if the property is of the ``symbol`` type.
+    #: Property symbol object, if the property is of the `symbol` type.
     symbol: typing.Optional[RemoteObject] = None
 
     def to_json(self) -> T_JSON_DICT:
@@ -538,10 +538,10 @@ class PrivatePropertyDescriptor:
     #: The value associated with the private property.
     value: typing.Optional[RemoteObject] = None
     #: A function which serves as a getter for the private property,
-    #: or ``undefined`` if there is no getter (accessor descriptors only).
+    #: or `undefined` if there is no getter (accessor descriptors only).
     get: typing.Optional[RemoteObject] = None
     #: A function which serves as a setter for the private property,
-    #: or ``undefined`` if there is no setter (accessor descriptors only).
+    #: or `undefined` if there is no setter (accessor descriptors only).
     set_: typing.Optional[RemoteObject] = None
 
     def to_json(self) -> T_JSON_DICT:
@@ -581,7 +581,7 @@ class PrivatePropertyDescriptor:
 class CallArgument:
     """
     Represents function call argument.
-    Either remote object id ``objectId``, primitive ``value``,
+    Either remote object id `objectId`, primitive `value`,
     unserializable primitive value or neither of them (for undefined)
     should be specified.
     """
@@ -652,7 +652,7 @@ class ExecutionContextDescription:
     #: while backend performs a cross-process navigation.
     unique_id: str
     #: Embedder-specific auxiliary data likely matching
-    # {isDefault: boolean, type: 'default'``'isolated'``'worker',
+    # {isDefault: boolean, type: 'default'`'isolated'`'worker',
     # frameId: string}
     aux_data: typing.Optional[dict] = None
 
@@ -898,9 +898,9 @@ class UniqueDebuggerId(str):
 @dataclass
 class StackTraceId:
     """
-    If ``debuggerId`` is set stack trace comes from another debugger
+    If `debuggerId` is set stack trace comes from another debugger
     and can be resolved there. This allows to track cross-debugger calls.
-    See ``Runtime.StackTrace`` and ``Debugger.paused`` for usages.
+    See `Runtime.StackTrace` and `Debugger.paused` for usages.
     """
     id_: str
     debugger_id: typing.Optional[UniqueDebuggerId] = None
@@ -999,16 +999,16 @@ def call_function_on(
      world as the target object.
     :param silent: *(Optional)*
      In silent mode exceptions thrown during evaluation are not reported
-     and do not pause execution. Overrides ``setPauseOnException`` state.
+     and do not pause execution. Overrides `setPauseOnException` state.
     :param return_by_value: *(Optional)*
      Whether the result is expected to be a JSON object which should be
-     sent by value. Can be overriden by ``serializationOptions``.
+     sent by value. Can be overriden by `serializationOptions`.
     :param generate_preview: **(EXPERIMENTAL)** *(Optional)*
      Whether preview should be generated for the result.
     :param user_gesture: *(Optional)*
      Whether execution should be treated as initiated by user in the UI.
     :param await_promise: *(Optional)*
-     Whether execution should ``await`` for resulting value and return
+     Whether execution should `await` for resulting value and return
      once awaited promise is resolved.
     :param execution_context_id: *(Optional)*
      Specifies execution context which global object will be used to call
@@ -1026,10 +1026,10 @@ def call_function_on(
      this is guaranteed to be system-unique, so it can be used
      to prevent accidental function call in context different than intended
      (e.g. as a result of navigation across process boundaries).
-     This is mutually exclusive with ``executionContextId``.
+     This is mutually exclusive with `executionContextId`.
     :param serialization_options: **(EXPERIMENTAL)** *(Optional)*
      Specifies the result serialization.
-     If provided, overrides ``generatePreview`` and ``returnByValue``.
+     If provided, overrides `generatePreview` and `returnByValue`.
     :returns: A tuple with the following items:
         0. **result** - Call result.
         1. **exceptionDetails** - *(Optional)* Exception details.
@@ -1145,7 +1145,7 @@ def discard_console_entries() -> (
 def enable() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Enables reporting of execution contexts creation
-    by means of ``executionContextCreated`` event.
+    by means of `executionContextCreated` event.
     When the reporting gets enabled the event will be sent immediately
     for each existing execution context.
     """
@@ -1187,12 +1187,12 @@ def evaluate(
      during the evaluation.
     :param silent: *(Optional)*
      In silent mode exceptions thrown during evaluation are not reported
-     and do not pause execution. Overrides ```setPauseOnException```` state.
+     and do not pause execution. Overrides `setPauseOnException` state.
     :param context_id: *(Optional)*
      Specifies in which execution context to perform evaluation.
      If the parameter is omitted the evaluation will be performed
      in the context of the inspected page.
-     This is mutually exclusive with ``uniqueContextId``,
+     This is mutually exclusive with `uniqueContextId`,
      which offers an alternative way to identify the execution context
      that is more reliable in a multi-process environment.
     :param return_by_value: *(Optional)*
@@ -1203,19 +1203,19 @@ def evaluate(
     :param user_gesture: *(Optional)*
      Whether execution should be treated as initiated by user in the UI.
     :param await_promise: *(Optional)*
-     Whether execution should ``await`` for resulting value
+     Whether execution should `await` for resulting value
      and return once awaited promise is resolved.
     :param throw_on_side_effect: **(EXPERIMENTAL)** *(Optional)*
      Whether to throw an exception if side effect cannot be ruled out
-     during evaluation. This implies ``disableBreaks`` below.
+     during evaluation. This implies `disableBreaks` below.
     :param timeout: **(EXPERIMENTAL)** *(Optional)*
      Terminate execution after timing out (number of milliseconds).
     :param disable_breaks: **(EXPERIMENTAL)** *(Optional)*
      Disable breakpoints during execution.
     :param repl_mode: **(EXPERIMENTAL)** *(Optional)*
-     Setting this flag to true enables ``let`` re-declaration
-     and top-level ``await``. Note that ``let`` variables can only be
-     re-declared if they originate from ``replMode`` themselves.
+     Setting this flag to true enables `let` re-declaration
+     and top-level `await`. Note that `let` variables can only be
+     re-declared if they originate from `replMode` themselves.
     :param allow_unsafe_eval_blocked_by_csp: **(EXPERIMENTAL)** *(Optional)*
      The Content Security Policy (CSP) for the target might block 'unsafe-eval'
      which includes eval(), Function(), setTimeout() and setInterval()
@@ -1228,10 +1228,10 @@ def evaluate(
      this is guaranteed to be system-unique, so it can be used to prevent
      accidental evaluation of the expression in context different than
      intended (e.g. as a result of navigation across process boundaries).
-     This is mutually exclusive with ``contextId``.
-    :param serialization_options: **(EXPERIMENTAL)** *(Optional)*
+     This is mutually exclusive with `contextId`.
+    :param serialization_options: *(Optional)*
      Specifies the result serialization.
-     If provided, overrides ``generatePreview`` and ``returnByValue``.
+     If provided, overrides `generatePreview` and `returnByValue`.
     :returns: A tuple with the following items:
         0. **result** - Evaluation result.
         1. **exceptionDetails** - *(Optional)* Exception details.
@@ -1505,7 +1505,7 @@ def run_script(
     :param silent: *(Optional)*
      In silent mode exceptions thrown during evaluation
      are not reported and do not pause execution.
-     Overrides ``setPauseOnException`` state.
+     Overrides `setPauseOnException` state.
     :param include_command_line_api: *(Optional)*
      Determines whether Command Line API should be available
      during the evaluation.
@@ -1515,7 +1515,7 @@ def run_script(
     :param generate_preview: *(Optional)*
      Whether preview should be generated for the result.
     :param await_promise: *(Optional)*
-     Whether execution should ``await`` for resulting value
+     Whether execution should `await` for resulting value
      and return once awaited promise is resolved.
     :returns: A tuple with the following items:
         0. **result** - Run result.
@@ -1558,7 +1558,7 @@ def set_async_call_stack_depth(
     """
     Enables or disables async call stacks tracking.
     :param max_depth: Maximum depth of async call stacks.
-     Setting to ``0`` (default) will disable collecting async call stacks.
+     Setting to `0` (default) will disable collecting async call stacks.
     """
     params: T_JSON_DICT = dict()
     params["maxDepth"] = max_depth
@@ -1631,10 +1631,10 @@ def add_binding(
      *(Optional)* If specified, the binding would only be exposed to the
      specified execution context. If omitted and `executionContextName` is
      not set, the binding is exposed to all execution contexts of the target.
-     This parameter is mutually exclusive with ``executionContextName``.
-     Deprecated in favor of ``executionContextName`` due to an unclear use case
+     This parameter is mutually exclusive with `executionContextName`.
+     Deprecated in favor of `executionContextName` due to an unclear use case
      and bugs in implementation (crbug.com/1169639).
-     ``executionContextId`` will be removed in the future.
+     `executionContextId` will be removed in the future.
     :param execution_context_name: *(Optional)*
      If specified, the binding is exposed to the executionContext
      with matching name, even for contexts created after the binding is added.
@@ -1738,9 +1738,9 @@ class ConsoleAPICalled:
     timestamp: Timestamp
     #: Stack trace captured when the call was made.
     #: The async stack chain is automatically reported for
-    #: the following call types: ``assert``, ``error``, ``trace``,
-    #: ``warning``. For other types the async call chain can be retrieved
-    #: using ``Debugger.getStackTrace`` and ``stackTrace.parentId`` field.
+    #: the following call types: `assert`, `error`, `trace`,
+    #: `warning`. For other types the async call chain can be retrieved
+    #: using `Debugger.getStackTrace` and `stackTrace.parentId` field.
     stack_trace: typing.Optional[StackTrace]
     #: Console context descriptor for calls on non-default console context
     #: (not console.*):
@@ -1776,7 +1776,7 @@ class ExceptionRevoked:
     """Issued when unhandled exception was revoked."""
     #: Reason describing why exception was revoked.
     reason: str
-    #: The id of revoked exception, as reported in ``exceptionThrown``.
+    #: The id of revoked exception, as reported in `exceptionThrown`.
     exception_id: int
 
     @classmethod
