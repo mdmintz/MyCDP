@@ -8,7 +8,7 @@
 
 Additionally, MyCDP can be used to connect to an existing Chromium browser instance if the `remote-debugging-port` is known. This advanced option allows for browsers to be controlled by multiple automation frameworks at the same time.
 
-This isn't a standalone product. Think of MyCDP as the engine for your framework: By itself, the engine is of little use, but when connected to a framework that provides an interface, MyCDP can transform Chromium into a powerhouse.
+This isn't a standalone product. Import `MyCDP` into your automation frameworks for driving the browser and using CDP commands.
 
 [SeleniumBase](https://github.com/seleniumbase/SeleniumBase) (via [CDP Mode](https://github.com/seleniumbase/SeleniumBase/blob/master/examples/cdp_mode/ReadMe.md)) is one of the frameworks using **MyCDP**.
 
