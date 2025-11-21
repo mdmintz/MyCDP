@@ -2223,8 +2223,8 @@ class PrivateNetworkRequestPolicy(enum.Enum):
     ALLOW = "Allow"
     BLOCK_FROM_INSECURE_TO_MORE_PRIVATE = "BlockFromInsecureToMorePrivate"
     WARN_FROM_INSECURE_TO_MORE_PRIVATE = "WarnFromInsecureToMorePrivate"
-    PREFLIGHT_BLOCK = "PreflightBlock"
-    PREFLIGHT_WARN = "PreflightWarn"
+    PERMISSION_BLOCK = "PermissionBlock"
+    PERMISSION_WARN = "PermissionWarn"
 
     def to_json(self) -> str:
         return self.value
