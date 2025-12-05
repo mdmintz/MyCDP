@@ -2281,10 +2281,23 @@ def disable() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     json = yield cmd_dict  # noqa
 
 
-def enable() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
-    """Enables page domain notifications."""
+def enable(
+        enable_file_chooser_opened_event: typing.Optional[bool] = None
+) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
+    """
+    Enables page domain notifications.
+    :param enable_file_chooser_opened_event: **(EXPERIMENTAL)** *(Optional)*
+     If true, the `Page.fileChooserOpened` event will be emitted regardless of
+     the state set by `Page.setInterceptFileChooserDialog` (default: false).
+    """
+    params: T_JSON_DICT = dict()
+    if enable_file_chooser_opened_event is not None:
+        params["enableFileChooserOpenedEvent"] = (
+            enable_file_chooser_opened_event
+        )
     cmd_dict: T_JSON_DICT = {
         "method": "Page.enable",
+        "params": params,
     }
     json = yield cmd_dict  # noqa
 
