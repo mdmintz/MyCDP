@@ -1172,8 +1172,7 @@ def get_cookies(
         "params": params,
     }
     json = yield cmd_dict
-    # return [network.Cookie.from_json(i) for i in json["cookies"]]
-    return [json["cookies"]]
+    return [network.Cookie.from_json(i) for i in json["cookies"]]
 
 
 def set_cookies(

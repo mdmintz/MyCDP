@@ -1486,30 +1486,32 @@ class Cookie:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> Cookie:
         return cls(
-            name=str(json["name"]),
-            value=str(json["value"]),
-            domain=str(json["domain"]),
-            path=str(json["path"]),
-            size=int(json["size"]),
-            http_only=bool(json["httpOnly"]),
-            secure=bool(json["secure"]),
-            session=bool(json["session"]),
-            priority=CookiePriority.from_json(json["priority"]),
-            same_party=bool(json["sameParty"]),
-            source_scheme=CookieSourceScheme.from_json(json["sourceScheme"]),
-            source_port=int(json["sourcePort"]),
+            name=str(json.get("name")),
+            value=str(json.get("value")),
+            domain=str(json.get("domain")),
+            path=str(json.get("path")),
+            size=int(json.get("size")),
+            http_only=bool(json.get("httpOnly")),
+            secure=bool(json.get("secure")),
+            session=bool(json.get("session")),
+            priority=CookiePriority.from_json(json.get("priority")),
+            same_party=bool(json.get("sameParty")),
+            source_scheme=CookieSourceScheme.from_json(
+                json.get("sourceScheme")
+            ),
+            source_port=int(json.get("sourcePort")),
             expires=(
-                float(json["expires"])
+                float(json.get("expires"))
                 if json.get("expires", None) is not None
                 else None
             ),
             same_site=(
-                CookieSameSite.from_json(json["sameSite"])
+                CookieSameSite.from_json(json.get("sameSite"))
                 if json.get("sameSite", None) is not None
                 else None
             ),
             partition_key=(
-                CookiePartitionKey.from_json(json["partitionKey"])
+                CookiePartitionKey.from_json(json.get("partitionKey"))
                 if json.get("partitionKey", None) is not None
                 else None
             ),
