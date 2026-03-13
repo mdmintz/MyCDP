@@ -64,9 +64,9 @@ class BackendNode:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> BackendNode:
         return cls(
-            node_type=int(json["nodeType"]),
-            node_name=str(json["nodeName"]),
-            backend_node_id=BackendNodeId.from_json(json["backendNodeId"]),
+            node_type=int(json.get("nodeType")),
+            node_name=str(json.get("nodeName")),
+            backend_node_id=BackendNodeId.from_json(json.get("backendNodeId")),
         )
 
 
@@ -332,19 +332,19 @@ class Node:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> Node:
         return cls(
-            node_id=NodeId.from_json(json["nodeId"]),
-            backend_node_id=BackendNodeId.from_json(json["backendNodeId"]),
-            node_type=int(json["nodeType"]),
-            node_name=str(json["nodeName"]),
-            local_name=str(json["localName"]),
-            node_value=str(json["nodeValue"]),
+            node_id=NodeId.from_json(json.get("nodeId")),
+            backend_node_id=BackendNodeId.from_json(json.get("backendNodeId")),
+            node_type=int(json.get("nodeType")),
+            node_name=str(json.get("nodeName")),
+            local_name=str(json.get("localName")),
+            node_value=str(json.get("nodeValue")),
             parent_id=(
-                NodeId.from_json(json["parentId"])
+                NodeId.from_json(json.get("parentId"))
                 if json.get("parentId", None) is not None
                 else None
             ),
             child_node_count=(
-                int(json["childNodeCount"])
+                int(json.get("childNodeCount"))
                 if json.get("childNodeCount", None) is not None
                 else None
             ),
@@ -359,67 +359,67 @@ class Node:
                 else None
             ),
             document_url=(
-                str(json["documentURL"])
+                str(json.get("documentURL"))
                 if json.get("documentURL", None) is not None
                 else None
             ),
             base_url=(
-                str(json["baseURL"])
+                str(json.get("baseURL"))
                 if json.get("baseURL", None) is not None
                 else None
             ),
             public_id=(
-                str(json["publicId"])
+                str(json.get("publicId"))
                 if json.get("publicId", None) is not None
                 else None
             ),
             system_id=(
-                str(json["systemId"])
+                str(json.get("systemId"))
                 if json.get("systemId", None) is not None
                 else None
             ),
             internal_subset=(
-                str(json["internalSubset"])
+                str(json.get("internalSubset"))
                 if json.get("internalSubset", None) is not None
                 else None
             ),
             xml_version=(
-                str(json["xmlVersion"])
+                str(json.get("xmlVersion"))
                 if json.get("xmlVersion", None) is not None
                 else None
             ),
             name=(
-                str(json["name"])
+                str(json.get("name"))
                 if json.get("name", None) is not None
                 else None
             ),
             value=(
-                str(json["value"])
+                str(json.get("value"))
                 if json.get("value", None) is not None
                 else None
             ),
             pseudo_type=(
-                PseudoType.from_json(json["pseudoType"])
+                PseudoType.from_json(json.get("pseudoType"))
                 if json.get("pseudoType", None) is not None
                 else None
             ),
             pseudo_identifier=(
-                str(json["pseudoIdentifier"])
+                str(json.get("pseudoIdentifier"))
                 if json.get("pseudoIdentifier", None) is not None
                 else None
             ),
             shadow_root_type=(
-                ShadowRootType.from_json(json["shadowRootType"])
+                ShadowRootType.from_json(json.get("shadowRootType"))
                 if json.get("shadowRootType", None) is not None
                 else None
             ),
             frame_id=(
-                page.FrameId.from_json(json["frameId"])
+                page.FrameId.from_json(json.get("frameId"))
                 if json.get("frameId", None) is not None
                 else None
             ),
             content_document=(
-                Node.from_json(json["contentDocument"])
+                Node.from_json(json.get("contentDocument"))
                 if json.get("contentDocument", None) is not None
                 else None
             ),
@@ -429,7 +429,7 @@ class Node:
                 else None
             ),
             template_content=(
-                Node.from_json(json["templateContent"])
+                Node.from_json(json.get("templateContent"))
                 if json.get("templateContent", None) is not None
                 else None
             ),
@@ -439,7 +439,7 @@ class Node:
                 else None
             ),
             imported_document=(
-                Node.from_json(json["importedDocument"])
+                Node.from_json(json.get("importedDocument"))
                 if json.get("importedDocument", None) is not None
                 else None
             ),
@@ -449,17 +449,17 @@ class Node:
                 else None
             ),
             is_svg=(
-                bool(json["isSVG"])
+                bool(json.get("isSVG"))
                 if json.get("isSVG", None) is not None
                 else None
             ),
             compatibility_mode=(
-                CompatibilityMode.from_json(json["compatibilityMode"])
+                CompatibilityMode.from_json(json.get("compatibilityMode"))
                 if json.get("compatibilityMode", None) is not None
                 else None
             ),
             assigned_slot=(
-                BackendNode.from_json(json["assignedSlot"])
+                BackendNode.from_json(json.get("assignedSlot"))
                 if json.get("assignedSlot", None) is not None
                 else None
             ),
@@ -490,9 +490,9 @@ class RGBA:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> RGBA:
         return cls(
-            r=int(json["r"]),
-            g=int(json["g"]),
-            b=int(json["b"]),
+            r=int(json.get("r")),
+            g=int(json.get("g")),
+            b=int(json.get("b")),
             a=float(json["a"]) if json.get("a", None) is not None else None,
         )
 
@@ -547,14 +547,14 @@ class BoxModel:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> BoxModel:
         return cls(
-            content=Quad.from_json(json["content"]),
-            padding=Quad.from_json(json["padding"]),
-            border=Quad.from_json(json["border"]),
-            margin=Quad.from_json(json["margin"]),
-            width=int(json["width"]),
-            height=int(json["height"]),
+            content=Quad.from_json(json.get("content")),
+            padding=Quad.from_json(json.get("padding")),
+            border=Quad.from_json(json.get("border")),
+            margin=Quad.from_json(json.get("margin")),
+            width=int(json.get("width")),
+            height=int(json.get("height")),
             shape_outside=(
-                ShapeOutsideInfo.from_json(json["shapeOutside"])
+                ShapeOutsideInfo.from_json(json.get("shapeOutside"))
                 if json.get("shapeOutside", None) is not None
                 else None
             ),
@@ -581,7 +581,7 @@ class ShapeOutsideInfo:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> ShapeOutsideInfo:
         return cls(
-            bounds=Quad.from_json(json["bounds"]),
+            bounds=Quad.from_json(json.get("bounds")),
             shape=[i for i in json["shape"]],
             margin_shape=[i for i in json["marginShape"]],
         )
@@ -610,10 +610,10 @@ class Rect:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> Rect:
         return cls(
-            x=float(json["x"]),
-            y=float(json["y"]),
-            width=float(json["width"]),
-            height=float(json["height"]),
+            x=float(json.get("x")),
+            y=float(json.get("y")),
+            width=float(json.get("width")),
+            height=float(json.get("height")),
         )
 
 
@@ -633,8 +633,8 @@ class CSSComputedStyleProperty:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> CSSComputedStyleProperty:
         return cls(
-            name=str(json["name"]),
-            value=str(json["value"]),
+            name=str(json.get("name")),
+            value=str(json.get("value")),
         )
 
 
@@ -681,7 +681,7 @@ def copy_to(
         "params": params,
     }
     json = yield cmd_dict
-    return NodeId.from_json(json["nodeId"])
+    return NodeId.from_json(json.get("nodeId"))
 
 
 def describe_node(
@@ -721,7 +721,7 @@ def describe_node(
         "params": params,
     }
     json = yield cmd_dict
-    return Node.from_json(json["node"])
+    return Node.from_json(json.get("node"))
 
 
 def scroll_into_view_if_needed(
@@ -869,7 +869,7 @@ def get_box_model(
         "params": params,
     }
     json = yield cmd_dict
-    return BoxModel.from_json(json["model"])
+    return BoxModel.from_json(json.get("model"))
 
 
 def get_content_quads(
@@ -925,7 +925,7 @@ def get_document(
         "params": params,
     }
     json = yield cmd_dict
-    return Node.from_json(json["root"])
+    return Node.from_json(json.get("root"))
 
 
 def get_flattened_document(
@@ -1026,10 +1026,10 @@ def get_node_for_location(
     }
     json = yield cmd_dict
     return (
-        BackendNodeId.from_json(json["backendNodeId"]),
-        page.FrameId.from_json(json["frameId"]),
+        BackendNodeId.from_json(json.get("backendNodeId")),
+        page.FrameId.from_json(json.get("frameId")),
         (
-            NodeId.from_json(json["nodeId"])
+            NodeId.from_json(json.get("nodeId"))
             if json.get("nodeId", None) is not None
             else None
         ),
@@ -1064,7 +1064,7 @@ def get_outer_html(
         "params": params,
     }
     json = yield cmd_dict
-    return str(json["outerHTML"])
+    return str(json.get("outerHTML"))
 
 
 def get_relayout_boundary(
@@ -1083,7 +1083,7 @@ def get_relayout_boundary(
         "params": params,
     }
     json = yield cmd_dict
-    return NodeId.from_json(json["nodeId"])
+    return NodeId.from_json(json.get("nodeId"))
 
 
 def get_search_results(
@@ -1164,7 +1164,7 @@ def move_to(
         "params": params,
     }
     json = yield cmd_dict
-    return NodeId.from_json(json["nodeId"])
+    return NodeId.from_json(json.get("nodeId"))
 
 
 def perform_search(
@@ -1190,7 +1190,7 @@ def perform_search(
         "params": params,
     }
     json = yield cmd_dict
-    return (str(json["searchId"]), int(json["resultCount"]))
+    return (str(json.get("searchId")), int(json.get("resultCount")))
 
 
 def push_node_by_path_to_frontend(
@@ -1208,7 +1208,7 @@ def push_node_by_path_to_frontend(
         "params": params,
     }
     json = yield cmd_dict
-    return NodeId.from_json(json["nodeId"])
+    return NodeId.from_json(json.get("nodeId"))
 
 
 def push_nodes_by_backend_ids_to_frontend(
@@ -1248,7 +1248,7 @@ def query_selector(
         "params": params,
     }
     json = yield cmd_dict
-    return NodeId.from_json(json["nodeId"])
+    return NodeId.from_json(json.get("nodeId"))
 
 
 def query_selector_all(
@@ -1304,7 +1304,7 @@ def get_element_by_relation(
         "params": params,
     }
     json = yield cmd_dict
-    return NodeId.from_json(json["nodeId"])
+    return NodeId.from_json(json.get("nodeId"))
 
 
 def redo() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
@@ -1395,7 +1395,7 @@ def request_node(
         "params": params,
     }
     json = yield cmd_dict
-    return NodeId.from_json(json["nodeId"])
+    return NodeId.from_json(json.get("nodeId"))
 
 
 def resolve_node(
@@ -1429,7 +1429,7 @@ def resolve_node(
         "params": params,
     }
     json = yield cmd_dict
-    return runtime.RemoteObject.from_json(json["object"])
+    return runtime.RemoteObject.from_json(json.get("object"))
 
 
 def set_attribute_value(
@@ -1542,7 +1542,7 @@ def get_node_stack_traces(
     }
     json = yield cmd_dict
     return (
-        runtime.StackTrace.from_json(json["creation"])
+        runtime.StackTrace.from_json(json.get("creation"))
         if json.get("creation", None) is not None
         else None
     )
@@ -1562,7 +1562,7 @@ def get_file_info(
         "params": params,
     }
     json = yield cmd_dict
-    return str(json["path"])
+    return str(json.get("path"))
 
 
 def set_inspected_node(
@@ -1600,7 +1600,7 @@ def set_node_name(
         "params": params,
     }
     json = yield cmd_dict
-    return NodeId.from_json(json["nodeId"])
+    return NodeId.from_json(json.get("nodeId"))
 
 
 def set_node_value(
@@ -1671,9 +1671,9 @@ def get_frame_owner(
     }
     json = yield cmd_dict
     return (
-        BackendNodeId.from_json(json["backendNodeId"]),
+        BackendNodeId.from_json(json.get("backendNodeId")),
         (
-            NodeId.from_json(json["nodeId"])
+            NodeId.from_json(json.get("nodeId"))
             if json.get("nodeId", None) is not None
             else None
         ),
@@ -1720,7 +1720,7 @@ def get_container_for_node(
     }
     json = yield cmd_dict
     return (
-        NodeId.from_json(json['nodeId'])
+        NodeId.from_json(json.get('nodeId'))
         if json.get('nodeId', None) is not None
         else None
     )
@@ -1769,7 +1769,7 @@ def get_anchor_element(
         "params": params,
     }
     json = yield cmd_dict
-    return NodeId.from_json(json["nodeId"])
+    return NodeId.from_json(json.get("nodeId"))
 
 
 def force_show_popover(
@@ -1810,9 +1810,9 @@ class AttributeModified:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> AttributeModified:
         return cls(
-            node_id=NodeId.from_json(json["nodeId"]),
-            name=str(json["name"]),
-            value=str(json["value"]),
+            node_id=NodeId.from_json(json.get("nodeId")),
+            name=str(json.get("name")),
+            value=str(json.get("value")),
         )
 
 
@@ -1828,7 +1828,8 @@ class AttributeRemoved:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> AttributeRemoved:
         return cls(
-            node_id=NodeId.from_json(json["nodeId"]), name=str(json["name"])
+            node_id=NodeId.from_json(json.get("nodeId")),
+            name=str(json.get("name")),
         )
 
 
@@ -1844,8 +1845,8 @@ class CharacterDataModified:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> CharacterDataModified:
         return cls(
-            node_id=NodeId.from_json(json["nodeId"]),
-            character_data=str(json["characterData"]),
+            node_id=NodeId.from_json(json.get("nodeId")),
+            character_data=str(json.get("characterData")),
         )
 
 
@@ -1861,8 +1862,8 @@ class ChildNodeCountUpdated:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> ChildNodeCountUpdated:
         return cls(
-            node_id=NodeId.from_json(json["nodeId"]),
-            child_node_count=int(json["childNodeCount"]),
+            node_id=NodeId.from_json(json.get("nodeId")),
+            child_node_count=int(json.get("childNodeCount")),
         )
 
 
@@ -1880,9 +1881,9 @@ class ChildNodeInserted:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> ChildNodeInserted:
         return cls(
-            parent_node_id=NodeId.from_json(json["parentNodeId"]),
-            previous_node_id=NodeId.from_json(json["previousNodeId"]),
-            node=Node.from_json(json["node"]),
+            parent_node_id=NodeId.from_json(json.get("parentNodeId")),
+            previous_node_id=NodeId.from_json(json.get("previousNodeId")),
+            node=Node.from_json(json.get("node")),
         )
 
 
@@ -1898,8 +1899,8 @@ class ChildNodeRemoved:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> ChildNodeRemoved:
         return cls(
-            parent_node_id=NodeId.from_json(json["parentNodeId"]),
-            node_id=NodeId.from_json(json["nodeId"]),
+            parent_node_id=NodeId.from_json(json.get("parentNodeId")),
+            node_id=NodeId.from_json(json.get("nodeId")),
         )
 
 
@@ -1915,7 +1916,7 @@ class DistributedNodesUpdated:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> DistributedNodesUpdated:
         return cls(
-            insertion_point_id=NodeId.from_json(json["insertionPointId"]),
+            insertion_point_id=NodeId.from_json(json.get("insertionPointId")),
             distributed_nodes=[
                 BackendNode.from_json(i) for i in json["distributedNodes"]
             ],
@@ -1962,8 +1963,8 @@ class PseudoElementAdded:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> PseudoElementAdded:
         return cls(
-            parent_id=NodeId.from_json(json["parentId"]),
-            pseudo_element=Node.from_json(json["pseudoElement"]),
+            parent_id=NodeId.from_json(json.get("parentId")),
+            pseudo_element=Node.from_json(json.get("pseudoElement")),
         )
 
 
@@ -1989,8 +1990,8 @@ class PseudoElementRemoved:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> PseudoElementRemoved:
         return cls(
-            parent_id=NodeId.from_json(json["parentId"]),
-            pseudo_element_id=NodeId.from_json(json["pseudoElementId"]),
+            parent_id=NodeId.from_json(json.get("parentId")),
+            pseudo_element_id=NodeId.from_json(json.get("pseudoElementId")),
         )
 
 
@@ -2006,8 +2007,8 @@ class ScrollableFlagUpdated:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> ScrollableFlagUpdated:
         return cls(
-            node_id=NodeId.from_json(json["nodeId"]),
-            is_scrollable=bool(json["isScrollable"]),
+            node_id=NodeId.from_json(json.get("nodeId")),
+            is_scrollable=bool(json.get("isScrollable")),
         )
 
 
@@ -2026,7 +2027,7 @@ class SetChildNodes:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> SetChildNodes:
         return cls(
-            parent_id=NodeId.from_json(json["parentId"]),
+            parent_id=NodeId.from_json(json.get("parentId")),
             nodes=[Node.from_json(i) for i in json["nodes"]],
         )
 
@@ -2043,8 +2044,8 @@ class ShadowRootPopped:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> ShadowRootPopped:
         return cls(
-            host_id=NodeId.from_json(json["hostId"]),
-            root_id=NodeId.from_json(json["rootId"]),
+            host_id=NodeId.from_json(json.get("hostId")),
+            root_id=NodeId.from_json(json.get("rootId")),
         )
 
 
@@ -2060,6 +2061,6 @@ class ShadowRootPushed:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> ShadowRootPushed:
         return cls(
-            host_id=NodeId.from_json(json["hostId"]),
-            root=Node.from_json(json["root"]),
+            host_id=NodeId.from_json(json.get("hostId")),
+            root=Node.from_json(json.get("root")),
         )

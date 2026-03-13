@@ -3028,7 +3028,7 @@ def get_response_body(
         "params": params,
     }
     json = yield cmd_dict
-    return (str(json["body"]), bool(json["base64Encoded"]))
+    return (str(json.get("body")), bool(json.get("base64Encoded")))
 
 
 def get_request_post_data(
@@ -3047,7 +3047,7 @@ def get_request_post_data(
         "params": params,
     }
     json = yield cmd_dict
-    return str(json["postData"])
+    return str(json.get("postData"))
 
 
 def get_response_body_for_interception(
@@ -3069,7 +3069,7 @@ def get_response_body_for_interception(
         "params": params,
     }
     json = yield cmd_dict
-    return (str(json["body"]), bool(json["base64Encoded"]))
+    return (str(json.get("body")), bool(json.get("base64Encoded")))
 
 
 def take_response_body_for_interception_as_stream(
@@ -3091,7 +3091,7 @@ def take_response_body_for_interception_as_stream(
         "params": params,
     }
     json = yield cmd_dict
-    return io.StreamHandle.from_json(json["stream"])
+    return io.StreamHandle.from_json(json.get("stream"))
 
 
 def replay_xhr(
@@ -3277,7 +3277,7 @@ def set_cookie(
         "params": params,
     }
     json = yield cmd_dict
-    return bool(json["success"])
+    return bool(json.get("success"))
 
 
 def set_cookies(
@@ -3400,7 +3400,7 @@ def stream_resource_content(
         "params": params,
     }
     json = yield cmd_dict
-    return str(json["bufferedData"])
+    return str(json.get("bufferedData"))
 
 
 def get_security_isolation_status(
@@ -3420,7 +3420,7 @@ def get_security_isolation_status(
         "params": params,
     }
     json = yield cmd_dict
-    return SecurityIsolationStatus.from_json(json["status"])
+    return SecurityIsolationStatus.from_json(json.get("status"))
 
 
 def enable_reporting_api(
@@ -3465,7 +3465,7 @@ def load_network_resource(
         "params": params,
     }
     json = yield cmd_dict
-    return LoadNetworkResourcePageResult.from_json(json["resource"])
+    return LoadNetworkResourcePageResult.from_json(json.get("resource"))
 
 
 @event_class("Network.dataReceived")
@@ -3488,12 +3488,12 @@ class DataReceived:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> DataReceived:
         return cls(
-            request_id=RequestId.from_json(json["requestId"]),
-            timestamp=MonotonicTime.from_json(json["timestamp"]),
-            data_length=int(json["dataLength"]),
-            encoded_data_length=int(json["encodedDataLength"]),
+            request_id=RequestId.from_json(json.get("requestId")),
+            timestamp=MonotonicTime.from_json(json.get("timestamp")),
+            data_length=int(json.get("dataLength")),
+            encoded_data_length=int(json.get("encodedDataLength")),
             data=(
-                str(json["data"])
+                str(json.get("data"))
                 if json.get("data", None) is not None
                 else None
             ),
@@ -3518,11 +3518,11 @@ class EventSourceMessageReceived:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> EventSourceMessageReceived:
         return cls(
-            request_id=RequestId.from_json(json["requestId"]),
-            timestamp=MonotonicTime.from_json(json["timestamp"]),
-            event_name=str(json["eventName"]),
-            event_id=str(json["eventId"]),
-            data=str(json["data"]),
+            request_id=RequestId.from_json(json.get("requestId")),
+            timestamp=MonotonicTime.from_json(json.get("timestamp")),
+            event_name=str(json.get("eventName")),
+            event_id=str(json.get("eventId")),
+            data=str(json.get("data")),
         )
 
 
@@ -3549,22 +3549,22 @@ class LoadingFailed:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> LoadingFailed:
         return cls(
-            request_id=RequestId.from_json(json["requestId"]),
-            timestamp=MonotonicTime.from_json(json["timestamp"]),
-            type_=ResourceType.from_json(json["type"]),
-            error_text=str(json["errorText"]),
+            request_id=RequestId.from_json(json.get("requestId")),
+            timestamp=MonotonicTime.from_json(json.get("timestamp")),
+            type_=ResourceType.from_json(json.get("type")),
+            error_text=str(json.get("errorText")),
             canceled=(
-                bool(json["canceled"])
+                bool(json.get("canceled"))
                 if json.get("canceled", None) is not None
                 else None
             ),
             blocked_reason=(
-                BlockedReason.from_json(json["blockedReason"])
+                BlockedReason.from_json(json.get("blockedReason"))
                 if json.get("blockedReason", None) is not None
                 else None
             ),
             cors_error_status=(
-                CorsErrorStatus.from_json(json["corsErrorStatus"])
+                CorsErrorStatus.from_json(json.get("corsErrorStatus"))
                 if json.get("corsErrorStatus", None) is not None
                 else None
             ),
@@ -3585,9 +3585,9 @@ class LoadingFinished:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> LoadingFinished:
         return cls(
-            request_id=RequestId.from_json(json["requestId"]),
-            timestamp=MonotonicTime.from_json(json["timestamp"]),
-            encoded_data_length=float(json["encodedDataLength"]),
+            request_id=RequestId.from_json(json.get("requestId")),
+            timestamp=MonotonicTime.from_json(json.get("timestamp")),
+            encoded_data_length=float(json.get("encodedDataLength")),
         )
 
 
@@ -3730,31 +3730,31 @@ class RequestWillBeSent:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> RequestWillBeSent:
         return cls(
-            request_id=RequestId.from_json(json["requestId"]),
-            loader_id=LoaderId.from_json(json["loaderId"]),
-            document_url=str(json["documentURL"]),
-            request=Request.from_json(json["request"]),
-            timestamp=MonotonicTime.from_json(json["timestamp"]),
-            wall_time=TimeSinceEpoch.from_json(json["wallTime"]),
-            initiator=Initiator.from_json(json["initiator"]),
-            redirect_has_extra_info=bool(json["redirectHasExtraInfo"]),
+            request_id=RequestId.from_json(json.get("requestId")),
+            loader_id=LoaderId.from_json(json.get("loaderId")),
+            document_url=str(json.get("documentURL")),
+            request=Request.from_json(json.get("request")),
+            timestamp=MonotonicTime.from_json(json.get("timestamp")),
+            wall_time=TimeSinceEpoch.from_json(json.get("wallTime")),
+            initiator=Initiator.from_json(json.get("initiator")),
+            redirect_has_extra_info=bool(json.get("redirectHasExtraInfo")),
             redirect_response=(
-                Response.from_json(json["redirectResponse"])
+                Response.from_json(json.get("redirectResponse"))
                 if json.get("redirectResponse", None) is not None
                 else None
             ),
             type_=(
-                ResourceType.from_json(json["type"])
+                ResourceType.from_json(json.get("type"))
                 if json.get("type", None) is not None
                 else None
             ),
             frame_id=(
-                page.FrameId.from_json(json["frameId"])
+                page.FrameId.from_json(json.get("frameId"))
                 if json.get("frameId", None) is not None
                 else None
             ),
             has_user_gesture=(
-                bool(json["hasUserGesture"])
+                bool(json.get("hasUserGesture"))
                 if json.get("hasUserGesture", None) is not None
                 else None
             ),
@@ -3828,14 +3828,14 @@ class ResponseReceived:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> ResponseReceived:
         return cls(
-            request_id=RequestId.from_json(json["requestId"]),
-            loader_id=LoaderId.from_json(json["loaderId"]),
-            timestamp=MonotonicTime.from_json(json["timestamp"]),
-            type_=ResourceType.from_json(json["type"]),
-            response=Response.from_json(json["response"]),
-            has_extra_info=bool(json["hasExtraInfo"]),
+            request_id=RequestId.from_json(json.get("requestId")),
+            loader_id=LoaderId.from_json(json.get("loaderId")),
+            timestamp=MonotonicTime.from_json(json.get("timestamp")),
+            type_=ResourceType.from_json(json.get("type")),
+            response=Response.from_json(json.get("response")),
+            has_extra_info=bool(json.get("hasExtraInfo")),
             frame_id=(
-                page.FrameId.from_json(json["frameId"])
+                page.FrameId.from_json(json.get("frameId"))
                 if json.get("frameId", None) is not None
                 else None
             ),
@@ -3854,8 +3854,8 @@ class WebSocketClosed:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> WebSocketClosed:
         return cls(
-            request_id=RequestId.from_json(json["requestId"]),
-            timestamp=MonotonicTime.from_json(json["timestamp"]),
+            request_id=RequestId.from_json(json.get("requestId")),
+            timestamp=MonotonicTime.from_json(json.get("timestamp")),
         )
 
 
@@ -3873,10 +3873,10 @@ class WebSocketCreated:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> WebSocketCreated:
         return cls(
-            request_id=RequestId.from_json(json["requestId"]),
-            url=str(json["url"]),
+            request_id=RequestId.from_json(json.get("requestId")),
+            url=str(json.get("url")),
             initiator=(
-                Initiator.from_json(json["initiator"])
+                Initiator.from_json(json.get("initiator"))
                 if json.get("initiator", None) is not None
                 else None
             ),
@@ -3897,9 +3897,9 @@ class WebSocketFrameError:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> WebSocketFrameError:
         return cls(
-            request_id=RequestId.from_json(json["requestId"]),
-            timestamp=MonotonicTime.from_json(json["timestamp"]),
-            error_message=str(json["errorMessage"]),
+            request_id=RequestId.from_json(json.get("requestId")),
+            timestamp=MonotonicTime.from_json(json.get("timestamp")),
+            error_message=str(json.get("errorMessage")),
         )
 
 
@@ -3917,9 +3917,9 @@ class WebSocketFrameReceived:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> WebSocketFrameReceived:
         return cls(
-            request_id=RequestId.from_json(json["requestId"]),
-            timestamp=MonotonicTime.from_json(json["timestamp"]),
-            response=WebSocketFrame.from_json(json["response"]),
+            request_id=RequestId.from_json(json.get("requestId")),
+            timestamp=MonotonicTime.from_json(json.get("timestamp")),
+            response=WebSocketFrame.from_json(json.get("response")),
         )
 
 
@@ -3937,9 +3937,9 @@ class WebSocketFrameSent:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> WebSocketFrameSent:
         return cls(
-            request_id=RequestId.from_json(json["requestId"]),
-            timestamp=MonotonicTime.from_json(json["timestamp"]),
-            response=WebSocketFrame.from_json(json["response"]),
+            request_id=RequestId.from_json(json.get("requestId")),
+            timestamp=MonotonicTime.from_json(json.get("timestamp")),
+            response=WebSocketFrame.from_json(json.get("response")),
         )
 
 
@@ -3959,9 +3959,9 @@ class WebSocketHandshakeResponseReceived:
         cls, json: T_JSON_DICT
     ) -> WebSocketHandshakeResponseReceived:
         return cls(
-            request_id=RequestId.from_json(json["requestId"]),
-            timestamp=MonotonicTime.from_json(json["timestamp"]),
-            response=WebSocketResponse.from_json(json["response"]),
+            request_id=RequestId.from_json(json.get("requestId")),
+            timestamp=MonotonicTime.from_json(json.get("timestamp")),
+            response=WebSocketResponse.from_json(json.get("response")),
         )
 
 
@@ -3981,10 +3981,10 @@ class WebSocketWillSendHandshakeRequest:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> WebSocketWillSendHandshakeRequest:
         return cls(
-            request_id=RequestId.from_json(json["requestId"]),
-            timestamp=MonotonicTime.from_json(json["timestamp"]),
-            wall_time=TimeSinceEpoch.from_json(json["wallTime"]),
-            request=WebSocketRequest.from_json(json["request"]),
+            request_id=RequestId.from_json(json.get("requestId")),
+            timestamp=MonotonicTime.from_json(json.get("timestamp")),
+            wall_time=TimeSinceEpoch.from_json(json.get("wallTime")),
+            request=WebSocketRequest.from_json(json.get("request")),
         )
 
 
@@ -4004,11 +4004,11 @@ class WebTransportCreated:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> WebTransportCreated:
         return cls(
-            transport_id=RequestId.from_json(json["transportId"]),
-            url=str(json["url"]),
-            timestamp=MonotonicTime.from_json(json["timestamp"]),
+            transport_id=RequestId.from_json(json.get("transportId")),
+            url=str(json.get("url")),
+            timestamp=MonotonicTime.from_json(json.get("timestamp")),
             initiator=(
-                Initiator.from_json(json["initiator"])
+                Initiator.from_json(json.get("initiator"))
                 if json.get("initiator", None) is not None
                 else None
             ),
@@ -4027,8 +4027,8 @@ class WebTransportConnectionEstablished:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> WebTransportConnectionEstablished:
         return cls(
-            transport_id=RequestId.from_json(json["transportId"]),
-            timestamp=MonotonicTime.from_json(json["timestamp"]),
+            transport_id=RequestId.from_json(json.get("transportId")),
+            timestamp=MonotonicTime.from_json(json.get("timestamp")),
         )
 
 
@@ -4044,8 +4044,8 @@ class WebTransportClosed:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> WebTransportClosed:
         return cls(
-            transport_id=RequestId.from_json(json["transportId"]),
-            timestamp=MonotonicTime.from_json(json["timestamp"]),
+            transport_id=RequestId.from_json(json.get("transportId")),
+            timestamp=MonotonicTime.from_json(json.get("timestamp")),
         )
 
 
