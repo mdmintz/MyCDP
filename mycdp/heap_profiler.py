@@ -53,9 +53,9 @@ class SamplingHeapProfileNode:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> SamplingHeapProfileNode:
         return cls(
-            call_frame=runtime.CallFrame.from_json(json["callFrame"]),
-            self_size=float(json["selfSize"]),
-            id_=int(json["id"]),
+            call_frame=runtime.CallFrame.from_json(json.get("callFrame")),
+            self_size=float(json.get("selfSize")),
+            id_=int(json.get("id")),
             children=[
                 SamplingHeapProfileNode.from_json(i) for i in json["children"]
             ],
@@ -84,9 +84,9 @@ class SamplingHeapProfileSample:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> SamplingHeapProfileSample:
         return cls(
-            size=float(json["size"]),
-            node_id=int(json["nodeId"]),
-            ordinal=float(json["ordinal"]),
+            size=float(json.get("size")),
+            node_id=int(json.get("nodeId")),
+            ordinal=float(json.get("ordinal")),
         )
 
 
@@ -105,7 +105,7 @@ class SamplingHeapProfile:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> SamplingHeapProfile:
         return cls(
-            head=SamplingHeapProfileNode.from_json(json["head"]),
+            head=SamplingHeapProfileNode.from_json(json.get("head")),
             samples=[
                 SamplingHeapProfileSample.from_json(i) for i in json["samples"]
             ],
@@ -166,7 +166,7 @@ def get_heap_object_id(
         "params": params,
     }
     json = yield cmd_dict
-    return HeapSnapshotObjectId.from_json(json["heapSnapshotObjectId"])
+    return HeapSnapshotObjectId.from_json(json.get("heapSnapshotObjectId"))
 
 
 def get_object_by_heap_object_id(
@@ -187,7 +187,7 @@ def get_object_by_heap_object_id(
         "params": params,
     }
     json = yield cmd_dict
-    return runtime.RemoteObject.from_json(json["result"])
+    return runtime.RemoteObject.from_json(json.get("result"))
 
 
 def get_sampling_profile() -> (
@@ -200,7 +200,7 @@ def get_sampling_profile() -> (
         "method": "HeapProfiler.getSamplingProfile",
     }
     json = yield cmd_dict
-    return SamplingHeapProfile.from_json(json["profile"])
+    return SamplingHeapProfile.from_json(json.get("profile"))
 
 
 def start_sampling(
@@ -275,7 +275,7 @@ def stop_sampling() -> (
         "method": "HeapProfiler.stopSampling",
     }
     json = yield cmd_dict
-    return SamplingHeapProfile.from_json(json["profile"])
+    return SamplingHeapProfile.from_json(json.get("profile"))
 
 
 def stop_tracking_heap_objects(
@@ -352,7 +352,7 @@ class AddHeapSnapshotChunk:
 
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> AddHeapSnapshotChunk:
-        return cls(chunk=str(json["chunk"]))
+        return cls(chunk=str(json.get("chunk")))
 
 
 @event_class("HeapProfiler.heapStatsUpdate")
@@ -388,8 +388,8 @@ class LastSeenObjectId:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> LastSeenObjectId:
         return cls(
-            last_seen_object_id=int(json["lastSeenObjectId"]),
-            timestamp=float(json["timestamp"]),
+            last_seen_object_id=int(json.get("lastSeenObjectId")),
+            timestamp=float(json.get("timestamp")),
         )
 
 
@@ -403,10 +403,10 @@ class ReportHeapSnapshotProgress:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> ReportHeapSnapshotProgress:
         return cls(
-            done=int(json["done"]),
-            total=int(json["total"]),
+            done=int(json.get("done")),
+            total=int(json.get("total")),
             finished=(
-                bool(json["finished"])
+                bool(json.get("finished"))
                 if json.get("finished", None) is not None
                 else None
             ),

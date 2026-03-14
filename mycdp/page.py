@@ -74,7 +74,7 @@ class AdFrameStatus:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> AdFrameStatus:
         return cls(
-            ad_frame_type=AdFrameType.from_json(json["adFrameType"]),
+            ad_frame_type=AdFrameType.from_json(json.get("adFrameType")),
             explanations=(
                 [AdFrameExplanation.from_json(i) for i in json["explanations"]]
                 if json.get("explanations", None) is not None
@@ -104,8 +104,10 @@ class AdScriptId:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> AdScriptId:
         return cls(
-            script_id=runtime.ScriptId.from_json(json["scriptId"]),
-            debugger_id=runtime.UniqueDebuggerId.from_json(json["debuggerId"]),
+            script_id=runtime.ScriptId.from_json(json.get("scriptId")),
+            debugger_id=runtime.UniqueDebuggerId.from_json(
+                json.get("debuggerId")
+            ),
         )
 
 
@@ -309,9 +311,9 @@ class PermissionsPolicyBlockLocator:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> PermissionsPolicyBlockLocator:
         return cls(
-            frame_id=FrameId.from_json(json["frameId"]),
+            frame_id=FrameId.from_json(json.get("frameId")),
             block_reason=PermissionsPolicyBlockReason.from_json(
-                json["blockReason"]
+                json.get("blockReason")
             ),
         )
 
@@ -333,10 +335,10 @@ class PermissionsPolicyFeatureState:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> PermissionsPolicyFeatureState:
         return cls(
-            feature=PermissionsPolicyFeature.from_json(json["feature"]),
-            allowed=bool(json["allowed"]),
+            feature=PermissionsPolicyFeature.from_json(json.get("feature")),
+            allowed=bool(json.get("allowed")),
             locator=(
-                PermissionsPolicyBlockLocator.from_json(json["locator"])
+                PermissionsPolicyBlockLocator.from_json(json.get("locator"))
                 if json.get("locator", None) is not None
                 else None
             ),
@@ -418,13 +420,15 @@ class OriginTrialToken:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> OriginTrialToken:
         return cls(
-            origin=str(json["origin"]),
-            match_sub_domains=bool(json["matchSubDomains"]),
-            trial_name=str(json["trialName"]),
-            expiry_time=network.TimeSinceEpoch.from_json(json["expiryTime"]),
-            is_third_party=bool(json["isThirdParty"]),
+            origin=str(json.get("origin")),
+            match_sub_domains=bool(json.get("matchSubDomains")),
+            trial_name=str(json.get("trialName")),
+            expiry_time=network.TimeSinceEpoch.from_json(
+                json.get("expiryTime")
+            ),
+            is_third_party=bool(json.get("isThirdParty")),
             usage_restriction=OriginTrialUsageRestriction.from_json(
-                json["usageRestriction"]
+                json.get("usageRestriction")
             ),
         )
 
@@ -449,10 +453,10 @@ class OriginTrialTokenWithStatus:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> OriginTrialTokenWithStatus:
         return cls(
-            raw_token_text=str(json["rawTokenText"]),
-            status=OriginTrialTokenStatus.from_json(json["status"]),
+            raw_token_text=str(json.get("rawTokenText")),
+            status=OriginTrialTokenStatus.from_json(json.get("status")),
             parsed_token=(
-                OriginTrialToken.from_json(json["parsedToken"])
+                OriginTrialToken.from_json(json.get("parsedToken"))
                 if json.get("parsedToken", None) is not None
                 else None
             ),
@@ -477,8 +481,8 @@ class OriginTrial:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> OriginTrial:
         return cls(
-            trial_name=str(json["trialName"]),
-            status=OriginTrialStatus.from_json(json["status"]),
+            trial_name=str(json.get("trialName")),
+            status=OriginTrialStatus.from_json(json.get("status")),
             tokens_with_status=[
                 OriginTrialTokenWithStatus.from_json(i)
                 for i in json["tokensWithStatus"]
@@ -555,43 +559,43 @@ class Frame:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> Frame:
         return cls(
-            id_=FrameId.from_json(json["id"]),
-            loader_id=network.LoaderId.from_json(json["loaderId"]),
-            url=str(json["url"]),
-            domain_and_registry=str(json["domainAndRegistry"]),
-            security_origin=str(json["securityOrigin"]),
-            mime_type=str(json["mimeType"]),
+            id_=FrameId.from_json(json.get("id")),
+            loader_id=network.LoaderId.from_json(json.get("loaderId")),
+            url=str(json.get("url")),
+            domain_and_registry=str(json.get("domainAndRegistry")),
+            security_origin=str(json.get("securityOrigin")),
+            mime_type=str(json.get("mimeType")),
             secure_context_type=SecureContextType.from_json(
-                json["secureContextType"]
+                json.get("secureContextType")
             ),
             cross_origin_isolated_context_type=CrossOriginIsolatedContextType.from_json(  # noqa
-                json["crossOriginIsolatedContextType"]
+                json.get("crossOriginIsolatedContextType")
             ),
             gated_api_features=[
                 GatedAPIFeatures.from_json(i) for i in json["gatedAPIFeatures"]
             ],
             parent_id=(
-                FrameId.from_json(json["parentId"])
+                FrameId.from_json(json.get("parentId"))
                 if json.get("parentId", None) is not None
                 else None
             ),
             name=(
-                str(json["name"])
+                str(json.get("name"))
                 if json.get("name", None) is not None
                 else None
             ),
             url_fragment=(
-                str(json["urlFragment"])
+                str(json.get("urlFragment"))
                 if json.get("urlFragment", None) is not None
                 else None
             ),
             unreachable_url=(
-                str(json["unreachableUrl"])
+                str(json.get("unreachableUrl"))
                 if json.get("unreachableUrl", None) is not None
                 else None
             ),
             ad_frame_status=(
-                AdFrameStatus.from_json(json["adFrameStatus"])
+                AdFrameStatus.from_json(json.get("adFrameStatus"))
                 if json.get("adFrameStatus", None) is not None
                 else None
             ),
@@ -634,26 +638,26 @@ class FrameResource:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> FrameResource:
         return cls(
-            url=str(json["url"]),
-            type_=network.ResourceType.from_json(json["type"]),
-            mime_type=str(json["mimeType"]),
+            url=str(json.get("url")),
+            type_=network.ResourceType.from_json(json.get("type")),
+            mime_type=str(json.get("mimeType")),
             last_modified=(
-                network.TimeSinceEpoch.from_json(json["lastModified"])
+                network.TimeSinceEpoch.from_json(json.get("lastModified"))
                 if json.get("lastModified", None) is not None
                 else None
             ),
             content_size=(
-                float(json["contentSize"])
+                float(json.get("contentSize"))
                 if json.get("contentSize", None) is not None
                 else None
             ),
             failed=(
-                bool(json["failed"])
+                bool(json.get("failed"))
                 if json.get("failed", None) is not None
                 else None
             ),
             canceled=(
-                bool(json["canceled"])
+                bool(json.get("canceled"))
                 if json.get("canceled", None) is not None
                 else None
             ),
@@ -683,7 +687,7 @@ class FrameResourceTree:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> FrameResourceTree:
         return cls(
-            frame=Frame.from_json(json["frame"]),
+            frame=Frame.from_json(json.get("frame")),
             resources=[FrameResource.from_json(i) for i in json["resources"]],
             child_frames=(
                 [FrameResourceTree.from_json(i) for i in json["childFrames"]]
@@ -711,7 +715,7 @@ class FrameTree:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> FrameTree:
         return cls(
-            frame=Frame.from_json(json["frame"]),
+            frame=Frame.from_json(json.get("frame")),
             child_frames=(
                 [FrameTree.from_json(i) for i in json["childFrames"]]
                 if json.get("childFrames", None) is not None
@@ -784,11 +788,13 @@ class NavigationEntry:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> NavigationEntry:
         return cls(
-            id_=int(json["id"]),
-            url=str(json["url"]),
-            user_typed_url=str(json["userTypedURL"]),
-            title=str(json["title"]),
-            transition_type=TransitionType.from_json(json["transitionType"]),
+            id_=int(json.get("id")),
+            url=str(json.get("url")),
+            user_typed_url=str(json.get("userTypedURL")),
+            title=str(json.get("title")),
+            transition_type=TransitionType.from_json(
+                json.get("transitionType")
+            ),
         )
 
 
@@ -825,14 +831,14 @@ class ScreencastFrameMetadata:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> ScreencastFrameMetadata:
         return cls(
-            offset_top=float(json["offsetTop"]),
-            page_scale_factor=float(json["pageScaleFactor"]),
-            device_width=float(json["deviceWidth"]),
-            device_height=float(json["deviceHeight"]),
-            scroll_offset_x=float(json["scrollOffsetX"]),
-            scroll_offset_y=float(json["scrollOffsetY"]),
+            offset_top=float(json.get("offsetTop")),
+            page_scale_factor=float(json.get("pageScaleFactor")),
+            device_width=float(json.get("deviceWidth")),
+            device_height=float(json.get("deviceHeight")),
+            scroll_offset_x=float(json.get("scrollOffsetX")),
+            scroll_offset_y=float(json.get("scrollOffsetY")),
             timestamp=(
-                network.TimeSinceEpoch.from_json(json["timestamp"])
+                network.TimeSinceEpoch.from_json(json.get("timestamp"))
                 if json.get("timestamp", None) is not None
                 else None
             ),
@@ -877,10 +883,10 @@ class AppManifestError:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> AppManifestError:
         return cls(
-            message=str(json["message"]),
-            critical=int(json["critical"]),
-            line=int(json["line"]),
-            column=int(json["column"]),
+            message=str(json.get("message")),
+            critical=int(json.get("critical")),
+            line=int(json.get("line")),
+            column=int(json.get("column")),
         )
 
 
@@ -898,7 +904,7 @@ class AppManifestParsedProperties:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> AppManifestParsedProperties:
         return cls(
-            scope=str(json["scope"]),
+            scope=str(json.get("scope")),
         )
 
 
@@ -925,10 +931,10 @@ class LayoutViewport:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> LayoutViewport:
         return cls(
-            page_x=int(json["pageX"]),
-            page_y=int(json["pageY"]),
-            client_width=int(json["clientWidth"]),
-            client_height=int(json["clientHeight"]),
+            page_x=int(json.get("pageX")),
+            page_y=int(json.get("pageY")),
+            client_width=int(json.get("clientWidth")),
+            client_height=int(json.get("clientHeight")),
         )
 
 
@@ -968,15 +974,15 @@ class VisualViewport:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> VisualViewport:
         return cls(
-            offset_x=float(json["offsetX"]),
-            offset_y=float(json["offsetY"]),
-            page_x=float(json["pageX"]),
-            page_y=float(json["pageY"]),
-            client_width=float(json["clientWidth"]),
-            client_height=float(json["clientHeight"]),
-            scale=float(json["scale"]),
+            offset_x=float(json.get("offsetX")),
+            offset_y=float(json.get("offsetY")),
+            page_x=float(json.get("pageX")),
+            page_y=float(json.get("pageY")),
+            client_width=float(json.get("clientWidth")),
+            client_height=float(json.get("clientHeight")),
+            scale=float(json.get("scale")),
             zoom=(
-                float(json["zoom"])
+                float(json.get("zoom"))
                 if json.get("zoom", None) is not None
                 else None
             ),
@@ -1009,11 +1015,11 @@ class Viewport:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> Viewport:
         return cls(
-            x=float(json["x"]),
-            y=float(json["y"]),
-            width=float(json["width"]),
-            height=float(json["height"]),
-            scale=float(json["scale"]),
+            x=float(json.get("x")),
+            y=float(json.get("y")),
+            width=float(json.get("width")),
+            height=float(json.get("height")),
+            scale=float(json.get("scale")),
         )
 
 
@@ -1057,37 +1063,37 @@ class FontFamilies:
     def from_json(cls, json: T_JSON_DICT) -> FontFamilies:
         return cls(
             standard=(
-                str(json["standard"])
+                str(json.get("standard"))
                 if json.get("standard", None) is not None
                 else None
             ),
             fixed=(
-                str(json["fixed"])
+                str(json.get("fixed"))
                 if json.get("fixed", None) is not None
                 else None
             ),
             serif=(
-                str(json["serif"])
+                str(json.get("serif"))
                 if json.get("serif", None) is not None
                 else None
             ),
             sans_serif=(
-                str(json["sansSerif"])
+                str(json.get("sansSerif"))
                 if json.get("sansSerif", None) is not None
                 else None
             ),
             cursive=(
-                str(json["cursive"])
+                str(json.get("cursive"))
                 if json.get("cursive", None) is not None
                 else None
             ),
             fantasy=(
-                str(json["fantasy"])
+                str(json.get("fantasy"))
                 if json.get("fantasy", None) is not None
                 else None
             ),
             math=(
-                str(json["math"])
+                str(json.get("math"))
                 if json.get("math", None) is not None
                 else None
             ),
@@ -1111,8 +1117,8 @@ class ScriptFontFamilies:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> ScriptFontFamilies:
         return cls(
-            script=str(json["script"]),
-            font_families=FontFamilies.from_json(json["fontFamilies"]),
+            script=str(json.get("script")),
+            font_families=FontFamilies.from_json(json.get("fontFamilies")),
         )
 
 
@@ -1136,12 +1142,12 @@ class FontSizes:
     def from_json(cls, json: T_JSON_DICT) -> FontSizes:
         return cls(
             standard=(
-                int(json["standard"])
+                int(json.get("standard"))
                 if json.get("standard", None) is not None
                 else None
             ),
             fixed=(
-                int(json["fixed"])
+                int(json.get("fixed"))
                 if json.get("fixed", None) is not None
                 else None
             ),
@@ -1196,8 +1202,8 @@ class InstallabilityErrorArgument:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> InstallabilityErrorArgument:
         return cls(
-            name=str(json["name"]),
-            value=str(json["value"]),
+            name=str(json.get("name")),
+            value=str(json.get("value")),
         )
 
 
@@ -1219,7 +1225,7 @@ class InstallabilityError:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> InstallabilityError:
         return cls(
-            error_id=str(json["errorId"]),
+            error_id=str(json.get("errorId")),
             error_arguments=[
                 InstallabilityErrorArgument.from_json(i)
                 for i in json["errorArguments"]
@@ -1267,9 +1273,9 @@ class CompilationCacheParams:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> CompilationCacheParams:
         return cls(
-            url=str(json["url"]),
+            url=str(json.get("url")),
             eager=(
-                bool(json["eager"])
+                bool(json.get("eager"))
                 if json.get("eager", None) is not None
                 else None
             ),
@@ -1293,7 +1299,7 @@ class FileFilter:
     def from_json(cls, json: T_JSON_DICT) -> FileFilter:
         return cls(
             name=(
-                str(json["name"])
+                str(json.get("name"))
                 if json.get("name", None) is not None
                 else None
             ),
@@ -1330,9 +1336,9 @@ class FileHandler:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> FileHandler:
         return cls(
-            action=str(json["action"]),
-            name=str(json["name"]),
-            launch_type=str(json["launchType"]),
+            action=str(json.get("action")),
+            name=str(json.get("name")),
+            launch_type=str(json.get("launchType")),
             icons=(
                 [ImageResource.from_json(i) for i in json["icons"]]
                 if json.get("icons", None) is not None
@@ -1367,14 +1373,14 @@ class ImageResource:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> ImageResource:
         return cls(
-            url=str(json["url"]),
+            url=str(json.get("url")),
             sizes=(
-                str(json["sizes"])
+                str(json.get("sizes"))
                 if json.get("sizes", None) is not None
                 else None
             ),
             type_=(
-                str(json["type"])
+                str(json.get("type"))
                 if json.get("type", None) is not None
                 else None
             ),
@@ -1393,7 +1399,7 @@ class LaunchHandler:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> LaunchHandler:
         return cls(
-            client_mode=str(json["clientMode"]),
+            client_mode=str(json.get("clientMode")),
         )
 
 
@@ -1411,8 +1417,8 @@ class ProtocolHandler:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> ProtocolHandler:
         return cls(
-            protocol=str(json["protocol"]),
-            url=str(json["url"]),
+            protocol=str(json.get("protocol")),
+            url=str(json.get("url")),
         )
 
 
@@ -1431,7 +1437,7 @@ class RelatedApplication:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> RelatedApplication:
         return cls(
-            url=str(json["url"]),
+            url=str(json.get("url")),
             id_=str(json["id"]) if json.get("id", None) is not None else None,
         )
 
@@ -1452,8 +1458,8 @@ class ScopeExtension:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> ScopeExtension:
         return cls(
-            origin=str(json["origin"]),
-            has_origin_wildcard=bool(json["hasOriginWildcard"]),
+            origin=str(json.get("origin")),
+            has_origin_wildcard=bool(json.get("hasOriginWildcard")),
         )
 
 
@@ -1474,10 +1480,10 @@ class Screenshot:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> Screenshot:
         return cls(
-            image=ImageResource.from_json(json["image"]),
-            form_factor=str(json["formFactor"]),
+            image=ImageResource.from_json(json.get("image")),
+            form_factor=str(json.get("formFactor")),
             label=(
-                str(json["label"])
+                str(json.get("label"))
                 if json.get("label", None) is not None
                 else None
             ),
@@ -1513,16 +1519,16 @@ class ShareTarget:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> ShareTarget:
         return cls(
-            action=str(json["action"]),
-            method=str(json["method"]),
-            enctype=str(json["enctype"]),
+            action=str(json.get("action")),
+            method=str(json.get("method")),
+            enctype=str(json.get("enctype")),
             title=(
-                str(json["title"])
+                str(json.get("title"))
                 if json.get("title", None) is not None
                 else None
             ),
             text=(
-                str(json["text"])
+                str(json.get("text"))
                 if json.get("text", None) is not None
                 else None
             ),
@@ -1551,8 +1557,8 @@ class Shortcut:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> Shortcut:
         return cls(
-            name=str(json["name"]),
-            url=str(json["url"]),
+            name=str(json.get("name")),
+            url=str(json.get("url")),
         )
 
 
@@ -1651,20 +1657,22 @@ class WebAppManifest:
     def from_json(cls, json: T_JSON_DICT) -> WebAppManifest:
         return cls(
             background_color=(
-                str(json["backgroundColor"])
+                str(json.get("backgroundColor"))
                 if json.get("backgroundColor", None) is not None
                 else None
             ),
             description=(
-                str(json["description"])
+                str(json.get("description"))
                 if json.get("description", None) is not None
                 else None
             ),
             dir_=(
-                str(json["dir"]) if json.get("dir", None) is not None else None
+                str(json.get("dir"))
+                if json.get("dir", None) is not None
+                else None
             ),
             display=(
-                str(json["display"])
+                str(json.get("display"))
                 if json.get("display", None) is not None
                 else None
             ),
@@ -1685,27 +1693,27 @@ class WebAppManifest:
             ),
             id_=str(json["id"]) if json.get("id", None) is not None else None,
             lang=(
-                str(json["lang"])
+                str(json.get("lang"))
                 if json.get("lang", None) is not None
                 else None
             ),
             launch_handler=(
-                LaunchHandler.from_json(json["launchHandler"])
+                LaunchHandler.from_json(json.get("launchHandler"))
                 if json.get("launchHandler", None) is not None
                 else None
             ),
             name=(
-                str(json["name"])
+                str(json.get("name"))
                 if json.get("name", None) is not None
                 else None
             ),
             orientation=(
-                str(json["orientation"])
+                str(json.get("orientation"))
                 if json.get("orientation", None) is not None
                 else None
             ),
             prefer_related_applications=(
-                bool(json["preferRelatedApplications"])
+                bool(json.get("preferRelatedApplications"))
                 if json.get("preferRelatedApplications", None) is not None
                 else None
             ),
@@ -1726,7 +1734,7 @@ class WebAppManifest:
                 else None
             ),
             scope=(
-                str(json["scope"])
+                str(json.get("scope"))
                 if json.get("scope", None) is not None
                 else None
             ),
@@ -1741,12 +1749,12 @@ class WebAppManifest:
                 else None
             ),
             share_target=(
-                ShareTarget.from_json(json["shareTarget"])
+                ShareTarget.from_json(json.get("shareTarget"))
                 if json.get("shareTarget", None) is not None
                 else None
             ),
             short_name=(
-                str(json["shortName"])
+                str(json.get("shortName"))
                 if json.get("shortName", None) is not None
                 else None
             ),
@@ -1756,12 +1764,12 @@ class WebAppManifest:
                 else None
             ),
             start_url=(
-                str(json["startUrl"])
+                str(json.get("startUrl"))
                 if json.get("startUrl", None) is not None
                 else None
             ),
             theme_color=(
-                str(json["themeColor"])
+                str(json.get("themeColor"))
                 if json.get("themeColor", None) is not None
                 else None
             ),
@@ -2031,13 +2039,13 @@ class BackForwardCacheBlockingDetails:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> BackForwardCacheBlockingDetails:
         return cls(
-            line_number=int(json["lineNumber"]),
-            column_number=int(json["columnNumber"]),
+            line_number=int(json.get("lineNumber")),
+            column_number=int(json.get("columnNumber")),
             url=(
                 str(json["url"]) if json.get("url", None) is not None else None
             ),
             function=(
-                str(json["function"])
+                str(json.get("function"))
                 if json.get("function", None) is not None
                 else None
             ),
@@ -2074,11 +2082,13 @@ class BackForwardCacheNotRestoredExplanation:
     ) -> BackForwardCacheNotRestoredExplanation:
         return cls(
             type_=BackForwardCacheNotRestoredReasonType.from_json(
-                json["type"]
+                json.get("type")
             ),
-            reason=BackForwardCacheNotRestoredReason.from_json(json["reason"]),
+            reason=BackForwardCacheNotRestoredReason.from_json(
+                json.get("reason")
+            ),
             context=(
-                str(json["context"])
+                str(json.get("context"))
                 if json.get("context", None) is not None
                 else None
             ),
@@ -2114,7 +2124,7 @@ class BackForwardCacheNotRestoredExplanationTree:
         cls, json: T_JSON_DICT
     ) -> BackForwardCacheNotRestoredExplanationTree:
         return cls(
-            url=str(json["url"]),
+            url=str(json.get("url")),
             explanations=[
                 BackForwardCacheNotRestoredExplanation.from_json(i)
                 for i in json["explanations"]
@@ -2162,7 +2172,7 @@ def add_script_to_evaluate_on_new_document(
         "params": params,
     }
     json = yield cmd_dict
-    return ScriptIdentifier.from_json(json["identifier"])
+    return ScriptIdentifier.from_json(json.get("identifier"))
 
 
 def bring_to_front() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
@@ -2218,7 +2228,7 @@ def capture_screenshot(
         "params": params,
     }
     json = yield cmd_dict
-    return str(json["data"])
+    return str(json.get("data"))
 
 
 def capture_snapshot(
@@ -2240,7 +2250,7 @@ def capture_snapshot(
         "params": params,
     }
     json = yield cmd_dict
-    return str(json["data"])
+    return str(json.get("data"))
 
 
 def create_isolated_world(
@@ -2270,7 +2280,7 @@ def create_isolated_world(
         "params": params,
     }
     json = yield cmd_dict
-    return runtime.ExecutionContextId.from_json(json["executionContextId"])
+    return runtime.ExecutionContextId.from_json(json.get("executionContextId"))
 
 
 def disable() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
@@ -2339,15 +2349,15 @@ def get_app_manifest(
     }
     json = yield cmd_dict
     return (
-        str(json["url"]),
+        str(json.get("url")),
         [AppManifestError.from_json(i) for i in json["errors"]],
-        str(json["data"]) if json.get("data", None) is not None else None,
+        str(json.get("data")) if json.get("data", None) is not None else None,
         (
-            AppManifestParsedProperties.from_json(json["parsed"])
+            AppManifestParsedProperties.from_json(json.get("parsed"))
             if json.get("parsed", None) is not None
             else None
         ),
-        WebAppManifest.from_json(json["manifest"]),
+        WebAppManifest.from_json(json.get("manifest")),
     )
 
 
@@ -2388,7 +2398,7 @@ def get_app_id() -> typing.Generator[
     return (
         str(json["appId"]) if json.get("appId", None) is not None else None,
         (
-            str(json["recommendedId"])
+            str(json.get("recommendedId"))
             if json.get("recommendedId", None) is not None
             else None
         ),
@@ -2413,7 +2423,7 @@ def get_ad_script_id(
     }
     json = yield cmd_dict
     return (
-        AdScriptId.from_json(json["adScriptId"])
+        AdScriptId.from_json(json.get("adScriptId"))
         if json.get("adScriptId", None) is not None
         else None
     )
@@ -2428,7 +2438,7 @@ def get_frame_tree() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, FrameTree]:
         "method": "Page.getFrameTree",
     }
     json = yield cmd_dict
-    return FrameTree.from_json(json["frameTree"])
+    return FrameTree.from_json(json.get("frameTree"))
 
 
 def get_layout_metrics() -> typing.Generator[
@@ -2467,12 +2477,12 @@ def get_layout_metrics() -> typing.Generator[
     }
     json = yield cmd_dict
     return (
-        LayoutViewport.from_json(json["layoutViewport"]),
-        VisualViewport.from_json(json["visualViewport"]),
-        dom.Rect.from_json(json["contentSize"]),
-        LayoutViewport.from_json(json["cssLayoutViewport"]),
-        VisualViewport.from_json(json["cssVisualViewport"]),
-        dom.Rect.from_json(json["cssContentSize"]),
+        LayoutViewport.from_json(json.get("layoutViewport")),
+        VisualViewport.from_json(json.get("visualViewport")),
+        dom.Rect.from_json(json.get("contentSize")),
+        LayoutViewport.from_json(json.get("cssLayoutViewport")),
+        VisualViewport.from_json(json.get("cssVisualViewport")),
+        dom.Rect.from_json(json.get("cssContentSize")),
     )
 
 
@@ -2492,7 +2502,7 @@ def get_navigation_history() -> typing.Generator[
     }
     json = yield cmd_dict
     return (
-        int(json["currentIndex"]),
+        int(json.get("currentIndex")),
         [NavigationEntry.from_json(i) for i in json["entries"]],
     )
 
@@ -2527,7 +2537,7 @@ def get_resource_content(
         "params": params,
     }
     json = yield cmd_dict
-    return (str(json["content"]), bool(json["base64Encoded"]))
+    return (str(json.get("content")), bool(json.get("base64Encoded")))
 
 
 def get_resource_tree() -> (
@@ -2542,7 +2552,7 @@ def get_resource_tree() -> (
         "method": "Page.getResourceTree",
     }
     json = yield cmd_dict
-    return FrameResourceTree.from_json(json["frameTree"])
+    return FrameResourceTree.from_json(json.get("frameTree"))
 
 
 def handle_java_script_dialog(
@@ -2619,14 +2629,14 @@ def navigate(
     }
     json = yield cmd_dict
     return (
-        FrameId.from_json(json["frameId"]),
+        FrameId.from_json(json.get("frameId")),
         (
-            network.LoaderId.from_json(json["loaderId"])
+            network.LoaderId.from_json(json.get("loaderId"))
             if json.get("loaderId", None) is not None
             else None
         ),
         (
-            str(json["errorText"])
+            str(json.get("errorText"))
             if json.get("errorText", None) is not None
             else None
         ),
@@ -2776,9 +2786,9 @@ def print_to_pdf(
     }
     json = yield cmd_dict
     return (
-        str(json["data"]),
+        str(json.get("data")),
         (
-            io.StreamHandle.from_json(json["stream"])
+            io.StreamHandle.from_json(json.get("stream"))
             if json.get("stream", None) is not None
             else None
         ),
@@ -3274,7 +3284,7 @@ class DomContentEventFired:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> DomContentEventFired:
         return cls(
-            timestamp=network.MonotonicTime.from_json(json["timestamp"])
+            timestamp=network.MonotonicTime.from_json(json.get("timestamp"))
         )
 
 
@@ -3294,10 +3304,10 @@ class FileChooserOpened:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> FileChooserOpened:
         return cls(
-            frame_id=FrameId.from_json(json["frameId"]),
-            mode=str(json["mode"]),
+            frame_id=FrameId.from_json(json.get("frameId")),
+            mode=str(json.get("mode")),
             backend_node_id=(
-                dom.BackendNodeId.from_json(json["backendNodeId"])
+                dom.BackendNodeId.from_json(json.get("backendNodeId"))
                 if json.get("backendNodeId", None) is not None
                 else None
             ),
@@ -3319,10 +3329,10 @@ class FrameAttached:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> FrameAttached:
         return cls(
-            frame_id=FrameId.from_json(json["frameId"]),
-            parent_frame_id=FrameId.from_json(json["parentFrameId"]),
+            frame_id=FrameId.from_json(json.get("frameId")),
+            parent_frame_id=FrameId.from_json(json.get("parentFrameId")),
             stack=(
-                runtime.StackTrace.from_json(json["stack"])
+                runtime.StackTrace.from_json(json.get("stack"))
                 if json.get("stack", None) is not None
                 else None
             ),
@@ -3338,7 +3348,7 @@ class FrameClearedScheduledNavigation:
 
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> FrameClearedScheduledNavigation:
-        return cls(frame_id=FrameId.from_json(json["frameId"]))
+        return cls(frame_id=FrameId.from_json(json.get("frameId")))
 
 
 @event_class("Page.frameDetached")
@@ -3353,8 +3363,8 @@ class FrameDetached:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> FrameDetached:
         return cls(
-            frame_id=FrameId.from_json(json["frameId"]),
-            reason=str(json["reason"]),
+            frame_id=FrameId.from_json(json.get("frameId")),
+            reason=str(json.get("reason")),
         )
 
 
@@ -3372,8 +3382,8 @@ class FrameNavigated:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> FrameNavigated:
         return cls(
-            frame=Frame.from_json(json["frame"]),
-            type_=NavigationType.from_json(json["type"]),
+            frame=Frame.from_json(json.get("frame")),
+            type_=NavigationType.from_json(json.get("type")),
         )
 
 
@@ -3386,7 +3396,7 @@ class DocumentOpened:
 
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> DocumentOpened:
-        return cls(frame=Frame.from_json(json["frame"]))
+        return cls(frame=Frame.from_json(json.get("frame")))
 
 
 @event_class("Page.frameResized")
@@ -3417,11 +3427,11 @@ class FrameRequestedNavigation:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> FrameRequestedNavigation:
         return cls(
-            frame_id=FrameId.from_json(json["frameId"]),
-            reason=ClientNavigationReason.from_json(json["reason"]),
-            url=str(json["url"]),
+            frame_id=FrameId.from_json(json.get("frameId")),
+            reason=ClientNavigationReason.from_json(json.get("reason")),
+            url=str(json.get("url")),
             disposition=ClientNavigationDisposition.from_json(
-                json["disposition"]
+                json.get("disposition")
             ),
         )
 
@@ -3443,10 +3453,10 @@ class FrameScheduledNavigation:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> FrameScheduledNavigation:
         return cls(
-            frame_id=FrameId.from_json(json["frameId"]),
-            delay=float(json["delay"]),
-            reason=ClientNavigationReason.from_json(json["reason"]),
-            url=str(json["url"]),
+            frame_id=FrameId.from_json(json.get("frameId")),
+            delay=float(json.get("delay")),
+            reason=ClientNavigationReason.from_json(json.get("reason")),
+            url=str(json.get("url")),
         )
 
 
@@ -3459,7 +3469,7 @@ class FrameStartedLoading:
 
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> FrameStartedLoading:
-        return cls(frame_id=FrameId.from_json(json["frameId"]))
+        return cls(frame_id=FrameId.from_json(json.get("frameId")))
 
 
 @event_class("Page.frameStoppedLoading")
@@ -3471,7 +3481,7 @@ class FrameStoppedLoading:
 
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> FrameStoppedLoading:
-        return cls(frame_id=FrameId.from_json(json["frameId"]))
+        return cls(frame_id=FrameId.from_json(json.get("frameId")))
 
 
 @event_class("Page.interstitialHidden")
@@ -3510,7 +3520,8 @@ class JavascriptDialogClosed:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> JavascriptDialogClosed:
         return cls(
-            result=bool(json["result"]), user_input=str(json["userInput"])
+            result=bool(json.get("result")),
+            user_input=str(json.get("userInput")),
         )
 
 
@@ -3539,12 +3550,12 @@ class JavascriptDialogOpening:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> JavascriptDialogOpening:
         return cls(
-            url=str(json["url"]),
-            message=str(json["message"]),
-            type_=DialogType.from_json(json["type"]),
-            has_browser_handler=bool(json["hasBrowserHandler"]),
+            url=str(json.get("url")),
+            message=str(json.get("message")),
+            type_=DialogType.from_json(json.get("type")),
+            has_browser_handler=bool(json.get("hasBrowserHandler")),
             default_prompt=(
-                str(json["defaultPrompt"])
+                str(json.get("defaultPrompt"))
                 if json.get("defaultPrompt", None) is not None
                 else None
             ),
@@ -3568,10 +3579,10 @@ class LifecycleEvent:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> LifecycleEvent:
         return cls(
-            frame_id=FrameId.from_json(json["frameId"]),
-            loader_id=network.LoaderId.from_json(json["loaderId"]),
-            name=str(json["name"]),
-            timestamp=network.MonotonicTime.from_json(json["timestamp"]),
+            frame_id=FrameId.from_json(json.get("frameId")),
+            loader_id=network.LoaderId.from_json(json.get("loaderId")),
+            name=str(json.get("name")),
+            timestamp=network.MonotonicTime.from_json(json.get("timestamp")),
         )
 
 
@@ -3603,15 +3614,15 @@ class BackForwardCacheNotUsed:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> BackForwardCacheNotUsed:
         return cls(
-            loader_id=network.LoaderId.from_json(json["loaderId"]),
-            frame_id=FrameId.from_json(json["frameId"]),
+            loader_id=network.LoaderId.from_json(json.get("loaderId")),
+            frame_id=FrameId.from_json(json.get("frameId")),
             not_restored_explanations=[
                 BackForwardCacheNotRestoredExplanation.from_json(i)
                 for i in json["notRestoredExplanations"]
             ],
             not_restored_explanations_tree=(
                 BackForwardCacheNotRestoredExplanationTree.from_json(
-                    json["notRestoredExplanationsTree"]
+                    json.get("notRestoredExplanationsTree")
                 )
                 if json.get("notRestoredExplanationsTree", None) is not None
                 else None
@@ -3627,7 +3638,7 @@ class LoadEventFired:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> LoadEventFired:
         return cls(
-            timestamp=network.MonotonicTime.from_json(json["timestamp"])
+            timestamp=network.MonotonicTime.from_json(json.get("timestamp"))
         )
 
 
@@ -3646,7 +3657,8 @@ class NavigatedWithinDocument:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> NavigatedWithinDocument:
         return cls(
-            frame_id=FrameId.from_json(json["frameId"]), url=str(json["url"])
+            frame_id=FrameId.from_json(json.get("frameId")),
+            url=str(json.get("url")),
         )
 
 
@@ -3665,9 +3677,9 @@ class ScreencastFrame:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> ScreencastFrame:
         return cls(
-            data=str(json["data"]),
-            metadata=ScreencastFrameMetadata.from_json(json["metadata"]),
-            session_id=int(json["sessionId"]),
+            data=str(json.get("data")),
+            metadata=ScreencastFrameMetadata.from_json(json.get("metadata")),
+            session_id=int(json.get("sessionId")),
         )
 
 
@@ -3682,7 +3694,7 @@ class ScreencastVisibilityChanged:
 
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> ScreencastVisibilityChanged:
-        return cls(visible=bool(json["visible"]))
+        return cls(visible=bool(json.get("visible")))
 
 
 @event_class("Page.windowOpen")
@@ -3704,10 +3716,10 @@ class WindowOpen:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> WindowOpen:
         return cls(
-            url=str(json["url"]),
-            window_name=str(json["windowName"]),
+            url=str(json.get("url")),
+            window_name=str(json.get("windowName")),
             window_features=[str(i) for i in json["windowFeatures"]],
-            user_gesture=bool(json["userGesture"]),
+            user_gesture=bool(json.get("userGesture")),
         )
 
 
@@ -3724,4 +3736,4 @@ class CompilationCacheProduced:
 
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> CompilationCacheProduced:
-        return cls(url=str(json["url"]), data=str(json["data"]))
+        return cls(url=str(json.get("url")), data=str(json.get("data")))

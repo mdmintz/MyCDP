@@ -68,10 +68,10 @@ class PseudoElementMatches:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> PseudoElementMatches:
         return cls(
-            pseudo_type=dom.PseudoType.from_json(json["pseudoType"]),
+            pseudo_type=dom.PseudoType.from_json(json.get("pseudoType")),
             matches=[RuleMatch.from_json(i) for i in json["matches"]],
             pseudo_identifier=(
-                str(json["pseudoIdentifier"])
+                str(json.get("pseudoIdentifier"))
                 if json.get("pseudoIdentifier", None) is not None
                 else None
             ),
@@ -102,7 +102,7 @@ class InheritedStyleEntry:
                 RuleMatch.from_json(i) for i in json["matchedCSSRules"]
             ],
             inline_style=(
-                CSSStyle.from_json(json["inlineStyle"])
+                CSSStyle.from_json(json.get("inlineStyle"))
                 if json.get("inlineStyle", None) is not None
                 else None
             ),
@@ -147,7 +147,7 @@ class RuleMatch:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> RuleMatch:
         return cls(
-            rule=CSSRule.from_json(json["rule"]),
+            rule=CSSRule.from_json(json.get("rule")),
             matching_selectors=[int(i) for i in json["matchingSelectors"]],
         )
 
@@ -177,14 +177,14 @@ class Value:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> Value:
         return cls(
-            text=str(json["text"]),
+            text=str(json.get("text")),
             range_=(
-                SourceRange.from_json(json["range"])
+                SourceRange.from_json(json.get("range"))
                 if json.get("range", None) is not None
                 else None
             ),
             specificity=(
-                Specificity.from_json(json["specificity"])
+                Specificity.from_json(json.get("specificity"))
                 if json.get("specificity", None) is not None
                 else None
             ),
@@ -216,9 +216,9 @@ class Specificity:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> Specificity:
         return cls(
-            a=int(json["a"]),
-            b=int(json["b"]),
-            c=int(json["c"]),
+            a=int(json.get("a")),
+            b=int(json.get("b")),
+            c=int(json.get("c")),
         )
 
 
@@ -240,7 +240,7 @@ class SelectorList:
     def from_json(cls, json: T_JSON_DICT) -> SelectorList:
         return cls(
             selectors=[Value.from_json(i) for i in json["selectors"]],
-            text=str(json["text"]),
+            text=str(json.get("text")),
         )
 
 
@@ -327,37 +327,37 @@ class CSSStyleSheetHeader:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> CSSStyleSheetHeader:
         return cls(
-            style_sheet_id=StyleSheetId.from_json(json["styleSheetId"]),
-            frame_id=page.FrameId.from_json(json["frameId"]),
-            source_url=str(json["sourceURL"]),
-            origin=StyleSheetOrigin.from_json(json["origin"]),
-            title=str(json["title"]),
-            disabled=bool(json["disabled"]),
-            is_inline=bool(json["isInline"]),
-            is_mutable=bool(json["isMutable"]),
-            is_constructed=bool(json["isConstructed"]),
-            start_line=float(json["startLine"]),
-            start_column=float(json["startColumn"]),
-            length=float(json["length"]),
-            end_line=float(json["endLine"]),
-            end_column=float(json["endColumn"]),
+            style_sheet_id=StyleSheetId.from_json(json.get("styleSheetId")),
+            frame_id=page.FrameId.from_json(json.get("frameId")),
+            source_url=str(json.get("sourceURL")),
+            origin=StyleSheetOrigin.from_json(json.get("origin")),
+            title=str(json.get("title")),
+            disabled=bool(json.get("disabled")),
+            is_inline=bool(json.get("isInline")),
+            is_mutable=bool(json.get("isMutable")),
+            is_constructed=bool(json.get("isConstructed")),
+            start_line=float(json.get("startLine")),
+            start_column=float(json.get("startColumn")),
+            length=float(json.get("length")),
+            end_line=float(json.get("endLine")),
+            end_column=float(json.get("endColumn")),
             source_map_url=(
-                str(json["sourceMapURL"])
+                str(json.get("sourceMapURL"))
                 if json.get("sourceMapURL", None) is not None
                 else None
             ),
             owner_node=(
-                dom.BackendNodeId.from_json(json["ownerNode"])
+                dom.BackendNodeId.from_json(json.get("ownerNode"))
                 if json.get("ownerNode", None) is not None
                 else None
             ),
             has_source_url=(
-                bool(json["hasSourceURL"])
+                bool(json.get("hasSourceURL"))
                 if json.get("hasSourceURL", None) is not None
                 else None
             ),
             loading_failed=(
-                bool(json["loadingFailed"])
+                bool(json.get("loadingFailed"))
                 if json.get("loadingFailed", None) is not None
                 else None
             ),
@@ -432,11 +432,11 @@ class CSSRule:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> CSSRule:
         return cls(
-            selector_list=SelectorList.from_json(json["selectorList"]),
-            origin=StyleSheetOrigin.from_json(json["origin"]),
-            style=CSSStyle.from_json(json["style"]),
+            selector_list=SelectorList.from_json(json.get("selectorList")),
+            origin=StyleSheetOrigin.from_json(json.get("origin")),
+            style=CSSStyle.from_json(json.get("style")),
             style_sheet_id=(
-                StyleSheetId.from_json(json["styleSheetId"])
+                StyleSheetId.from_json(json.get("styleSheetId"))
                 if json.get("styleSheetId", None) is not None
                 else None
             ),
@@ -529,10 +529,10 @@ class RuleUsage:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> RuleUsage:
         return cls(
-            style_sheet_id=StyleSheetId.from_json(json["styleSheetId"]),
-            start_offset=float(json["startOffset"]),
-            end_offset=float(json["endOffset"]),
-            used=bool(json["used"]),
+            style_sheet_id=StyleSheetId.from_json(json.get("styleSheetId")),
+            start_offset=float(json.get("startOffset")),
+            end_offset=float(json.get("endOffset")),
+            used=bool(json.get("used")),
         )
 
 
@@ -559,10 +559,10 @@ class SourceRange:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> SourceRange:
         return cls(
-            start_line=int(json["startLine"]),
-            start_column=int(json["startColumn"]),
-            end_line=int(json["endLine"]),
-            end_column=int(json["endColumn"]),
+            start_line=int(json.get("startLine")),
+            start_column=int(json.get("startColumn")),
+            end_line=int(json.get("endLine")),
+            end_column=int(json.get("endColumn")),
         )
 
 
@@ -587,10 +587,10 @@ class ShorthandEntry:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> ShorthandEntry:
         return cls(
-            name=str(json["name"]),
-            value=str(json["value"]),
+            name=str(json.get("name")),
+            value=str(json.get("value")),
             important=(
-                bool(json["important"])
+                bool(json.get("important"))
                 if json.get("important", None) is not None
                 else None
             ),
@@ -613,8 +613,8 @@ class CSSComputedStyleProperty:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> CSSComputedStyleProperty:
         return cls(
-            name=str(json["name"]),
-            value=str(json["value"]),
+            name=str(json.get("name")),
+            value=str(json.get("value")),
         )
 
 
@@ -658,17 +658,17 @@ class CSSStyle:
                 ShorthandEntry.from_json(i) for i in json["shorthandEntries"]
             ],
             style_sheet_id=(
-                StyleSheetId.from_json(json["styleSheetId"])
+                StyleSheetId.from_json(json.get("styleSheetId"))
                 if json.get("styleSheetId", None) is not None
                 else None
             ),
             css_text=(
-                str(json["cssText"])
+                str(json.get("cssText"))
                 if json.get("cssText", None) is not None
                 else None
             ),
             range_=(
-                SourceRange.from_json(json["range"])
+                SourceRange.from_json(json.get("range"))
                 if json.get("range", None) is not None
                 else None
             ),
@@ -727,35 +727,35 @@ class CSSProperty:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> CSSProperty:
         return cls(
-            name=str(json["name"]),
-            value=str(json["value"]),
+            name=str(json.get("name")),
+            value=str(json.get("value")),
             important=(
-                bool(json["important"])
+                bool(json.get("important"))
                 if json.get("important", None) is not None
                 else None
             ),
             implicit=(
-                bool(json["implicit"])
+                bool(json.get("implicit"))
                 if json.get("implicit", None) is not None
                 else None
             ),
             text=(
-                str(json["text"])
+                str(json.get("text"))
                 if json.get("text", None) is not None
                 else None
             ),
             parsed_ok=(
-                bool(json["parsedOk"])
+                bool(json.get("parsedOk"))
                 if json.get("parsedOk", None) is not None
                 else None
             ),
             disabled=(
-                bool(json["disabled"])
+                bool(json.get("disabled"))
                 if json.get("disabled", None) is not None
                 else None
             ),
             range_=(
-                SourceRange.from_json(json["range"])
+                SourceRange.from_json(json.get("range"))
                 if json.get("range", None) is not None
                 else None
             ),
@@ -807,20 +807,20 @@ class CSSMedia:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> CSSMedia:
         return cls(
-            text=str(json["text"]),
-            source=str(json["source"]),
+            text=str(json.get("text")),
+            source=str(json.get("source")),
             source_url=(
-                str(json["sourceURL"])
+                str(json.get("sourceURL"))
                 if json.get("sourceURL", None) is not None
                 else None
             ),
             range_=(
-                SourceRange.from_json(json["range"])
+                SourceRange.from_json(json.get("range"))
                 if json.get("range", None) is not None
                 else None
             ),
             style_sheet_id=(
-                StyleSheetId.from_json(json["styleSheetId"])
+                StyleSheetId.from_json(json.get("styleSheetId"))
                 if json.get("styleSheetId", None) is not None
                 else None
             ),
@@ -852,7 +852,7 @@ class MediaQuery:
             expressions=[
                 MediaQueryExpression.from_json(i) for i in json["expressions"]
             ],
-            active=bool(json["active"]),
+            active=bool(json.get("active")),
         )
 
 
@@ -885,16 +885,16 @@ class MediaQueryExpression:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> MediaQueryExpression:
         return cls(
-            value=float(json["value"]),
-            unit=str(json["unit"]),
-            feature=str(json["feature"]),
+            value=float(json.get("value")),
+            unit=str(json.get("unit")),
+            feature=str(json.get("feature")),
             value_range=(
-                SourceRange.from_json(json["valueRange"])
+                SourceRange.from_json(json.get("valueRange"))
                 if json.get("valueRange", None) is not None
                 else None
             ),
             computed_length=(
-                float(json["computedLength"])
+                float(json.get("computedLength"))
                 if json.get("computedLength", None) is not None
                 else None
             ),
@@ -936,29 +936,29 @@ class CSSContainerQuery:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> CSSContainerQuery:
         return cls(
-            text=str(json["text"]),
+            text=str(json.get("text")),
             range_=(
-                SourceRange.from_json(json["range"])
+                SourceRange.from_json(json.get("range"))
                 if json.get("range", None) is not None
                 else None
             ),
             style_sheet_id=(
-                StyleSheetId.from_json(json["styleSheetId"])
+                StyleSheetId.from_json(json.get("styleSheetId"))
                 if json.get("styleSheetId", None) is not None
                 else None
             ),
             name=(
-                str(json["name"])
+                str(json.get("name"))
                 if json.get("name", None) is not None
                 else None
             ),
             physical_axes=(
-                dom.PhysicalAxes.from_json(json["physicalAxes"])
+                dom.PhysicalAxes.from_json(json.get("physicalAxes"))
                 if json.get("physicalAxes", None) is not None
                 else None
             ),
             logical_axes=(
-                dom.LogicalAxes.from_json(json["logicalAxes"])
+                dom.LogicalAxes.from_json(json.get("logicalAxes"))
                 if json.get("logicalAxes", None) is not None
                 else None
             ),
@@ -991,15 +991,15 @@ class CSSSupports:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> CSSSupports:
         return cls(
-            text=str(json["text"]),
-            active=bool(json["active"]),
+            text=str(json.get("text")),
+            active=bool(json.get("active")),
             range_=(
-                SourceRange.from_json(json["range"])
+                SourceRange.from_json(json.get("range"))
                 if json.get("range", None) is not None
                 else None
             ),
             style_sheet_id=(
-                StyleSheetId.from_json(json["styleSheetId"])
+                StyleSheetId.from_json(json.get("styleSheetId"))
                 if json.get("styleSheetId", None) is not None
                 else None
             ),
@@ -1029,14 +1029,14 @@ class CSSScope:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> CSSScope:
         return cls(
-            text=str(json["text"]),
+            text=str(json.get("text")),
             range_=(
-                SourceRange.from_json(json["range"])
+                SourceRange.from_json(json.get("range"))
                 if json.get("range", None) is not None
                 else None
             ),
             style_sheet_id=(
-                StyleSheetId.from_json(json["styleSheetId"])
+                StyleSheetId.from_json(json.get("styleSheetId"))
                 if json.get("styleSheetId", None) is not None
                 else None
             ),
@@ -1066,14 +1066,14 @@ class CSSLayer:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> CSSLayer:
         return cls(
-            text=str(json["text"]),
+            text=str(json.get("text")),
             range_=(
-                SourceRange.from_json(json["range"])
+                SourceRange.from_json(json.get("range"))
                 if json.get("range", None) is not None
                 else None
             ),
             style_sheet_id=(
-                StyleSheetId.from_json(json["styleSheetId"])
+                StyleSheetId.from_json(json.get("styleSheetId"))
                 if json.get("styleSheetId", None) is not None
                 else None
             ),
@@ -1103,8 +1103,8 @@ class CSSLayerData:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> CSSLayerData:
         return cls(
-            name=str(json["name"]),
-            order=float(json["order"]),
+            name=str(json.get("name")),
+            order=float(json.get("order")),
             sub_layers=(
                 [CSSLayerData.from_json(i) for i in json["subLayers"]]
                 if json.get("subLayers", None) is not None
@@ -1138,10 +1138,10 @@ class PlatformFontUsage:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> PlatformFontUsage:
         return cls(
-            family_name=str(json["familyName"]),
-            post_script_name=str(json["postScriptName"]),
-            is_custom_font=bool(json["isCustomFont"]),
-            glyph_count=float(json["glyphCount"]),
+            family_name=str(json.get("familyName")),
+            post_script_name=str(json.get("postScriptName")),
+            is_custom_font=bool(json.get("isCustomFont")),
+            glyph_count=float(json.get("glyphCount")),
         )
 
 
@@ -1171,11 +1171,11 @@ class FontVariationAxis:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> FontVariationAxis:
         return cls(
-            tag=str(json["tag"]),
-            name=str(json["name"]),
-            min_value=float(json["minValue"]),
-            max_value=float(json["maxValue"]),
-            default_value=float(json["defaultValue"]),
+            tag=str(json.get("tag")),
+            name=str(json.get("name")),
+            min_value=float(json.get("minValue")),
+            max_value=float(json.get("maxValue")),
+            default_value=float(json.get("defaultValue")),
         )
 
 
@@ -1227,15 +1227,15 @@ class FontFace:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> FontFace:
         return cls(
-            font_family=str(json["fontFamily"]),
-            font_style=str(json["fontStyle"]),
-            font_variant=str(json["fontVariant"]),
-            font_weight=str(json["fontWeight"]),
-            font_stretch=str(json["fontStretch"]),
-            font_display=str(json["fontDisplay"]),
-            unicode_range=str(json["unicodeRange"]),
-            src=str(json["src"]),
-            platform_font_family=str(json["platformFontFamily"]),
+            font_family=str(json.get("fontFamily")),
+            font_style=str(json.get("fontStyle")),
+            font_variant=str(json.get("fontVariant")),
+            font_weight=str(json.get("fontWeight")),
+            font_stretch=str(json.get("fontStretch")),
+            font_display=str(json.get("fontDisplay")),
+            unicode_range=str(json.get("unicodeRange")),
+            src=str(json.get("src")),
+            platform_font_family=str(json.get("platformFontFamily")),
             font_variation_axes=(
                 [
                     FontVariationAxis.from_json(i)
@@ -1270,10 +1270,10 @@ class CSSTryRule:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> CSSTryRule:
         return cls(
-            origin=StyleSheetOrigin.from_json(json["origin"]),
-            style=CSSStyle.from_json(json["style"]),
+            origin=StyleSheetOrigin.from_json(json.get("origin")),
+            style=CSSStyle.from_json(json.get("style")),
             style_sheet_id=(
-                StyleSheetId.from_json(json["styleSheetId"])
+                StyleSheetId.from_json(json.get("styleSheetId"))
                 if json.get("styleSheetId", None) is not None
                 else None
             ),
@@ -1296,7 +1296,7 @@ class CSSPositionFallbackRule:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> CSSPositionFallbackRule:
         return cls(
-            name=Value.from_json(json["name"]),
+            name=Value.from_json(json.get("name")),
             try_rules=[CSSTryRule.from_json(i) for i in json["tryRules"]],
         )
 
@@ -1327,11 +1327,11 @@ class CSSPositionTryRule:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> CSSPositionTryRule:
         return cls(
-            name=Value.from_json(json["name"]),
-            origin=StyleSheetOrigin.from_json(json["origin"]),
-            style=CSSStyle.from_json(json["style"]),
+            name=Value.from_json(json.get("name")),
+            origin=StyleSheetOrigin.from_json(json.get("origin")),
+            style=CSSStyle.from_json(json.get("style")),
             style_sheet_id=(
-                StyleSheetId.from_json(json["styleSheetId"])
+                StyleSheetId.from_json(json.get("styleSheetId"))
                 if json.get("styleSheetId", None) is not None
                 else None
             ),
@@ -1355,7 +1355,7 @@ class CSSKeyframesRule:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> CSSKeyframesRule:
         return cls(
-            animation_name=Value.from_json(json["animationName"]),
+            animation_name=Value.from_json(json.get("animationName")),
             keyframes=[
                 CSSKeyframeRule.from_json(i) for i in json["keyframes"]
             ],
@@ -1385,11 +1385,11 @@ class CSSPropertyRegistration:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> CSSPropertyRegistration:
         return cls(
-            property_name=str(json["propertyName"]),
-            inherits=bool(json["inherits"]),
-            syntax=str(json["syntax"]),
+            property_name=str(json.get("propertyName")),
+            inherits=bool(json.get("inherits")),
+            syntax=str(json.get("syntax")),
             initial_value=(
-                Value.from_json(json["initialValue"])
+                Value.from_json(json.get("initialValue"))
                 if json.get("initialValue", None) is not None
                 else None
             ),
@@ -1422,11 +1422,11 @@ class CSSFontPaletteValuesRule:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> CSSFontPaletteValuesRule:
         return cls(
-            origin=StyleSheetOrigin.from_json(json["origin"]),
-            font_palette_name=Value.from_json(json["fontPaletteName"]),
-            style=CSSStyle.from_json(json["style"]),
+            origin=StyleSheetOrigin.from_json(json.get("origin")),
+            font_palette_name=Value.from_json(json.get("fontPaletteName")),
+            style=CSSStyle.from_json(json.get("style")),
             style_sheet_id=(
-                StyleSheetId.from_json(json["styleSheetId"])
+                StyleSheetId.from_json(json.get("styleSheetId"))
                 if json.get("styleSheetId", None) is not None
                 else None
             ),
@@ -1459,11 +1459,11 @@ class CSSPropertyRule:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> CSSPropertyRule:
         return cls(
-            origin=StyleSheetOrigin.from_json(json["origin"]),
-            property_name=Value.from_json(json["propertyName"]),
-            style=CSSStyle.from_json(json["style"]),
+            origin=StyleSheetOrigin.from_json(json.get("origin")),
+            property_name=Value.from_json(json.get("propertyName")),
+            style=CSSStyle.from_json(json.get("style")),
             style_sheet_id=(
-                StyleSheetId.from_json(json["styleSheetId"])
+                StyleSheetId.from_json(json.get("styleSheetId"))
                 if json.get("styleSheetId", None) is not None
                 else None
             ),
@@ -1496,11 +1496,11 @@ class CSSKeyframeRule:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> CSSKeyframeRule:
         return cls(
-            origin=StyleSheetOrigin.from_json(json["origin"]),
-            key_text=Value.from_json(json["keyText"]),
-            style=CSSStyle.from_json(json["style"]),
+            origin=StyleSheetOrigin.from_json(json.get("origin")),
+            key_text=Value.from_json(json.get("keyText")),
+            style=CSSStyle.from_json(json.get("style")),
             style_sheet_id=(
-                StyleSheetId.from_json(json["styleSheetId"])
+                StyleSheetId.from_json(json.get("styleSheetId"))
                 if json.get("styleSheetId", None) is not None
                 else None
             ),
@@ -1527,9 +1527,9 @@ class StyleDeclarationEdit:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> StyleDeclarationEdit:
         return cls(
-            style_sheet_id=StyleSheetId.from_json(json["styleSheetId"]),
-            range_=SourceRange.from_json(json["range"]),
-            text=str(json["text"]),
+            style_sheet_id=StyleSheetId.from_json(json.get("styleSheetId")),
+            range_=SourceRange.from_json(json.get("range")),
+            text=str(json.get("text")),
         )
 
 
@@ -1568,7 +1568,7 @@ def add_rule(
         "params": params,
     }
     json = yield cmd_dict
-    return CSSRule.from_json(json["rule"])
+    return CSSRule.from_json(json.get("rule"))
 
 
 def collect_class_names(
@@ -1606,7 +1606,7 @@ def create_style_sheet(
         "params": params,
     }
     json = yield cmd_dict
-    return StyleSheetId.from_json(json["styleSheetId"])
+    return StyleSheetId.from_json(json.get("styleSheetId"))
 
 
 def disable() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
@@ -1692,12 +1692,12 @@ def get_background_colors(
             else None
         ),
         (
-            str(json["computedFontSize"])
+            str(json.get("computedFontSize"))
             if json.get("computedFontSize", None) is not None
             else None
         ),
         (
-            str(json["computedFontWeight"])
+            str(json.get("computedFontWeight"))
             if json.get("computedFontWeight", None) is not None
             else None
         ),
@@ -1754,12 +1754,12 @@ def get_inline_styles_for_node(
     json = yield cmd_dict
     return (
         (
-            CSSStyle.from_json(json["inlineStyle"])
+            CSSStyle.from_json(json.get("inlineStyle"))
             if json.get("inlineStyle", None) is not None
             else None
         ),
         (
-            CSSStyle.from_json(json["attributesStyle"])
+            CSSStyle.from_json(json.get("attributesStyle"))
             if json.get("attributesStyle", None) is not None
             else None
         ),
@@ -1831,12 +1831,12 @@ def get_matched_styles_for_node(
     json = yield cmd_dict
     return (
         (
-            CSSStyle.from_json(json["inlineStyle"])
+            CSSStyle.from_json(json.get("inlineStyle"))
             if json.get("inlineStyle", None) is not None
             else None
         ),
         (
-            CSSStyle.from_json(json["attributesStyle"])
+            CSSStyle.from_json(json.get("attributesStyle"))
             if json.get("attributesStyle", None) is not None
             else None
         ),
@@ -1905,7 +1905,7 @@ def get_matched_styles_for_node(
             else None
         ),
         (
-            dom.NodeId.from_json(json["parentLayoutNodeId"])
+            dom.NodeId.from_json(json.get("parentLayoutNodeId"))
             if json.get("parentLayoutNodeId", None) is not None
             else None
         ),
@@ -1959,7 +1959,7 @@ def get_style_sheet_text(
         "params": params,
     }
     json = yield cmd_dict
-    return str(json["text"])
+    return str(json.get("text"))
 
 
 def get_layers_for_node(
@@ -1982,7 +1982,7 @@ def get_layers_for_node(
         "params": params,
     }
     json = yield cmd_dict
-    return CSSLayerData.from_json(json["rootLayer"])
+    return CSSLayerData.from_json(json.get("rootLayer"))
 
 
 def get_location_for_selector(
@@ -2089,7 +2089,7 @@ def set_property_rule_property_name(
         "params": params,
     }
     json = yield cmd_dict
-    return Value.from_json(json["propertyName"])
+    return Value.from_json(json.get("propertyName"))
 
 
 def set_keyframe_key(
@@ -2111,7 +2111,7 @@ def set_keyframe_key(
         "params": params,
     }
     json = yield cmd_dict
-    return Value.from_json(json["keyText"])
+    return Value.from_json(json.get("keyText"))
 
 
 def set_media_text(
@@ -2133,7 +2133,7 @@ def set_media_text(
         "params": params,
     }
     json = yield cmd_dict
-    return CSSMedia.from_json(json["media"])
+    return CSSMedia.from_json(json.get("media"))
 
 
 def set_container_query_text(
@@ -2156,7 +2156,7 @@ def set_container_query_text(
         "params": params,
     }
     json = yield cmd_dict
-    return CSSContainerQuery.from_json(json["containerQuery"])
+    return CSSContainerQuery.from_json(json.get("containerQuery"))
 
 
 def set_supports_text(
@@ -2179,7 +2179,7 @@ def set_supports_text(
         "params": params,
     }
     json = yield cmd_dict
-    return CSSSupports.from_json(json["supports"])
+    return CSSSupports.from_json(json.get("supports"))
 
 
 def set_scope_text(
@@ -2202,7 +2202,7 @@ def set_scope_text(
         "params": params,
     }
     json = yield cmd_dict
-    return CSSScope.from_json(json["scope"])
+    return CSSScope.from_json(json.get("scope"))
 
 
 def set_rule_selector(
@@ -2224,7 +2224,7 @@ def set_rule_selector(
         "params": params,
     }
     json = yield cmd_dict
-    return SelectorList.from_json(json["selectorList"])
+    return SelectorList.from_json(json.get("selectorList"))
 
 
 def set_style_sheet_text(
@@ -2245,7 +2245,7 @@ def set_style_sheet_text(
     }
     json = yield cmd_dict
     return (
-        str(json["sourceMapURL"])
+        str(json.get("sourceMapURL"))
         if json.get("sourceMapURL", None) is not None
         else None
     )
@@ -2323,7 +2323,7 @@ def take_coverage_delta() -> (
     json = yield cmd_dict
     return (
         [RuleUsage.from_json(i) for i in json["coverage"]],
-        float(json["timestamp"]),
+        float(json.get("timestamp")),
     )
 
 
@@ -2358,7 +2358,7 @@ class FontsUpdated:
     def from_json(cls, json: T_JSON_DICT) -> FontsUpdated:
         return cls(
             font=(
-                FontFace.from_json(json["font"])
+                FontFace.from_json(json.get("font"))
                 if json.get("font", None) is not None
                 else None
             )
@@ -2389,7 +2389,7 @@ class StyleSheetAdded:
 
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> StyleSheetAdded:
-        return cls(header=CSSStyleSheetHeader.from_json(json["header"]))
+        return cls(header=CSSStyleSheetHeader.from_json(json.get("header")))
 
 
 @event_class("CSS.styleSheetChanged")
@@ -2402,7 +2402,9 @@ class StyleSheetChanged:
 
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> StyleSheetChanged:
-        return cls(style_sheet_id=StyleSheetId.from_json(json["styleSheetId"]))
+        return cls(style_sheet_id=StyleSheetId.from_json(
+            json.get("styleSheetId")
+        ))
 
 
 @event_class("CSS.styleSheetRemoved")
@@ -2414,4 +2416,6 @@ class StyleSheetRemoved:
 
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> StyleSheetRemoved:
-        return cls(style_sheet_id=StyleSheetId.from_json(json["styleSheetId"]))
+        return cls(style_sheet_id=StyleSheetId.from_json(
+            json.get("styleSheetId")
+        ))

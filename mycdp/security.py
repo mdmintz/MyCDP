@@ -134,35 +134,37 @@ class CertificateSecurityState:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> CertificateSecurityState:
         return cls(
-            protocol=str(json["protocol"]),
-            key_exchange=str(json["keyExchange"]),
-            cipher=str(json["cipher"]),
+            protocol=str(json.get("protocol")),
+            key_exchange=str(json.get("keyExchange")),
+            cipher=str(json.get("cipher")),
             certificate=[str(i) for i in json["certificate"]],
-            subject_name=str(json["subjectName"]),
-            issuer=str(json["issuer"]),
-            valid_from=network.TimeSinceEpoch.from_json(json["validFrom"]),
-            valid_to=network.TimeSinceEpoch.from_json(json["validTo"]),
+            subject_name=str(json.get("subjectName")),
+            issuer=str(json.get("issuer")),
+            valid_from=network.TimeSinceEpoch.from_json(json.get("validFrom")),
+            valid_to=network.TimeSinceEpoch.from_json(json.get("validTo")),
             certificate_has_weak_signature=bool(
                 json["certificateHasWeakSignature"]
             ),
             certificate_has_sha1_signature=bool(
                 json["certificateHasSha1Signature"]
             ),
-            modern_ssl=bool(json["modernSSL"]),
-            obsolete_ssl_protocol=bool(json["obsoleteSslProtocol"]),
-            obsolete_ssl_key_exchange=bool(json["obsoleteSslKeyExchange"]),
-            obsolete_ssl_cipher=bool(json["obsoleteSslCipher"]),
-            obsolete_ssl_signature=bool(json["obsoleteSslSignature"]),
+            modern_ssl=bool(json.get("modernSSL")),
+            obsolete_ssl_protocol=bool(json.get("obsoleteSslProtocol")),
+            obsolete_ssl_key_exchange=bool(json.get("obsoleteSslKeyExchange")),
+            obsolete_ssl_cipher=bool(json.get("obsoleteSslCipher")),
+            obsolete_ssl_signature=bool(json.get("obsoleteSslSignature")),
             key_exchange_group=(
-                str(json["keyExchangeGroup"])
+                str(json.get("keyExchangeGroup"))
                 if json.get("keyExchangeGroup", None) is not None
                 else None
             ),
             mac=(
-                str(json["mac"]) if json.get("mac", None) is not None else None
+                str(json.get("mac"))
+                if json.get("mac", None) is not None
+                else None
             ),
             certificate_network_error=(
-                str(json["certificateNetworkError"])
+                str(json.get("certificateNetworkError"))
                 if json.get("certificateNetworkError", None) is not None
                 else None
             ),
@@ -204,7 +206,7 @@ class SafetyTipInfo:
                 json["safetyTipStatus"]
             ),
             safe_url=(
-                str(json["safeUrl"])
+                str(json.get("safeUrl"))
                 if json.get("safeUrl", None) is not None
                 else None
             ),
@@ -244,7 +246,7 @@ class VisibleSecurityState:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> VisibleSecurityState:
         return cls(
-            security_state=SecurityState.from_json(json["securityState"]),
+            security_state=SecurityState.from_json(json.get("securityState")),
             security_state_issue_ids=[
                 str(i) for i in json["securityStateIssueIds"]
             ],
@@ -256,7 +258,7 @@ class VisibleSecurityState:
                 else None
             ),
             safety_tip_info=(
-                SafetyTipInfo.from_json(json["safetyTipInfo"])
+                SafetyTipInfo.from_json(json.get("safetyTipInfo"))
                 if json.get("safetyTipInfo", None) is not None
                 else None
             ),
@@ -296,10 +298,10 @@ class SecurityStateExplanation:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> SecurityStateExplanation:
         return cls(
-            security_state=SecurityState.from_json(json["securityState"]),
-            title=str(json["title"]),
-            summary=str(json["summary"]),
-            description=str(json["description"]),
+            security_state=SecurityState.from_json(json.get("securityState")),
+            title=str(json.get("title")),
+            summary=str(json.get("summary")),
+            description=str(json.get("description")),
             mixed_content_type=MixedContentType.from_json(
                 json["mixedContentType"]
             ),
@@ -350,9 +352,9 @@ class InsecureContentStatus:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> InsecureContentStatus:
         return cls(
-            ran_mixed_content=bool(json["ranMixedContent"]),
-            displayed_mixed_content=bool(json["displayedMixedContent"]),
-            contained_mixed_form=bool(json["containedMixedForm"]),
+            ran_mixed_content=bool(json.get("ranMixedContent")),
+            displayed_mixed_content=bool(json.get("displayedMixedContent")),
+            contained_mixed_form=bool(json.get("containedMixedForm")),
             ran_content_with_cert_errors=bool(
                 json["ranContentWithCertErrors"]
             ),
@@ -437,9 +439,9 @@ class CertificateError:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> CertificateError:
         return cls(
-            event_id=int(json["eventId"]),
-            error_type=str(json["errorType"]),
-            request_url=str(json["requestURL"]),
+            event_id=int(json.get("eventId")),
+            error_type=str(json.get("errorType")),
+            request_url=str(json.get("requestURL")),
         )
 
 
@@ -481,8 +483,8 @@ class SecurityStateChanged:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> SecurityStateChanged:
         return cls(
-            security_state=SecurityState.from_json(json["securityState"]),
-            scheme_is_cryptographic=bool(json["schemeIsCryptographic"]),
+            security_state=SecurityState.from_json(json.get("securityState")),
+            scheme_is_cryptographic=bool(json.get("schemeIsCryptographic")),
             explanations=[
                 SecurityStateExplanation.from_json(i)
                 for i in json["explanations"]
@@ -491,7 +493,7 @@ class SecurityStateChanged:
                 json["insecureContentStatus"]
             ),
             summary=(
-                str(json["summary"])
+                str(json.get("summary"))
                 if json.get("summary", None) is not None
                 else None
             ),

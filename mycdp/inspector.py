@@ -39,7 +39,7 @@ class Detached:
 
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> Detached:
-        return cls(reason=str(json["reason"]))
+        return cls(reason=str(json.get("reason")))
 
 
 @event_class("Inspector.targetCrashed")

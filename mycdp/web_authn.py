@@ -136,60 +136,60 @@ class VirtualAuthenticatorOptions:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> VirtualAuthenticatorOptions:
         return cls(
-            protocol=AuthenticatorProtocol.from_json(json["protocol"]),
-            transport=AuthenticatorTransport.from_json(json["transport"]),
+            protocol=AuthenticatorProtocol.from_json(json.get("protocol")),
+            transport=AuthenticatorTransport.from_json(json.get("transport")),
             ctap2_version=(
-                Ctap2Version.from_json(json["ctap2Version"])
+                Ctap2Version.from_json(json.get("ctap2Version"))
                 if json.get("ctap2Version", None) is not None
                 else None
             ),
             has_resident_key=(
-                bool(json["hasResidentKey"])
+                bool(json.get("hasResidentKey"))
                 if json.get("hasResidentKey", None) is not None
                 else None
             ),
             has_user_verification=(
-                bool(json["hasUserVerification"])
+                bool(json.get("hasUserVerification"))
                 if json.get("hasUserVerification", None) is not None
                 else None
             ),
             has_large_blob=(
-                bool(json["hasLargeBlob"])
+                bool(json.get("hasLargeBlob"))
                 if json.get("hasLargeBlob", None) is not None
                 else None
             ),
             has_cred_blob=(
-                bool(json["hasCredBlob"])
+                bool(json.get("hasCredBlob"))
                 if json.get("hasCredBlob", None) is not None
                 else None
             ),
             has_min_pin_length=(
-                bool(json["hasMinPinLength"])
+                bool(json.get("hasMinPinLength"))
                 if json.get("hasMinPinLength", None) is not None
                 else None
             ),
             has_prf=(
-                bool(json["hasPrf"])
+                bool(json.get("hasPrf"))
                 if json.get("hasPrf", None) is not None
                 else None
             ),
             automatic_presence_simulation=(
-                bool(json["automaticPresenceSimulation"])
+                bool(json.get("automaticPresenceSimulation"))
                 if json.get("automaticPresenceSimulation", None) is not None
                 else None
             ),
             is_user_verified=(
-                bool(json["isUserVerified"])
+                bool(json.get("isUserVerified"))
                 if json.get("isUserVerified", None) is not None
                 else None
             ),
             default_backup_eligibility=(
-                bool(json["defaultBackupEligibility"])
+                bool(json.get("defaultBackupEligibility"))
                 if json.get("defaultBackupEligibility", None) is not None
                 else None
             ),
             default_backup_state=(
-                bool(json["defaultBackupState"])
+                bool(json.get("defaultBackupState"))
                 if json.get("defaultBackupState", None) is not None
                 else None
             ),
@@ -247,32 +247,32 @@ class Credential:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> Credential:
         return cls(
-            credential_id=str(json["credentialId"]),
-            is_resident_credential=bool(json["isResidentCredential"]),
-            private_key=str(json["privateKey"]),
-            sign_count=int(json["signCount"]),
+            credential_id=str(json.get("credentialId")),
+            is_resident_credential=bool(json.get("isResidentCredential")),
+            private_key=str(json.get("privateKey")),
+            sign_count=int(json.get("signCount")),
             rp_id=(
-                str(json["rpId"])
+                str(json.get("rpId"))
                 if json.get("rpId", None) is not None
                 else None
             ),
             user_handle=(
-                str(json["userHandle"])
+                str(json.get("userHandle"))
                 if json.get("userHandle", None) is not None
                 else None
             ),
             large_blob=(
-                str(json["largeBlob"])
+                str(json.get("largeBlob"))
                 if json.get("largeBlob", None) is not None
                 else None
             ),
             backup_eligibility=(
-                bool(json["backupEligibility"])
+                bool(json.get("backupEligibility"))
                 if json.get("backupEligibility", None) is not None
                 else None
             ),
             backup_state=(
-                bool(json["backupState"])
+                bool(json.get("backupState"))
                 if json.get("backupState", None) is not None
                 else None
             ),
@@ -325,7 +325,7 @@ def add_virtual_authenticator(
         "params": params,
     }
     json = yield cmd_dict
-    return AuthenticatorId.from_json(json["authenticatorId"])
+    return AuthenticatorId.from_json(json.get("authenticatorId"))
 
 
 def set_response_override_bits(
@@ -414,7 +414,7 @@ def get_credential(
         "params": params,
     }
     json = yield cmd_dict
-    return Credential.from_json(json["credential"])
+    return Credential.from_json(json.get("credential"))
 
 
 def get_credentials(
@@ -548,7 +548,7 @@ class CredentialAdded:
             authenticator_id=AuthenticatorId.from_json(
                 json["authenticatorId"]
             ),
-            credential=Credential.from_json(json["credential"]),
+            credential=Credential.from_json(json.get("credential")),
         )
 
 
@@ -565,5 +565,5 @@ class CredentialAsserted:
             authenticator_id=AuthenticatorId.from_json(
                 json["authenticatorId"]
             ),
-            credential=Credential.from_json(json["credential"]),
+            credential=Credential.from_json(json.get("credential")),
         )

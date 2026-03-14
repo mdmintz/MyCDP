@@ -54,14 +54,14 @@ class SerializationOptions:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> SerializationOptions:
         return cls(
-            serialization=str(json["serialization"]),
+            serialization=str(json.get("serialization")),
             max_depth=(
-                int(json["maxDepth"])
+                int(json.get("maxDepth"))
                 if json.get("maxDepth", None) is not None
                 else None
             ),
             additional_parameters=(
-                dict(json["additionalParameters"])
+                dict(json.get("additionalParameters"))
                 if json.get("additionalParameters", None) is not None
                 else None
             ),
@@ -93,17 +93,17 @@ class DeepSerializedValue:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> DeepSerializedValue:
         return cls(
-            type_=str(json["type"]),
+            type_=str(json.get("type")),
             value=(
                 json["value"] if json.get("value", None) is not None else None
             ),
             object_id=(
-                str(json["objectId"])
+                str(json.get("objectId"))
                 if json.get("objectId", None) is not None
                 else None
             ),
             weak_local_object_reference=(
-                int(json["weakLocalObjectReference"])
+                int(json.get("weakLocalObjectReference"))
                 if json.get("weakLocalObjectReference", None) is not None
                 else None
             ),
@@ -197,14 +197,14 @@ class RemoteObject:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> RemoteObject:
         return cls(
-            type_=str(json["type"]),
+            type_=str(json.get("type")),
             subtype=(
-                str(json["subtype"])
+                str(json.get("subtype"))
                 if json.get("subtype", None) is not None
                 else None
             ),
             class_name=(
-                str(json["className"])
+                str(json.get("className"))
                 if json.get("className", None) is not None
                 else None
             ),
@@ -212,32 +212,32 @@ class RemoteObject:
                 json["value"] if json.get("value", None) is not None else None
             ),
             unserializable_value=(
-                UnserializableValue.from_json(json["unserializableValue"])
+                UnserializableValue.from_json(json.get("unserializableValue"))
                 if json.get("unserializableValue", None) is not None
                 else None
             ),
             description=(
-                str(json["description"])
+                str(json.get("description"))
                 if json.get("description", None) is not None
                 else None
             ),
             deep_serialized_value=(
-                DeepSerializedValue.from_json(json["deepSerializedValue"])
+                DeepSerializedValue.from_json(json.get("deepSerializedValue"))
                 if json.get("deepSerializedValue", None) is not None
                 else None
             ),
             object_id=(
-                RemoteObjectId.from_json(json["objectId"])
+                RemoteObjectId.from_json(json.get("objectId"))
                 if json.get("objectId", None) is not None
                 else None
             ),
             preview=(
-                ObjectPreview.from_json(json["preview"])
+                ObjectPreview.from_json(json.get("preview"))
                 if json.get("preview", None) is not None
                 else None
             ),
             custom_preview=(
-                CustomPreview.from_json(json["customPreview"])
+                CustomPreview.from_json(json.get("customPreview"))
                 if json.get("customPreview", None) is not None
                 else None
             ),
@@ -265,9 +265,9 @@ class CustomPreview:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> CustomPreview:
         return cls(
-            header=str(json["header"]),
+            header=str(json.get("header")),
             body_getter_id=(
-                RemoteObjectId.from_json(json["bodyGetterId"])
+                RemoteObjectId.from_json(json.get("bodyGetterId"))
                 if json.get("bodyGetterId", None) is not None
                 else None
             ),
@@ -308,18 +308,18 @@ class ObjectPreview:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> ObjectPreview:
         return cls(
-            type_=str(json["type"]),
-            overflow=bool(json["overflow"]),
+            type_=str(json.get("type")),
+            overflow=bool(json.get("overflow")),
             properties=[
                 PropertyPreview.from_json(i) for i in json["properties"]
             ],
             subtype=(
-                str(json["subtype"])
+                str(json.get("subtype"))
                 if json.get("subtype", None) is not None
                 else None
             ),
             description=(
-                str(json["description"])
+                str(json.get("description"))
                 if json.get("description", None) is not None
                 else None
             ),
@@ -360,20 +360,20 @@ class PropertyPreview:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> PropertyPreview:
         return cls(
-            name=str(json["name"]),
-            type_=str(json["type"]),
+            name=str(json.get("name")),
+            type_=str(json.get("type")),
             value=(
-                str(json["value"])
+                str(json.get("value"))
                 if json.get("value", None) is not None
                 else None
             ),
             value_preview=(
-                ObjectPreview.from_json(json["valuePreview"])
+                ObjectPreview.from_json(json.get("valuePreview"))
                 if json.get("valuePreview", None) is not None
                 else None
             ),
             subtype=(
-                str(json["subtype"])
+                str(json.get("subtype"))
                 if json.get("subtype", None) is not None
                 else None
             ),
@@ -397,9 +397,9 @@ class EntryPreview:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> EntryPreview:
         return cls(
-            value=ObjectPreview.from_json(json["value"]),
+            value=ObjectPreview.from_json(json.get("value")),
             key=(
-                ObjectPreview.from_json(json["key"])
+                ObjectPreview.from_json(json.get("key"))
                 if json.get("key", None) is not None
                 else None
             ),
@@ -459,41 +459,41 @@ class PropertyDescriptor:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> PropertyDescriptor:
         return cls(
-            name=str(json["name"]),
-            configurable=bool(json["configurable"]),
-            enumerable=bool(json["enumerable"]),
+            name=str(json.get("name")),
+            configurable=bool(json.get("configurable")),
+            enumerable=bool(json.get("enumerable")),
             value=(
-                RemoteObject.from_json(json["value"])
+                RemoteObject.from_json(json.get("value"))
                 if json.get("value", None) is not None
                 else None
             ),
             writable=(
-                bool(json["writable"])
+                bool(json.get("writable"))
                 if json.get("writable", None) is not None
                 else None
             ),
             get=(
-                RemoteObject.from_json(json["get"])
+                RemoteObject.from_json(json.get("get"))
                 if json.get("get", None) is not None
                 else None
             ),
             set_=(
-                RemoteObject.from_json(json["set"])
+                RemoteObject.from_json(json.get("set"))
                 if json.get("set", None) is not None
                 else None
             ),
             was_thrown=(
-                bool(json["wasThrown"])
+                bool(json.get("wasThrown"))
                 if json.get("wasThrown", None) is not None
                 else None
             ),
             is_own=(
-                bool(json["isOwn"])
+                bool(json.get("isOwn"))
                 if json.get("isOwn", None) is not None
                 else None
             ),
             symbol=(
-                RemoteObject.from_json(json["symbol"])
+                RemoteObject.from_json(json.get("symbol"))
                 if json.get("symbol", None) is not None
                 else None
             ),
@@ -521,9 +521,9 @@ class InternalPropertyDescriptor:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> InternalPropertyDescriptor:
         return cls(
-            name=str(json["name"]),
+            name=str(json.get("name")),
             value=(
-                RemoteObject.from_json(json["value"])
+                RemoteObject.from_json(json.get("value"))
                 if json.get("value", None) is not None
                 else None
             ),
@@ -558,19 +558,19 @@ class PrivatePropertyDescriptor:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> PrivatePropertyDescriptor:
         return cls(
-            name=str(json["name"]),
+            name=str(json.get("name")),
             value=(
-                RemoteObject.from_json(json["value"])
+                RemoteObject.from_json(json.get("value"))
                 if json.get("value", None) is not None
                 else None
             ),
             get=(
-                RemoteObject.from_json(json["get"])
+                RemoteObject.from_json(json.get("get"))
                 if json.get("get", None) is not None
                 else None
             ),
             set_=(
-                RemoteObject.from_json(json["set"])
+                RemoteObject.from_json(json.get("set"))
                 if json.get("set", None) is not None
                 else None
             ),
@@ -606,15 +606,17 @@ class CallArgument:
     def from_json(cls, json: T_JSON_DICT) -> CallArgument:
         return cls(
             value=(
-                json["value"] if json.get("value", None) is not None else None
+                json.get("value")
+                if json.get("value", None) is not None
+                else None
             ),
             unserializable_value=(
-                UnserializableValue.from_json(json["unserializableValue"])
+                UnserializableValue.from_json(json.get("unserializableValue"))
                 if json.get("unserializableValue", None) is not None
                 else None
             ),
             object_id=(
-                RemoteObjectId.from_json(json["objectId"])
+                RemoteObjectId.from_json(json.get("objectId"))
                 if json.get("objectId", None) is not None
                 else None
             ),
@@ -669,12 +671,12 @@ class ExecutionContextDescription:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> ExecutionContextDescription:
         return cls(
-            id_=ExecutionContextId.from_json(json["id"]),
-            origin=str(json["origin"]),
-            name=str(json["name"]),
-            unique_id=str(json["uniqueId"]),
+            id_=ExecutionContextId.from_json(json.get("id")),
+            origin=str(json.get("origin")),
+            name=str(json.get("name")),
+            unique_id=str(json.get("uniqueId")),
             aux_data=(
-                dict(json["auxData"])
+                dict(json.get("auxData"))
                 if json.get("auxData", None) is not None
                 else None
             ),
@@ -735,35 +737,37 @@ class ExceptionDetails:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> ExceptionDetails:
         return cls(
-            exception_id=int(json["exceptionId"]),
-            text=str(json["text"]),
-            line_number=int(json["lineNumber"]),
-            column_number=int(json["columnNumber"]),
+            exception_id=int(json.get("exceptionId")),
+            text=str(json.get("text")),
+            line_number=int(json.get("lineNumber")),
+            column_number=int(json.get("columnNumber")),
             script_id=(
-                ScriptId.from_json(json["scriptId"])
+                ScriptId.from_json(json.get("scriptId"))
                 if json.get("scriptId", None) is not None
                 else None
             ),
             url=(
-                str(json["url"]) if json.get("url", None) is not None else None
+                str(json.get("url"))
+                if json.get("url", None) is not None
+                else None
             ),
             stack_trace=(
-                StackTrace.from_json(json["stackTrace"])
+                StackTrace.from_json(json.get("stackTrace"))
                 if json.get("stackTrace", None) is not None
                 else None
             ),
             exception=(
-                RemoteObject.from_json(json["exception"])
+                RemoteObject.from_json(json.get("exception"))
                 if json.get("exception", None) is not None
                 else None
             ),
             execution_context_id=(
-                ExecutionContextId.from_json(json["executionContextId"])
+                ExecutionContextId.from_json(json.get("executionContextId"))
                 if json.get("executionContextId", None) is not None
                 else None
             ),
             exception_meta_data=(
-                dict(json["exceptionMetaData"])
+                dict(json.get("exceptionMetaData"))
                 if json.get("exceptionMetaData", None) is not None
                 else None
             ),
@@ -824,11 +828,11 @@ class CallFrame:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> CallFrame:
         return cls(
-            function_name=str(json["functionName"]),
-            script_id=ScriptId.from_json(json["scriptId"]),
-            url=str(json["url"]),
-            line_number=int(json["lineNumber"]),
-            column_number=int(json["columnNumber"]),
+            function_name=str(json.get("functionName")),
+            script_id=ScriptId.from_json(json.get("scriptId")),
+            url=str(json.get("url")),
+            line_number=int(json.get("lineNumber")),
+            column_number=int(json.get("columnNumber")),
         )
 
 
@@ -864,17 +868,17 @@ class StackTrace:
         return cls(
             call_frames=[CallFrame.from_json(i) for i in json["callFrames"]],
             description=(
-                str(json["description"])
+                str(json.get("description"))
                 if json.get("description", None) is not None
                 else None
             ),
             parent=(
-                StackTrace.from_json(json["parent"])
+                StackTrace.from_json(json.get("parent"))
                 if json.get("parent", None) is not None
                 else None
             ),
             parent_id=(
-                StackTraceId.from_json(json["parentId"])
+                StackTraceId.from_json(json.get("parentId"))
                 if json.get("parentId", None) is not None
                 else None
             ),
@@ -915,9 +919,9 @@ class StackTraceId:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> StackTraceId:
         return cls(
-            id_=str(json["id"]),
+            id_=str(json.get("id")),
             debugger_id=(
-                UniqueDebuggerId.from_json(json["debuggerId"])
+                UniqueDebuggerId.from_json(json.get("debuggerId"))
                 if json.get("debuggerId", None) is not None
                 else None
             ),
@@ -959,9 +963,9 @@ def await_promise(
     }
     json = yield cmd_dict
     return (
-        RemoteObject.from_json(json["result"]),
+        RemoteObject.from_json(json.get("result")),
         (
-            ExceptionDetails.from_json(json["exceptionDetails"])
+            ExceptionDetails.from_json(json.get("exceptionDetails"))
             if json.get("exceptionDetails", None) is not None
             else None
         ),
@@ -1066,9 +1070,9 @@ def call_function_on(
     }
     json = yield cmd_dict
     return (
-        RemoteObject.from_json(json["result"]),
+        RemoteObject.from_json(json.get("result")),
         (
-            ExceptionDetails.from_json(json["exceptionDetails"])
+            ExceptionDetails.from_json(json.get("exceptionDetails"))
             if json.get("exceptionDetails", None) is not None
             else None
         ),
@@ -1112,12 +1116,12 @@ def compile_script(
     json = yield cmd_dict
     return (
         (
-            ScriptId.from_json(json["scriptId"])
+            ScriptId.from_json(json.get("scriptId"))
             if json.get("scriptId", None) is not None
             else None
         ),
         (
-            ExceptionDetails.from_json(json["exceptionDetails"])
+            ExceptionDetails.from_json(json.get("exceptionDetails"))
             if json.get("exceptionDetails", None) is not None
             else None
         ),
@@ -1276,9 +1280,9 @@ def evaluate(
     }
     json = yield cmd_dict
     return (
-        RemoteObject.from_json(json["result"]),
+        RemoteObject.from_json(json.get("result")),
         (
-            ExceptionDetails.from_json(json["exceptionDetails"])
+            ExceptionDetails.from_json(json.get("exceptionDetails"))
             if json.get("exceptionDetails", None) is not None
             else None
         ),
@@ -1295,7 +1299,7 @@ def get_isolate_id() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, str]:
         "method": "Runtime.getIsolateId",
     }
     json = yield cmd_dict
-    return str(json["id"])
+    return str(json.get("id"))
 
 
 def get_heap_usage() -> (
@@ -1314,7 +1318,7 @@ def get_heap_usage() -> (
         "method": "Runtime.getHeapUsage",
     }
     json = yield cmd_dict
-    return (float(json["usedSize"]), float(json["totalSize"]))
+    return (float(json.get("usedSize")), float(json.get("totalSize")))
 
 
 def get_properties(
@@ -1388,7 +1392,7 @@ def get_properties(
             else None
         ),
         (
-            ExceptionDetails.from_json(json["exceptionDetails"])
+            ExceptionDetails.from_json(json.get("exceptionDetails"))
             if json.get("exceptionDetails", None) is not None
             else None
         ),
@@ -1434,7 +1438,7 @@ def query_objects(
         "params": params,
     }
     json = yield cmd_dict
-    return RemoteObject.from_json(json["objects"])
+    return RemoteObject.from_json(json.get("objects"))
 
 
 def release_object(
@@ -1543,9 +1547,9 @@ def run_script(
     }
     json = yield cmd_dict
     return (
-        RemoteObject.from_json(json["result"]),
+        RemoteObject.from_json(json.get("result")),
         (
-            ExceptionDetails.from_json(json["exceptionDetails"])
+            ExceptionDetails.from_json(json.get("exceptionDetails"))
             if json.get("exceptionDetails", None) is not None
             else None
         ),
@@ -1695,7 +1699,7 @@ def get_exception_details(
     }
     json = yield cmd_dict
     return (
-        ExceptionDetails.from_json(json["exceptionDetails"])
+        ExceptionDetails.from_json(json.get("exceptionDetails"))
         if json.get("exceptionDetails", None) is not None
         else None
     )
@@ -1716,10 +1720,10 @@ class BindingCalled:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> BindingCalled:
         return cls(
-            name=str(json["name"]),
-            payload=str(json["payload"]),
+            name=str(json.get("name")),
+            payload=str(json.get("payload")),
             execution_context_id=ExecutionContextId.from_json(
-                json["executionContextId"]
+                json.get("executionContextId")
             ),
         )
 
@@ -1751,19 +1755,19 @@ class ConsoleAPICalled:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> ConsoleAPICalled:
         return cls(
-            type_=str(json["type"]),
+            type_=str(json.get("type")),
             args=[RemoteObject.from_json(i) for i in json["args"]],
             execution_context_id=ExecutionContextId.from_json(
-                json["executionContextId"]
+                json.get("executionContextId")
             ),
-            timestamp=Timestamp.from_json(json["timestamp"]),
+            timestamp=Timestamp.from_json(json.get("timestamp")),
             stack_trace=(
-                StackTrace.from_json(json["stackTrace"])
+                StackTrace.from_json(json.get("stackTrace"))
                 if json.get("stackTrace", None) is not None
                 else None
             ),
             context=(
-                str(json["context"])
+                str(json.get("context"))
                 if json.get("context", None) is not None
                 else None
             ),
@@ -1782,7 +1786,8 @@ class ExceptionRevoked:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> ExceptionRevoked:
         return cls(
-            reason=str(json["reason"]), exception_id=int(json["exceptionId"])
+            reason=str(json.get("reason")),
+            exception_id=int(json.get("exceptionId")),
         )
 
 
@@ -1797,9 +1802,9 @@ class ExceptionThrown:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> ExceptionThrown:
         return cls(
-            timestamp=Timestamp.from_json(json["timestamp"]),
+            timestamp=Timestamp.from_json(json.get("timestamp")),
             exception_details=ExceptionDetails.from_json(
-                json["exceptionDetails"]
+                json.get("exceptionDetails")
             ),
         )
 
@@ -1814,7 +1819,7 @@ class ExecutionContextCreated:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> ExecutionContextCreated:
         return cls(
-            context=ExecutionContextDescription.from_json(json["context"])
+            context=ExecutionContextDescription.from_json(json.get("context"))
         )
 
 
@@ -1831,9 +1836,11 @@ class ExecutionContextDestroyed:
     def from_json(cls, json: T_JSON_DICT) -> ExecutionContextDestroyed:
         return cls(
             execution_context_id=ExecutionContextId.from_json(
-                json["executionContextId"]
+                json.get("executionContextId")
             ),
-            execution_context_unique_id=str(json["executionContextUniqueId"]),
+            execution_context_unique_id=str(
+                json.get("executionContextUniqueId")
+            ),
         )
 
 
@@ -1862,10 +1869,10 @@ class InspectRequested:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> InspectRequested:
         return cls(
-            object_=RemoteObject.from_json(json["object"]),
-            hints=dict(json["hints"]),
+            object_=RemoteObject.from_json(json.get("object")),
+            hints=dict(json.get("hints")),
             execution_context_id=(
-                ExecutionContextId.from_json(json["executionContextId"])
+                ExecutionContextId.from_json(json.get("executionContextId"))
                 if json.get("executionContextId", None) is not None
                 else None
             ),

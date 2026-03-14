@@ -45,14 +45,14 @@ class StorageId:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> StorageId:
         return cls(
-            is_local_storage=bool(json["isLocalStorage"]),
+            is_local_storage=bool(json.get("isLocalStorage")),
             security_origin=(
-                str(json["securityOrigin"])
+                str(json.get("securityOrigin"))
                 if json.get("securityOrigin", None) is not None
                 else None
             ),
             storage_key=(
-                SerializedStorageKey.from_json(json["storageKey"])
+                SerializedStorageKey.from_json(json.get("storageKey"))
                 if json.get("storageKey", None) is not None
                 else None
             ),
@@ -172,9 +172,9 @@ class DomStorageItemAdded:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> DomStorageItemAdded:
         return cls(
-            storage_id=StorageId.from_json(json["storageId"]),
-            key=str(json["key"]),
-            new_value=str(json["newValue"]),
+            storage_id=StorageId.from_json(json.get("storageId")),
+            key=str(json.get("key")),
+            new_value=str(json.get("newValue")),
         )
 
 
@@ -187,8 +187,8 @@ class DomStorageItemRemoved:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> DomStorageItemRemoved:
         return cls(
-            storage_id=StorageId.from_json(json["storageId"]),
-            key=str(json["key"]),
+            storage_id=StorageId.from_json(json.get("storageId")),
+            key=str(json.get("key")),
         )
 
 
@@ -203,10 +203,10 @@ class DomStorageItemUpdated:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> DomStorageItemUpdated:
         return cls(
-            storage_id=StorageId.from_json(json["storageId"]),
-            key=str(json["key"]),
-            old_value=str(json["oldValue"]),
-            new_value=str(json["newValue"]),
+            storage_id=StorageId.from_json(json.get("storageId")),
+            key=str(json.get("key")),
+            old_value=str(json.get("oldValue")),
+            new_value=str(json.get("newValue")),
         )
 
 
@@ -217,4 +217,4 @@ class DomStorageItemsCleared:
 
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> DomStorageItemsCleared:
-        return cls(storage_id=StorageId.from_json(json["storageId"]))
+        return cls(storage_id=StorageId.from_json(json.get("storageId")))

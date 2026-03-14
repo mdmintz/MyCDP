@@ -57,8 +57,8 @@ class ScrollRect:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> ScrollRect:
         return cls(
-            rect=dom.Rect.from_json(json["rect"]),
-            type_=str(json["type"]),
+            rect=dom.Rect.from_json(json.get("rect")),
+            type_=str(json.get("type")),
         )
 
 
@@ -91,17 +91,19 @@ class StickyPositionConstraint:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> StickyPositionConstraint:
         return cls(
-            sticky_box_rect=dom.Rect.from_json(json["stickyBoxRect"]),
+            sticky_box_rect=dom.Rect.from_json(json.get("stickyBoxRect")),
             containing_block_rect=dom.Rect.from_json(
                 json["containingBlockRect"]
             ),
             nearest_layer_shifting_sticky_box=(
-                LayerId.from_json(json["nearestLayerShiftingStickyBox"])
+                LayerId.from_json(json.get("nearestLayerShiftingStickyBox"))
                 if json.get("nearestLayerShiftingStickyBox", None) is not None
                 else None
             ),
             nearest_layer_shifting_containing_block=(
-                LayerId.from_json(json["nearestLayerShiftingContainingBlock"])
+                LayerId.from_json(
+                    json.get("nearestLayerShiftingContainingBlock")
+                )
                 if json.get("nearestLayerShiftingContainingBlock", None)
                 is not None
                 else None
@@ -132,9 +134,9 @@ class PictureTile:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> PictureTile:
         return cls(
-            x=float(json["x"]),
-            y=float(json["y"]),
-            picture=str(json["picture"]),
+            x=float(json.get("x")),
+            y=float(json.get("y")),
+            picture=str(json.get("picture")),
         )
 
 
@@ -211,20 +213,20 @@ class Layer:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> Layer:
         return cls(
-            layer_id=LayerId.from_json(json["layerId"]),
-            offset_x=float(json["offsetX"]),
-            offset_y=float(json["offsetY"]),
-            width=float(json["width"]),
-            height=float(json["height"]),
-            paint_count=int(json["paintCount"]),
-            draws_content=bool(json["drawsContent"]),
+            layer_id=LayerId.from_json(json.get("layerId")),
+            offset_x=float(json.get("offsetX")),
+            offset_y=float(json.get("offsetY")),
+            width=float(json.get("width")),
+            height=float(json.get("height")),
+            paint_count=int(json.get("paintCount")),
+            draws_content=bool(json.get("drawsContent")),
             parent_layer_id=(
-                LayerId.from_json(json["parentLayerId"])
+                LayerId.from_json(json.get("parentLayerId"))
                 if json.get("parentLayerId", None) is not None
                 else None
             ),
             backend_node_id=(
-                dom.BackendNodeId.from_json(json["backendNodeId"])
+                dom.BackendNodeId.from_json(json.get("backendNodeId"))
                 if json.get("backendNodeId", None) is not None
                 else None
             ),
@@ -234,22 +236,22 @@ class Layer:
                 else None
             ),
             anchor_x=(
-                float(json["anchorX"])
+                float(json.get("anchorX"))
                 if json.get("anchorX", None) is not None
                 else None
             ),
             anchor_y=(
-                float(json["anchorY"])
+                float(json.get("anchorY"))
                 if json.get("anchorY", None) is not None
                 else None
             ),
             anchor_z=(
-                float(json["anchorZ"])
+                float(json.get("anchorZ"))
                 if json.get("anchorZ", None) is not None
                 else None
             ),
             invisible=(
-                bool(json["invisible"])
+                bool(json.get("invisible"))
                 if json.get("invisible", None) is not None
                 else None
             ),
@@ -342,7 +344,7 @@ def load_snapshot(
         "params": params,
     }
     json = yield cmd_dict
-    return SnapshotId.from_json(json["snapshotId"])
+    return SnapshotId.from_json(json.get("snapshotId"))
 
 
 def make_snapshot(
@@ -360,7 +362,7 @@ def make_snapshot(
         "params": params,
     }
     json = yield cmd_dict
-    return SnapshotId.from_json(json["snapshotId"])
+    return SnapshotId.from_json(json.get("snapshotId"))
 
 
 def profile_snapshot(
@@ -442,7 +444,7 @@ def replay_snapshot(
         "params": params,
     }
     json = yield cmd_dict
-    return str(json["dataURL"])
+    return str(json.get("dataURL"))
 
 
 def snapshot_command_log(
@@ -474,8 +476,8 @@ class LayerPainted:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> LayerPainted:
         return cls(
-            layer_id=LayerId.from_json(json["layerId"]),
-            clip=dom.Rect.from_json(json["clip"]),
+            layer_id=LayerId.from_json(json.get("layerId")),
+            clip=dom.Rect.from_json(json.get("clip")),
         )
 
 

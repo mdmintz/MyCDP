@@ -43,19 +43,21 @@ class ConsoleMessage:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> ConsoleMessage:
         return cls(
-            source=str(json["source"]),
-            level=str(json["level"]),
-            text=str(json["text"]),
+            source=str(json.get("source")),
+            level=str(json.get("level")),
+            text=str(json.get("text")),
             url=(
-                str(json["url"]) if json.get("url", None) is not None else None
+                str(json.get("url"))
+                if json.get("url", None) is not None
+                else None
             ),
             line=(
-                int(json["line"])
+                int(json.get("line"))
                 if json.get("line", None) is not None
                 else None
             ),
             column=(
-                int(json["column"])
+                int(json.get("column"))
                 if json.get("column", None) is not None
                 else None
             ),
@@ -99,4 +101,4 @@ class MessageAdded:
 
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> MessageAdded:
-        return cls(message=ConsoleMessage.from_json(json["message"]))
+        return cls(message=ConsoleMessage.from_json(json.get("message")))

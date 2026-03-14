@@ -88,25 +88,27 @@ class Bounds:
     def from_json(cls, json: T_JSON_DICT) -> Bounds:
         return cls(
             left=(
-                int(json["left"])
+                int(json.get("left"))
                 if json.get("left", None) is not None
                 else None
             ),
             top=(
-                int(json["top"]) if json.get("top", None) is not None else None
+                int(json.get("top"))
+                if json.get("top", None) is not None
+                else None
             ),
             width=(
-                int(json["width"])
+                int(json.get("width"))
                 if json.get("width", None) is not None
                 else None
             ),
             height=(
-                int(json["height"])
+                int(json.get("height"))
                 if json.get("height", None) is not None
                 else None
             ),
             window_state=(
-                WindowState.from_json(json["windowState"])
+                WindowState.from_json(json.get("windowState"))
                 if json.get("windowState", None) is not None
                 else None
             ),
@@ -203,29 +205,29 @@ class PermissionDescriptor:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> PermissionDescriptor:
         return cls(
-            name=str(json["name"]),
+            name=str(json.get("name")),
             sysex=(
-                bool(json["sysex"])
+                bool(json.get("sysex"))
                 if json.get("sysex", None) is not None
                 else None
             ),
             user_visible_only=(
-                bool(json["userVisibleOnly"])
+                bool(json.get("userVisibleOnly"))
                 if json.get("userVisibleOnly", None) is not None
                 else None
             ),
             allow_without_sanitization=(
-                bool(json["allowWithoutSanitization"])
+                bool(json.get("allowWithoutSanitization"))
                 if json.get("allowWithoutSanitization", None) is not None
                 else None
             ),
             allow_without_gesture=(
-                bool(json["allowWithoutGesture"])
+                bool(json.get("allowWithoutGesture"))
                 if json.get("allowWithoutGesture", None) is not None
                 else None
             ),
             pan_tilt_zoom=(
-                bool(json["panTiltZoom"])
+                bool(json.get("panTiltZoom"))
                 if json.get("panTiltZoom", None) is not None
                 else None
             ),
@@ -265,9 +267,9 @@ class Bucket:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> Bucket:
         return cls(
-            low=int(json["low"]),
-            high=int(json["high"]),
-            count=int(json["count"]),
+            low=int(json.get("low")),
+            high=int(json.get("high")),
+            count=int(json.get("count")),
         )
 
 
@@ -297,9 +299,9 @@ class Histogram:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> Histogram:
         return cls(
-            name=str(json["name"]),
-            sum_=int(json["sum"]),
-            count=int(json["count"]),
+            name=str(json.get("name")),
+            sum_=int(json.get("sum")),
+            count=int(json.get("count")),
             buckets=[Bucket.from_json(i) for i in json["buckets"]],
         )
 
@@ -501,11 +503,11 @@ def get_version() -> (
     }
     json = yield cmd_dict
     return (
-        str(json["protocolVersion"]),
-        str(json["product"]),
-        str(json["revision"]),
-        str(json["userAgent"]),
-        str(json["jsVersion"]),
+        str(json.get("protocolVersion")),
+        str(json.get("product")),
+        str(json.get("revision")),
+        str(json.get("userAgent")),
+        str(json.get("jsVersion")),
     )
 
 
@@ -568,7 +570,7 @@ def get_histogram(
         "params": params,
     }
     json = yield cmd_dict
-    return Histogram.from_json(json["histogram"])
+    return Histogram.from_json(json.get("histogram"))
 
 
 def get_window_bounds(
@@ -592,7 +594,7 @@ def get_window_bounds(
         "params": params,
     }
     json = yield cmd_dict
-    return Bounds.from_json(json["bounds"])
+    return Bounds.from_json(json.get("bounds"))
 
 
 def get_window_for_target(
@@ -622,8 +624,8 @@ def get_window_for_target(
     }
     json = yield cmd_dict
     return (
-        WindowID.from_json(json["windowId"]),
-        Bounds.from_json(json["bounds"]),
+        WindowID.from_json(json.get("windowId")),
+        Bounds.from_json(json.get("bounds")),
     )
 
 
@@ -729,10 +731,10 @@ class DownloadWillBegin:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> DownloadWillBegin:
         return cls(
-            frame_id=page.FrameId.from_json(json["frameId"]),
-            guid=str(json["guid"]),
-            url=str(json["url"]),
-            suggested_filename=str(json["suggestedFilename"]),
+            frame_id=page.FrameId.from_json(json.get("frameId")),
+            guid=str(json.get("guid")),
+            url=str(json.get("url")),
+            suggested_filename=str(json.get("suggestedFilename")),
         )
 
 
@@ -754,8 +756,8 @@ class DownloadProgress:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> DownloadProgress:
         return cls(
-            guid=str(json["guid"]),
-            total_bytes=float(json["totalBytes"]),
-            received_bytes=float(json["receivedBytes"]),
-            state=str(json["state"]),
+            guid=str(json.get("guid")),
+            total_bytes=float(json.get("totalBytes")),
+            received_bytes=float(json.get("receivedBytes")),
+            state=str(json.get("state")),
         )

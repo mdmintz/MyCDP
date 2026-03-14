@@ -62,10 +62,10 @@ class Location:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> Location:
         return cls(
-            script_id=runtime.ScriptId.from_json(json["scriptId"]),
-            line_number=int(json["lineNumber"]),
+            script_id=runtime.ScriptId.from_json(json.get("scriptId")),
+            line_number=int(json.get("lineNumber")),
             column_number=(
-                int(json["columnNumber"])
+                int(json.get("columnNumber"))
                 if json.get("columnNumber", None) is not None
                 else None
             ),
@@ -87,8 +87,8 @@ class ScriptPosition:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> ScriptPosition:
         return cls(
-            line_number=int(json["lineNumber"]),
-            column_number=int(json["columnNumber"]),
+            line_number=int(json.get("lineNumber")),
+            column_number=int(json.get("columnNumber")),
         )
 
 
@@ -109,9 +109,9 @@ class LocationRange:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> LocationRange:
         return cls(
-            script_id=runtime.ScriptId.from_json(json["scriptId"]),
-            start=ScriptPosition.from_json(json["start"]),
-            end=ScriptPosition.from_json(json["end"]),
+            script_id=runtime.ScriptId.from_json(json.get("scriptId")),
+            start=ScriptPosition.from_json(json.get("start")),
+            end=ScriptPosition.from_json(json.get("end")),
         )
 
 
@@ -163,24 +163,24 @@ class CallFrame:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> CallFrame:
         return cls(
-            call_frame_id=CallFrameId.from_json(json["callFrameId"]),
-            function_name=str(json["functionName"]),
-            location=Location.from_json(json["location"]),
-            url=str(json["url"]),
+            call_frame_id=CallFrameId.from_json(json.get("callFrameId")),
+            function_name=str(json.get("functionName")),
+            location=Location.from_json(json.get("location")),
+            url=str(json.get("url")),
             scope_chain=[Scope.from_json(i) for i in json["scopeChain"]],
-            this=runtime.RemoteObject.from_json(json["this"]),
+            this=runtime.RemoteObject.from_json(json.get("this")),
             function_location=(
-                Location.from_json(json["functionLocation"])
+                Location.from_json(json.get("functionLocation"))
                 if json.get("functionLocation", None) is not None
                 else None
             ),
             return_value=(
-                runtime.RemoteObject.from_json(json["returnValue"])
+                runtime.RemoteObject.from_json(json.get("returnValue"))
                 if json.get("returnValue", None) is not None
                 else None
             ),
             can_be_restarted=(
-                bool(json["canBeRestarted"])
+                bool(json.get("canBeRestarted"))
                 if json.get("canBeRestarted", None) is not None
                 else None
             ),
@@ -219,20 +219,20 @@ class Scope:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> Scope:
         return cls(
-            type_=str(json["type"]),
-            object_=runtime.RemoteObject.from_json(json["object"]),
+            type_=str(json.get("type")),
+            object_=runtime.RemoteObject.from_json(json.get("object")),
             name=(
-                str(json["name"])
+                str(json.get("name"))
                 if json.get("name", None) is not None
                 else None
             ),
             start_location=(
-                Location.from_json(json["startLocation"])
+                Location.from_json(json.get("startLocation"))
                 if json.get("startLocation", None) is not None
                 else None
             ),
             end_location=(
-                Location.from_json(json["endLocation"])
+                Location.from_json(json.get("endLocation"))
                 if json.get("endLocation", None) is not None
                 else None
             ),
@@ -256,8 +256,8 @@ class SearchMatch:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> SearchMatch:
         return cls(
-            line_number=float(json["lineNumber"]),
-            line_content=str(json["lineContent"]),
+            line_number=float(json.get("lineNumber")),
+            line_content=str(json.get("lineContent")),
         )
 
 
@@ -284,15 +284,15 @@ class BreakLocation:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> BreakLocation:
         return cls(
-            script_id=runtime.ScriptId.from_json(json["scriptId"]),
-            line_number=int(json["lineNumber"]),
+            script_id=runtime.ScriptId.from_json(json.get("scriptId")),
+            line_number=int(json.get("lineNumber")),
             column_number=(
-                int(json["columnNumber"])
+                int(json.get("columnNumber"))
                 if json.get("columnNumber", None) is not None
                 else None
             ),
             type_=(
-                str(json["type"])
+                str(json.get("type"))
                 if json.get("type", None) is not None
                 else None
             ),
@@ -351,9 +351,9 @@ class DebugSymbols:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> DebugSymbols:
         return cls(
-            type_=str(json["type"]),
+            type_=str(json.get("type")),
             external_url=(
-                str(json["externalURL"])
+                str(json.get("externalURL"))
                 if json.get("externalURL", None) is not None
                 else None
             ),
@@ -408,7 +408,7 @@ def enable(
         "params": params,
     }
     json = yield cmd_dict
-    return runtime.UniqueDebuggerId.from_json(json["debuggerId"])
+    return runtime.UniqueDebuggerId.from_json(json.get("debuggerId"))
 
 
 def evaluate_on_call_frame(
@@ -478,9 +478,9 @@ def evaluate_on_call_frame(
     }
     json = yield cmd_dict
     return (
-        runtime.RemoteObject.from_json(json["result"]),
+        runtime.RemoteObject.from_json(json.get("result")),
         (
-            runtime.ExceptionDetails.from_json(json["exceptionDetails"])
+            runtime.ExceptionDetails.from_json(json.get("exceptionDetails"))
             if json.get("exceptionDetails", None) is not None
             else None
         ),
@@ -539,9 +539,9 @@ def get_script_source(
     }
     json = yield cmd_dict
     return (
-        str(json["scriptSource"]),
+        str(json.get("scriptSource")),
         (
-            str(json["bytecode"])
+            str(json.get("bytecode"))
             if json.get("bytecode", None) is not None
             else None
         ),
@@ -581,13 +581,13 @@ def disassemble_wasm_module(
     json = yield cmd_dict
     return (
         (
-            str(json["streamId"])
+            str(json.get("streamId"))
             if json.get("streamId", None) is not None
             else None
         ),
-        int(json["totalNumberOfLines"]),
+        int(json.get("totalNumberOfLines")),
         [int(i) for i in json["functionBodyOffsets"]],
-        WasmDisassemblyChunk.from_json(json["chunk"]),
+        WasmDisassemblyChunk.from_json(json.get("chunk")),
     )
 
 
@@ -610,7 +610,7 @@ def next_wasm_disassembly_chunk(
         "params": params,
     }
     json = yield cmd_dict
-    return WasmDisassemblyChunk.from_json(json["chunk"])
+    return WasmDisassemblyChunk.from_json(json.get("chunk"))
 
 
 def get_stack_trace(
@@ -628,7 +628,7 @@ def get_stack_trace(
         "params": params,
     }
     json = yield cmd_dict
-    return runtime.StackTrace.from_json(json["stackTrace"])
+    return runtime.StackTrace.from_json(json.get("stackTrace"))
 
 
 def pause() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
@@ -699,12 +699,12 @@ def restart_frame(
     return (
         [CallFrame.from_json(i) for i in json["callFrames"]],
         (
-            runtime.StackTrace.from_json(json["asyncStackTrace"])
+            runtime.StackTrace.from_json(json.get("asyncStackTrace"))
             if json.get("asyncStackTrace", None) is not None
             else None
         ),
         (
-            runtime.StackTraceId.from_json(json["asyncStackTraceId"])
+            runtime.StackTraceId.from_json(json.get("asyncStackTraceId"))
             if json.get("asyncStackTraceId", None) is not None
             else None
         ),
@@ -852,8 +852,8 @@ def set_breakpoint(
     }
     json = yield cmd_dict
     return (
-        BreakpointId.from_json(json["breakpointId"]),
-        Location.from_json(json["actualLocation"]),
+        BreakpointId.from_json(json.get("breakpointId")),
+        Location.from_json(json.get("actualLocation")),
     )
 
 
@@ -872,7 +872,7 @@ def set_instrumentation_breakpoint(
         "params": params,
     }
     json = yield cmd_dict
-    return BreakpointId.from_json(json["breakpointId"])
+    return BreakpointId.from_json(json.get("breakpointId"))
 
 
 def set_breakpoint_by_url(
@@ -929,7 +929,7 @@ def set_breakpoint_by_url(
     }
     json = yield cmd_dict
     return (
-        BreakpointId.from_json(json["breakpointId"]),
+        BreakpointId.from_json(json.get("breakpointId")),
         [Location.from_json(i) for i in json["locations"]],
     )
 
@@ -957,7 +957,7 @@ def set_breakpoint_on_function_call(
         "params": params,
     }
     json = yield cmd_dict
-    return BreakpointId.from_json(json["breakpointId"])
+    return BreakpointId.from_json(json.get("breakpointId"))
 
 
 def set_breakpoints_active(
@@ -1079,23 +1079,23 @@ def set_script_source(
             else None
         ),
         (
-            bool(json["stackChanged"])
+            bool(json.get("stackChanged"))
             if json.get("stackChanged", None) is not None
             else None
         ),
         (
-            runtime.StackTrace.from_json(json["asyncStackTrace"])
+            runtime.StackTrace.from_json(json.get("asyncStackTrace"))
             if json.get("asyncStackTrace", None) is not None
             else None
         ),
         (
-            runtime.StackTraceId.from_json(json["asyncStackTraceId"])
+            runtime.StackTraceId.from_json(json.get("asyncStackTraceId"))
             if json.get("asyncStackTraceId", None) is not None
             else None
         ),
-        str(json["status"]),
+        str(json.get("status")),
         (
-            runtime.ExceptionDetails.from_json(json["exceptionDetails"])
+            runtime.ExceptionDetails.from_json(json.get("exceptionDetails"))
             if json.get("exceptionDetails", None) is not None
             else None
         ),
@@ -1209,8 +1209,8 @@ class BreakpointResolved:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> BreakpointResolved:
         return cls(
-            breakpoint_id=BreakpointId.from_json(json["breakpointId"]),
-            location=Location.from_json(json["location"]),
+            breakpoint_id=BreakpointId.from_json(json.get("breakpointId")),
+            location=Location.from_json(json.get("location")),
         )
 
 
@@ -1240,9 +1240,9 @@ class Paused:
     def from_json(cls, json: T_JSON_DICT) -> Paused:
         return cls(
             call_frames=[CallFrame.from_json(i) for i in json["callFrames"]],
-            reason=str(json["reason"]),
+            reason=str(json.get("reason")),
             data=(
-                dict(json["data"])
+                dict(json.get("data"))
                 if json.get("data", None) is not None
                 else None
             ),
@@ -1252,17 +1252,19 @@ class Paused:
                 else None
             ),
             async_stack_trace=(
-                runtime.StackTrace.from_json(json["asyncStackTrace"])
+                runtime.StackTrace.from_json(json.get("asyncStackTrace"))
                 if json.get("asyncStackTrace", None) is not None
                 else None
             ),
             async_stack_trace_id=(
-                runtime.StackTraceId.from_json(json["asyncStackTraceId"])
+                runtime.StackTraceId.from_json(json.get("asyncStackTraceId"))
                 if json.get("asyncStackTraceId", None) is not None
                 else None
             ),
             async_call_stack_trace_id=(
-                runtime.StackTraceId.from_json(json["asyncCallStackTraceId"])
+                runtime.StackTraceId.from_json(
+                    json.get("asyncCallStackTraceId")
+                )
                 if json.get("asyncCallStackTraceId", None) is not None
                 else None
             ),
@@ -1326,58 +1328,58 @@ class ScriptFailedToParse:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> ScriptFailedToParse:
         return cls(
-            script_id=runtime.ScriptId.from_json(json["scriptId"]),
-            url=str(json["url"]),
-            start_line=int(json["startLine"]),
-            start_column=int(json["startColumn"]),
-            end_line=int(json["endLine"]),
-            end_column=int(json["endColumn"]),
+            script_id=runtime.ScriptId.from_json(json.get("scriptId")),
+            url=str(json.get("url")),
+            start_line=int(json.get("startLine")),
+            start_column=int(json.get("startColumn")),
+            end_line=int(json.get("endLine")),
+            end_column=int(json.get("endColumn")),
             execution_context_id=runtime.ExecutionContextId.from_json(
-                json["executionContextId"]
+                json.get("executionContextId")
             ),
-            hash_=str(json["hash"]),
+            hash_=str(json.get("hash")),
             execution_context_aux_data=(
-                dict(json["executionContextAuxData"])
+                dict(json.get("executionContextAuxData"))
                 if json.get("executionContextAuxData", None) is not None
                 else None
             ),
             source_map_url=(
-                str(json["sourceMapURL"])
+                str(json.get("sourceMapURL"))
                 if json.get("sourceMapURL", None) is not None
                 else None
             ),
             has_source_url=(
-                bool(json["hasSourceURL"])
+                bool(json.get("hasSourceURL"))
                 if json.get("hasSourceURL", None) is not None
                 else None
             ),
             is_module=(
-                bool(json["isModule"])
+                bool(json.get("isModule"))
                 if json.get("isModule", None) is not None
                 else None
             ),
             length=(
-                int(json["length"])
+                int(json.get("length"))
                 if json.get("length", None) is not None
                 else None
             ),
             stack_trace=(
-                runtime.StackTrace.from_json(json["stackTrace"])
+                runtime.StackTrace.from_json(json.get("stackTrace"))
                 if json.get("stackTrace", None) is not None
                 else None
             ),
             code_offset=(
-                int(json["codeOffset"])
+                int(json.get("codeOffset"))
                 if json.get("codeOffset", None) is not None
                 else None
             ),
             script_language=(
-                ScriptLanguage.from_json(json["scriptLanguage"])
+                ScriptLanguage.from_json(json.get("scriptLanguage"))
                 if json.get("scriptLanguage", None) is not None
                 else None
             ),
             embedder_name=(
-                str(json["embedderName"])
+                str(json.get("embedderName"))
                 if json.get("embedderName", None) is not None
                 else None
             ),
@@ -1441,68 +1443,68 @@ class ScriptParsed:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> ScriptParsed:
         return cls(
-            script_id=runtime.ScriptId.from_json(json["scriptId"]),
-            url=str(json["url"]),
-            start_line=int(json["startLine"]),
-            start_column=int(json["startColumn"]),
-            end_line=int(json["endLine"]),
-            end_column=int(json["endColumn"]),
+            script_id=runtime.ScriptId.from_json(json.get("scriptId")),
+            url=str(json.get("url")),
+            start_line=int(json.get("startLine")),
+            start_column=int(json.get("startColumn")),
+            end_line=int(json.get("endLine")),
+            end_column=int(json.get("endColumn")),
             execution_context_id=runtime.ExecutionContextId.from_json(
-                json["executionContextId"]
+                json.get("executionContextId")
             ),
-            hash_=str(json["hash"]),
+            hash_=str(json.get("hash")),
             execution_context_aux_data=(
-                dict(json["executionContextAuxData"])
+                dict(json.get("executionContextAuxData"))
                 if json.get("executionContextAuxData", None) is not None
                 else None
             ),
             is_live_edit=(
-                bool(json["isLiveEdit"])
+                bool(json.get("isLiveEdit"))
                 if json.get("isLiveEdit", None) is not None
                 else None
             ),
             source_map_url=(
-                str(json["sourceMapURL"])
+                str(json.get("sourceMapURL"))
                 if json.get("sourceMapURL", None) is not None
                 else None
             ),
             has_source_url=(
-                bool(json["hasSourceURL"])
+                bool(json.get("hasSourceURL"))
                 if json.get("hasSourceURL", None) is not None
                 else None
             ),
             is_module=(
-                bool(json["isModule"])
+                bool(json.get("isModule"))
                 if json.get("isModule", None) is not None
                 else None
             ),
             length=(
-                int(json["length"])
+                int(json.get("length"))
                 if json.get("length", None) is not None
                 else None
             ),
             stack_trace=(
-                runtime.StackTrace.from_json(json["stackTrace"])
+                runtime.StackTrace.from_json(json.get("stackTrace"))
                 if json.get("stackTrace", None) is not None
                 else None
             ),
             code_offset=(
-                int(json["codeOffset"])
+                int(json.get("codeOffset"))
                 if json.get("codeOffset", None) is not None
                 else None
             ),
             script_language=(
-                ScriptLanguage.from_json(json["scriptLanguage"])
+                ScriptLanguage.from_json(json.get("scriptLanguage"))
                 if json.get("scriptLanguage", None) is not None
                 else None
             ),
             debug_symbols=(
-                DebugSymbols.from_json(json["debugSymbols"])
+                DebugSymbols.from_json(json.get("debugSymbols"))
                 if json.get("debugSymbols", None) is not None
                 else None
             ),
             embedder_name=(
-                str(json["embedderName"])
+                str(json.get("embedderName"))
                 if json.get("embedderName", None) is not None
                 else None
             ),

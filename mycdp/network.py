@@ -309,34 +309,34 @@ class ResourceTiming:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> ResourceTiming:
         return cls(
-            request_time=float(json["requestTime"]),
-            proxy_start=float(json["proxyStart"]),
-            proxy_end=float(json["proxyEnd"]),
-            dns_start=float(json["dnsStart"]),
-            dns_end=float(json["dnsEnd"]),
-            connect_start=float(json["connectStart"]),
-            connect_end=float(json["connectEnd"]),
-            ssl_start=float(json["sslStart"]),
-            ssl_end=float(json["sslEnd"]),
-            worker_start=float(json["workerStart"]),
-            worker_ready=float(json["workerReady"]),
-            worker_fetch_start=float(json["workerFetchStart"]),
+            request_time=float(json.get("requestTime")),
+            proxy_start=float(json.get("proxyStart")),
+            proxy_end=float(json.get("proxyEnd")),
+            dns_start=float(json.get("dnsStart")),
+            dns_end=float(json.get("dnsEnd")),
+            connect_start=float(json.get("connectStart")),
+            connect_end=float(json.get("connectEnd")),
+            ssl_start=float(json.get("sslStart")),
+            ssl_end=float(json.get("sslEnd")),
+            worker_start=float(json.get("workerStart")),
+            worker_ready=float(json.get("workerReady")),
+            worker_fetch_start=float(json.get("workerFetchStart")),
             worker_respond_with_settled=float(
-                json["workerRespondWithSettled"]
+                json.get("workerRespondWithSettled")
             ),
-            send_start=float(json["sendStart"]),
-            send_end=float(json["sendEnd"]),
-            push_start=float(json["pushStart"]),
-            push_end=float(json["pushEnd"]),
-            receive_headers_start=float(json["receiveHeadersStart"]),
-            receive_headers_end=float(json["receiveHeadersEnd"]),
+            send_start=float(json.get("sendStart")),
+            send_end=float(json.get("sendEnd")),
+            push_start=float(json.get("pushStart")),
+            push_end=float(json.get("pushEnd")),
+            receive_headers_start=float(json.get("receiveHeadersStart")),
+            receive_headers_end=float(json.get("receiveHeadersEnd")),
             worker_router_evaluation_start=(
-                float(json["workerRouterEvaluationStart"])
+                float(json.get("workerRouterEvaluationStart"))
                 if json.get("workerRouterEvaluationStart", None) is not None
                 else None
             ),
             worker_cache_lookup_start=(
-                float(json["workerCacheLookupStart"])
+                float(json.get("workerCacheLookupStart"))
                 if json.get("workerCacheLookupStart", None) is not None
                 else None
             ),
@@ -374,7 +374,7 @@ class PostDataEntry:
     def from_json(cls, json: T_JSON_DICT) -> PostDataEntry:
         return cls(
             bytes_=(
-                str(json["bytes"])
+                str(json.get("bytes"))
                 if json.get("bytes", None) is not None
                 else None
             ),
@@ -448,25 +448,25 @@ class Request:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> Request:
         return cls(
-            url=str(json["url"]),
-            method=str(json["method"]),
-            headers=Headers.from_json(json["headers"]),
+            url=str(json.get("url")),
+            method=str(json.get("method")),
+            headers=Headers.from_json(json.get("headers")),
             initial_priority=ResourcePriority.from_json(
-                json["initialPriority"]
+                json.get("initialPriority")
             ),
-            referrer_policy=str(json["referrerPolicy"]),
+            referrer_policy=str(json.get("referrerPolicy")),
             url_fragment=(
-                str(json["urlFragment"])
+                str(json.get("urlFragment"))
                 if json.get("urlFragment", None) is not None
                 else None
             ),
             post_data=(
-                str(json["postData"])
+                str(json.get("postData"))
                 if json.get("postData", None) is not None
                 else None
             ),
             has_post_data=(
-                bool(json["hasPostData"])
+                bool(json.get("hasPostData"))
                 if json.get("hasPostData", None) is not None
                 else None
             ),
@@ -476,22 +476,24 @@ class Request:
                 else None
             ),
             mixed_content_type=(
-                security.MixedContentType.from_json(json["mixedContentType"])
+                security.MixedContentType.from_json(
+                    json.get("mixedContentType")
+                )
                 if json.get("mixedContentType", None) is not None
                 else None
             ),
             is_link_preload=(
-                bool(json["isLinkPreload"])
+                bool(json.get("isLinkPreload"))
                 if json.get("isLinkPreload", None) is not None
                 else None
             ),
             trust_token_params=(
-                TrustTokenParams.from_json(json["trustTokenParams"])
+                TrustTokenParams.from_json(json.get("trustTokenParams"))
                 if json.get("trustTokenParams", None) is not None
                 else None
             ),
             is_same_site=(
-                bool(json["isSameSite"])
+                bool(json.get("isSameSite"))
                 if json.get("isSameSite", None) is not None
                 else None
             ),
@@ -534,14 +536,14 @@ class SignedCertificateTimestamp:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> SignedCertificateTimestamp:
         return cls(
-            status=str(json["status"]),
-            origin=str(json["origin"]),
-            log_description=str(json["logDescription"]),
-            log_id=str(json["logId"]),
-            timestamp=float(json["timestamp"]),
-            hash_algorithm=str(json["hashAlgorithm"]),
-            signature_algorithm=str(json["signatureAlgorithm"]),
-            signature_data=str(json["signatureData"]),
+            status=str(json.get("status")),
+            origin=str(json.get("origin")),
+            log_description=str(json.get("logDescription")),
+            log_id=str(json.get("logId")),
+            timestamp=float(json.get("timestamp")),
+            hash_algorithm=str(json.get("hashAlgorithm")),
+            signature_algorithm=str(json.get("signatureAlgorithm")),
+            signature_data=str(json.get("signatureData")),
         )
 
 
@@ -611,35 +613,37 @@ class SecurityDetails:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> SecurityDetails:
         return cls(
-            protocol=str(json["protocol"]),
-            key_exchange=str(json["keyExchange"]),
-            cipher=str(json["cipher"]),
+            protocol=str(json.get("protocol")),
+            key_exchange=str(json.get("keyExchange")),
+            cipher=str(json.get("cipher")),
             certificate_id=security.CertificateId.from_json(
-                json["certificateId"]
+                json.get("certificateId")
             ),
-            subject_name=str(json["subjectName"]),
+            subject_name=str(json.get("subjectName")),
             san_list=[str(i) for i in json["sanList"]],
-            issuer=str(json["issuer"]),
-            valid_from=TimeSinceEpoch.from_json(json["validFrom"]),
-            valid_to=TimeSinceEpoch.from_json(json["validTo"]),
+            issuer=str(json.get("issuer")),
+            valid_from=TimeSinceEpoch.from_json(json.get("validFrom")),
+            valid_to=TimeSinceEpoch.from_json(json.get("validTo")),
             signed_certificate_timestamp_list=[
                 SignedCertificateTimestamp.from_json(i)
                 for i in json["signedCertificateTimestampList"]
             ],
             certificate_transparency_compliance=CertificateTransparencyCompliance.from_json(  # noqa
-                json["certificateTransparencyCompliance"]
+                json.get("certificateTransparencyCompliance")
             ),
-            encrypted_client_hello=bool(json["encryptedClientHello"]),
+            encrypted_client_hello=bool(json.get("encryptedClientHello")),
             key_exchange_group=(
-                str(json["keyExchangeGroup"])
+                str(json.get("keyExchangeGroup"))
                 if json.get("keyExchangeGroup", None) is not None
                 else None
             ),
             mac=(
-                str(json["mac"]) if json.get("mac", None) is not None else None
+                str(json.get("mac"))
+                if json.get("mac", None) is not None
+                else None
             ),
             server_signature_algorithm=(
-                int(json["serverSignatureAlgorithm"])
+                int(json.get("serverSignatureAlgorithm"))
                 if json.get("serverSignatureAlgorithm", None) is not None
                 else None
             ),
@@ -797,8 +801,8 @@ class CorsErrorStatus:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> CorsErrorStatus:
         return cls(
-            cors_error=CorsError.from_json(json["corsError"]),
-            failed_parameter=str(json["failedParameter"]),
+            cors_error=CorsError.from_json(json.get("corsError")),
+            failed_parameter=str(json.get("failedParameter")),
         )
 
 
@@ -843,8 +847,8 @@ class TrustTokenParams:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> TrustTokenParams:
         return cls(
-            operation=TrustTokenOperationType.from_json(json["operation"]),
-            refresh_policy=str(json["refreshPolicy"]),
+            operation=TrustTokenOperationType.from_json(json.get("operation")),
+            refresh_policy=str(json.get("refreshPolicy")),
             issuers=(
                 [str(i) for i in json["issuers"]]
                 if json.get("issuers", None) is not None
@@ -925,17 +929,21 @@ class ServiceWorkerRouterInfo:
     def from_json(cls, json: T_JSON_DICT) -> ServiceWorkerRouterInfo:
         return cls(
             rule_id_matched=(
-                int(json["ruleIdMatched"])
+                int(json.get("ruleIdMatched"))
                 if json.get("ruleIdMatched", None) is not None
                 else None
             ),
             matched_source_type=(
-                ServiceWorkerRouterSource.from_json(json["matchedSourceType"])
+                ServiceWorkerRouterSource.from_json(
+                    json.get("matchedSourceType")
+                )
                 if json.get("matchedSourceType", None) is not None
                 else None
             ),
             actual_source_type=(
-                ServiceWorkerRouterSource.from_json(json["actualSourceType"])
+                ServiceWorkerRouterSource.from_json(
+                    json.get("actualSourceType")
+                )
                 if json.get("actualSourceType", None) is not None
                 else None
             ),
@@ -1076,111 +1084,111 @@ class Response:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> Response:
         return cls(
-            url=str(json["url"]),
-            status=int(json["status"]),
-            status_text=str(json["statusText"]),
-            headers=Headers.from_json(json["headers"]),
-            mime_type=str(json["mimeType"]),
-            charset=str(json["charset"]),
-            connection_reused=bool(json["connectionReused"]),
-            connection_id=float(json["connectionId"]),
-            encoded_data_length=float(json["encodedDataLength"]),
+            url=str(json.get("url")),
+            status=int(json.get("status")),
+            status_text=str(json.get("statusText")),
+            headers=Headers.from_json(json.get("headers")),
+            mime_type=str(json.get("mimeType")),
+            charset=str(json.get("charset")),
+            connection_reused=bool(json.get("connectionReused")),
+            connection_id=float(json.get("connectionId")),
+            encoded_data_length=float(json.get("encodedDataLength")),
             security_state=security.SecurityState.from_json(
-                json["securityState"]
+                json.get("securityState")
             ),
             headers_text=(
-                str(json["headersText"])
+                str(json.get("headersText"))
                 if json.get("headersText", None) is not None
                 else None
             ),
             request_headers=(
-                Headers.from_json(json["requestHeaders"])
+                Headers.from_json(json.get("requestHeaders"))
                 if json.get("requestHeaders", None) is not None
                 else None
             ),
             request_headers_text=(
-                str(json["requestHeadersText"])
+                str(json.get("requestHeadersText"))
                 if json.get("requestHeadersText", None) is not None
                 else None
             ),
             remote_ip_address=(
-                str(json["remoteIPAddress"])
+                str(json.get("remoteIPAddress"))
                 if json.get("remoteIPAddress", None) is not None
                 else None
             ),
             remote_port=(
-                int(json["remotePort"])
+                int(json.get("remotePort"))
                 if json.get("remotePort", None) is not None
                 else None
             ),
             from_disk_cache=(
-                bool(json["fromDiskCache"])
+                bool(json.get("fromDiskCache"))
                 if json.get("fromDiskCache", None) is not None
                 else None
             ),
             from_service_worker=(
-                bool(json["fromServiceWorker"])
+                bool(json.get("fromServiceWorker"))
                 if json.get("fromServiceWorker", None) is not None
                 else None
             ),
             from_prefetch_cache=(
-                bool(json["fromPrefetchCache"])
+                bool(json.get("fromPrefetchCache"))
                 if json.get("fromPrefetchCache", None) is not None
                 else None
             ),
             from_early_hints=(
-                bool(json["fromEarlyHints"])
+                bool(json.get("fromEarlyHints"))
                 if json.get("fromEarlyHints", None) is not None
                 else None
             ),
             service_worker_router_info=(
                 ServiceWorkerRouterInfo.from_json(
-                    json["serviceWorkerRouterInfo"]
+                    json.get("serviceWorkerRouterInfo")
                 )
                 if json.get("serviceWorkerRouterInfo", None) is not None
                 else None
             ),
             timing=(
-                ResourceTiming.from_json(json["timing"])
+                ResourceTiming.from_json(json.get("timing"))
                 if json.get("timing", None) is not None
                 else None
             ),
             service_worker_response_source=(
                 ServiceWorkerResponseSource.from_json(
-                    json["serviceWorkerResponseSource"]
+                    json.get("serviceWorkerResponseSource")
                 )
                 if json.get("serviceWorkerResponseSource", None) is not None
                 else None
             ),
             response_time=(
-                TimeSinceEpoch.from_json(json["responseTime"])
+                TimeSinceEpoch.from_json(json.get("responseTime"))
                 if json.get("responseTime", None) is not None
                 else None
             ),
             cache_storage_cache_name=(
-                str(json["cacheStorageCacheName"])
+                str(json.get("cacheStorageCacheName"))
                 if json.get("cacheStorageCacheName", None) is not None
                 else None
             ),
             protocol=(
-                str(json["protocol"])
+                str(json.get("protocol"))
                 if json.get("protocol", None) is not None
                 else None
             ),
             alternate_protocol_usage=(
                 AlternateProtocolUsage.from_json(
-                    json["alternateProtocolUsage"]
+                    json.get("alternateProtocolUsage")
                 )
                 if json.get("alternateProtocolUsage", None) is not None
                 else None
             ),
             security_details=(
-                SecurityDetails.from_json(json["securityDetails"])
+                SecurityDetails.from_json(json.get("securityDetails"))
                 if json.get("securityDetails", None) is not None
                 else None
             ),
             is_ip_protection_used=(
-                bool(json['isIpProtectionUsed'])
+                bool(json.get('isIpProtectionUsed'))
                 if json.get('isIpProtectionUsed', None) is not None
                 else None,
             ),
@@ -1201,7 +1209,7 @@ class WebSocketRequest:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> WebSocketRequest:
         return cls(
-            headers=Headers.from_json(json["headers"]),
+            headers=Headers.from_json(json.get("headers")),
         )
 
 
@@ -1237,21 +1245,21 @@ class WebSocketResponse:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> WebSocketResponse:
         return cls(
-            status=int(json["status"]),
-            status_text=str(json["statusText"]),
-            headers=Headers.from_json(json["headers"]),
+            status=int(json.get("status")),
+            status_text=str(json.get("statusText")),
+            headers=Headers.from_json(json.get("headers")),
             headers_text=(
-                str(json["headersText"])
+                str(json.get("headersText"))
                 if json.get("headersText", None) is not None
                 else None
             ),
             request_headers=(
-                Headers.from_json(json["requestHeaders"])
+                Headers.from_json(json.get("requestHeaders"))
                 if json.get("requestHeaders", None) is not None
                 else None
             ),
             request_headers_text=(
-                str(json["requestHeadersText"])
+                str(json.get("requestHeadersText"))
                 if json.get("requestHeadersText", None) is not None
                 else None
             ),
@@ -1285,9 +1293,9 @@ class WebSocketFrame:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> WebSocketFrame:
         return cls(
-            opcode=float(json["opcode"]),
-            mask=bool(json["mask"]),
-            payload_data=str(json["payloadData"]),
+            opcode=float(json.get("opcode")),
+            mask=bool(json.get("mask")),
+            payload_data=str(json.get("payloadData")),
         )
 
 
@@ -1315,11 +1323,11 @@ class CachedResource:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> CachedResource:
         return cls(
-            url=str(json["url"]),
-            type_=ResourceType.from_json(json["type"]),
-            body_size=float(json["bodySize"]),
+            url=str(json.get("url")),
+            type_=ResourceType.from_json(json.get("type")),
+            body_size=float(json.get("bodySize")),
             response=(
-                Response.from_json(json["response"])
+                Response.from_json(json.get("response"))
                 if json.get("response", None) is not None
                 else None
             ),
@@ -1363,27 +1371,29 @@ class Initiator:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> Initiator:
         return cls(
-            type_=str(json["type"]),
+            type_=str(json.get("type")),
             stack=(
-                runtime.StackTrace.from_json(json["stack"])
+                runtime.StackTrace.from_json(json.get("stack"))
                 if json.get("stack", None) is not None
                 else None
             ),
             url=(
-                str(json["url"]) if json.get("url", None) is not None else None
+                str(json.get("url"))
+                if json.get("url", None) is not None
+                else None
             ),
             line_number=(
-                float(json["lineNumber"])
+                float(json.get("lineNumber"))
                 if json.get("lineNumber", None) is not None
                 else None
             ),
             column_number=(
-                float(json["columnNumber"])
+                float(json.get("columnNumber"))
                 if json.get("columnNumber", None) is not None
                 else None
             ),
             request_id=(
-                RequestId.from_json(json["requestId"])
+                RequestId.from_json(json.get("requestId"))
                 if json.get("requestId", None) is not None
                 else None
             ),
@@ -1414,8 +1424,8 @@ class CookiePartitionKey:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> CookiePartitionKey:
         return cls(
-            top_level_site=str(json["topLevelSite"]),
-            has_cross_site_ancestor=bool(json["hasCrossSiteAncestor"]),
+            top_level_site=str(json.get("topLevelSite")),
+            has_cross_site_ancestor=bool(json.get("hasCrossSiteAncestor")),
         )
 
 
@@ -1516,7 +1526,7 @@ class Cookie:
                 else None
             ),
             partition_key_opaque=(
-                bool(json["partitionKeyOpaque"])
+                bool(json.get("partitionKeyOpaque"))
                 if json.get("partitionKeyOpaque", None) is not None
                 else None
             ),
@@ -1645,9 +1655,9 @@ class BlockedSetCookieWithReason:
                 SetCookieBlockedReason.from_json(i)
                 for i in json["blockedReasons"]
             ],
-            cookie_line=str(json["cookieLine"]),
+            cookie_line=str(json.get("cookieLine")),
             cookie=(
-                Cookie.from_json(json["cookie"])
+                Cookie.from_json(json.get("cookie"))
                 if json.get("cookie", None) is not None
                 else None
             ),
@@ -1680,10 +1690,10 @@ class ExemptedSetCookieWithReason:
     def from_json(cls, json: T_JSON_DICT) -> ExemptedSetCookieWithReason:
         return cls(
             exemption_reason=CookieExemptionReason.from_json(
-                json["exemptionReason"]
+                json.get("exemptionReason")
             ),
-            cookie_line=str(json["cookieLine"]),
-            cookie=Cookie.from_json(json["cookie"]),
+            cookie_line=str(json.get("cookieLine")),
+            cookie=Cookie.from_json(json.get("cookie")),
         )
 
 
@@ -1713,13 +1723,13 @@ class AssociatedCookie:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> AssociatedCookie:
         return cls(
-            cookie=Cookie.from_json(json["cookie"]),
+            cookie=Cookie.from_json(json.get("cookie")),
             blocked_reasons=[
                 CookieBlockedReason.from_json(i)
                 for i in json["blockedReasons"]
             ],
             exemption_reason=(
-                CookieExemptionReason.from_json(json["exemptionReason"])
+                CookieExemptionReason.from_json(json.get("exemptionReason"))
                 if json.get("exemptionReason", None) is not None
                 else None
             ),
@@ -1798,63 +1808,65 @@ class CookieParam:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> CookieParam:
         return cls(
-            name=str(json["name"]),
-            value=str(json["value"]),
+            name=str(json.get("name")),
+            value=str(json.get("value")),
             url=(
-                str(json["url"]) if json.get("url", None) is not None else None
+                str(json.get("url"))
+                if json.get("url", None) is not None
+                else None
             ),
             domain=(
-                str(json["domain"])
+                str(json.get("domain"))
                 if json.get("domain", None) is not None
                 else None
             ),
             path=(
-                str(json["path"])
+                str(json.get("path"))
                 if json.get("path", None) is not None
                 else None
             ),
             secure=(
-                bool(json["secure"])
+                bool(json.get("secure"))
                 if json.get("secure", None) is not None
                 else None
             ),
             http_only=(
-                bool(json["httpOnly"])
+                bool(json.get("httpOnly"))
                 if json.get("httpOnly", None) is not None
                 else None
             ),
             same_site=(
-                CookieSameSite.from_json(json["sameSite"])
+                CookieSameSite.from_json(json.get("sameSite"))
                 if json.get("sameSite", None) is not None
                 else None
             ),
             expires=(
-                TimeSinceEpoch.from_json(json["expires"])
+                TimeSinceEpoch.from_json(json.get("expires"))
                 if json.get("expires", None) is not None
                 else None
             ),
             priority=(
-                CookiePriority.from_json(json["priority"])
+                CookiePriority.from_json(json.get("priority"))
                 if json.get("priority", None) is not None
                 else None
             ),
             same_party=(
-                bool(json["sameParty"])
+                bool(json.get("sameParty"))
                 if json.get("sameParty", None) is not None
                 else None
             ),
             source_scheme=(
-                CookieSourceScheme.from_json(json["sourceScheme"])
+                CookieSourceScheme.from_json(json.get("sourceScheme"))
                 if json.get("sourceScheme", None) is not None
                 else None
             ),
             source_port=(
-                int(json["sourcePort"])
+                int(json.get("sourcePort"))
                 if json.get("sourcePort", None) is not None
                 else None
             ),
             partition_key=(
-                CookiePartitionKey.from_json(json["partitionKey"])
+                CookiePartitionKey.from_json(json.get("partitionKey"))
                 if json.get("partitionKey", None) is not None
                 else None
             ),
@@ -1885,11 +1897,11 @@ class AuthChallenge:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> AuthChallenge:
         return cls(
-            origin=str(json["origin"]),
-            scheme=str(json["scheme"]),
-            realm=str(json["realm"]),
+            origin=str(json.get("origin")),
+            scheme=str(json.get("scheme")),
+            realm=str(json.get("realm")),
             source=(
-                str(json["source"])
+                str(json.get("source"))
                 if json.get("source", None) is not None
                 else None
             ),
@@ -1923,14 +1935,14 @@ class AuthChallengeResponse:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> AuthChallengeResponse:
         return cls(
-            response=str(json["response"]),
+            response=str(json.get("response")),
             username=(
-                str(json["username"])
+                str(json.get("username"))
                 if json.get("username", None) is not None
                 else None
             ),
             password=(
-                str(json["password"])
+                str(json.get("password"))
                 if json.get("password", None) is not None
                 else None
             ),
@@ -1979,17 +1991,17 @@ class RequestPattern:
     def from_json(cls, json: T_JSON_DICT) -> RequestPattern:
         return cls(
             url_pattern=(
-                str(json["urlPattern"])
+                str(json.get("urlPattern"))
                 if json.get("urlPattern", None) is not None
                 else None
             ),
             resource_type=(
-                ResourceType.from_json(json["resourceType"])
+                ResourceType.from_json(json.get("resourceType"))
                 if json.get("resourceType", None) is not None
                 else None
             ),
             interception_stage=(
-                InterceptionStage.from_json(json["interceptionStage"])
+                InterceptionStage.from_json(json.get("interceptionStage"))
                 if json.get("interceptionStage", None) is not None
                 else None
             ),
@@ -2041,19 +2053,19 @@ class SignedExchangeSignature:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> SignedExchangeSignature:
         return cls(
-            label=str(json["label"]),
-            signature=str(json["signature"]),
-            integrity=str(json["integrity"]),
-            validity_url=str(json["validityUrl"]),
-            date=int(json["date"]),
-            expires=int(json["expires"]),
+            label=str(json.get("label")),
+            signature=str(json.get("signature")),
+            integrity=str(json.get("integrity")),
+            validity_url=str(json.get("validityUrl")),
+            date=int(json.get("date")),
+            expires=int(json.get("expires")),
             cert_url=(
-                str(json["certUrl"])
+                str(json.get("certUrl"))
                 if json.get("certUrl", None) is not None
                 else None
             ),
             cert_sha256=(
-                str(json["certSha256"])
+                str(json.get("certSha256"))
                 if json.get("certSha256", None) is not None
                 else None
             ),
@@ -2096,14 +2108,14 @@ class SignedExchangeHeader:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> SignedExchangeHeader:
         return cls(
-            request_url=str(json["requestUrl"]),
-            response_code=int(json["responseCode"]),
-            response_headers=Headers.from_json(json["responseHeaders"]),
+            request_url=str(json.get("requestUrl")),
+            response_code=int(json.get("responseCode")),
+            response_headers=Headers.from_json(json.get("responseHeaders")),
             signatures=[
                 SignedExchangeSignature.from_json(i)
                 for i in json["signatures"]
             ],
-            header_integrity=str(json["headerIntegrity"]),
+            header_integrity=str(json.get("headerIntegrity")),
         )
 
 
@@ -2146,14 +2158,14 @@ class SignedExchangeError:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> SignedExchangeError:
         return cls(
-            message=str(json["message"]),
+            message=str(json.get("message")),
             signature_index=(
-                int(json["signatureIndex"])
+                int(json.get("signatureIndex"))
                 if json.get("signatureIndex", None) is not None
                 else None
             ),
             error_field=(
-                SignedExchangeErrorField.from_json(json["errorField"])
+                SignedExchangeErrorField.from_json(json.get("errorField"))
                 if json.get("errorField", None) is not None
                 else None
             ),
@@ -2187,14 +2199,14 @@ class SignedExchangeInfo:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> SignedExchangeInfo:
         return cls(
-            outer_response=Response.from_json(json["outerResponse"]),
+            outer_response=Response.from_json(json.get("outerResponse")),
             header=(
-                SignedExchangeHeader.from_json(json["header"])
+                SignedExchangeHeader.from_json(json.get("header"))
                 if json.get("header", None) is not None
                 else None
             ),
             security_details=(
-                SecurityDetails.from_json(json["securityDetails"])
+                SecurityDetails.from_json(json.get("securityDetails"))
                 if json.get("securityDetails", None) is not None
                 else None
             ),
@@ -2267,7 +2279,7 @@ class ConnectTiming:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> ConnectTiming:
         return cls(
-            request_time=float(json["requestTime"]),
+            request_time=float(json.get("requestTime")),
         )
 
 
@@ -2291,12 +2303,14 @@ class ClientSecurityState:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> ClientSecurityState:
         return cls(
-            initiator_is_secure_context=bool(json["initiatorIsSecureContext"]),
+            initiator_is_secure_context=bool(
+                json.get("initiatorIsSecureContext")
+            ),
             initiator_ip_address_space=IPAddressSpace.from_json(
-                json["initiatorIPAddressSpace"]
+                json.get("initiatorIPAddressSpace")
             ),
             private_network_request_policy=PrivateNetworkRequestPolicy.from_json(  # noqa
-                json["privateNetworkRequestPolicy"]
+                json.get("privateNetworkRequestPolicy")
             ),
         )
 
@@ -2339,17 +2353,17 @@ class CrossOriginOpenerPolicyStatus:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> CrossOriginOpenerPolicyStatus:
         return cls(
-            value=CrossOriginOpenerPolicyValue.from_json(json["value"]),
+            value=CrossOriginOpenerPolicyValue.from_json(json.get("value")),
             report_only_value=CrossOriginOpenerPolicyValue.from_json(
-                json["reportOnlyValue"]
+                json.get("reportOnlyValue")
             ),
             reporting_endpoint=(
-                str(json["reportingEndpoint"])
+                str(json.get("reportingEndpoint"))
                 if json.get("reportingEndpoint", None) is not None
                 else None
             ),
             report_only_reporting_endpoint=(
-                str(json["reportOnlyReportingEndpoint"])
+                str(json.get("reportOnlyReportingEndpoint"))
                 if json.get("reportOnlyReportingEndpoint", None) is not None
                 else None
             ),
@@ -2391,17 +2405,17 @@ class CrossOriginEmbedderPolicyStatus:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> CrossOriginEmbedderPolicyStatus:
         return cls(
-            value=CrossOriginEmbedderPolicyValue.from_json(json["value"]),
+            value=CrossOriginEmbedderPolicyValue.from_json(json.get("value")),
             report_only_value=CrossOriginEmbedderPolicyValue.from_json(
-                json["reportOnlyValue"]
+                json.get("reportOnlyValue")
             ),
             reporting_endpoint=(
-                str(json["reportingEndpoint"])
+                str(json.get("reportingEndpoint"))
                 if json.get("reportingEndpoint", None) is not None
                 else None
             ),
             report_only_reporting_endpoint=(
-                str(json["reportOnlyReportingEndpoint"])
+                str(json.get("reportOnlyReportingEndpoint"))
                 if json.get("reportOnlyReportingEndpoint", None) is not None
                 else None
             ),
@@ -2436,9 +2450,9 @@ class ContentSecurityPolicyStatus:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> ContentSecurityPolicyStatus:
         return cls(
-            effective_directives=str(json["effectiveDirectives"]),
-            is_enforced=bool(json["isEnforced"]),
-            source=ContentSecurityPolicySource.from_json(json["source"]),
+            effective_directives=str(json.get("effectiveDirectives")),
+            is_enforced=bool(json.get("isEnforced")),
+            source=ContentSecurityPolicySource.from_json(json.get("source")),
         )
 
 
@@ -2462,12 +2476,12 @@ class SecurityIsolationStatus:
     def from_json(cls, json: T_JSON_DICT) -> SecurityIsolationStatus:
         return cls(
             coop=(
-                CrossOriginOpenerPolicyStatus.from_json(json["coop"])
+                CrossOriginOpenerPolicyStatus.from_json(json.get("coop"))
                 if json.get("coop", None) is not None
                 else None
             ),
             coep=(
-                CrossOriginEmbedderPolicyStatus.from_json(json["coep"])
+                CrossOriginEmbedderPolicyStatus.from_json(json.get("coep"))
                 if json.get("coep", None) is not None
                 else None
             ),
@@ -2544,15 +2558,15 @@ class ReportingApiReport:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> ReportingApiReport:
         return cls(
-            id_=ReportId.from_json(json["id"]),
-            initiator_url=str(json["initiatorUrl"]),
-            destination=str(json["destination"]),
-            type_=str(json["type"]),
-            timestamp=TimeSinceEpoch.from_json(json["timestamp"]),
-            depth=int(json["depth"]),
-            completed_attempts=int(json["completedAttempts"]),
-            body=dict(json["body"]),
-            status=ReportStatus.from_json(json["status"]),
+            id_=ReportId.from_json(json.get("id")),
+            initiator_url=str(json.get("initiatorUrl")),
+            destination=str(json.get("destination")),
+            type_=str(json.get("type")),
+            timestamp=TimeSinceEpoch.from_json(json.get("timestamp")),
+            depth=int(json.get("depth")),
+            completed_attempts=int(json.get("completedAttempts")),
+            body=dict(json.get("body")),
+            status=ReportStatus.from_json(json.get("status")),
         )
 
 
@@ -2572,8 +2586,8 @@ class ReportingApiEndpoint:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> ReportingApiEndpoint:
         return cls(
-            url=str(json["url"]),
-            group_name=str(json["groupName"]),
+            url=str(json.get("url")),
+            group_name=str(json.get("groupName")),
         )
 
 
@@ -2608,29 +2622,29 @@ class LoadNetworkResourcePageResult:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> LoadNetworkResourcePageResult:
         return cls(
-            success=bool(json["success"]),
+            success=bool(json.get("success")),
             net_error=(
-                float(json["netError"])
+                float(json.get("netError"))
                 if json.get("netError", None) is not None
                 else None
             ),
             net_error_name=(
-                str(json["netErrorName"])
+                str(json.get("netErrorName"))
                 if json.get("netErrorName", None) is not None
                 else None
             ),
             http_status_code=(
-                float(json["httpStatusCode"])
+                float(json.get("httpStatusCode"))
                 if json.get("httpStatusCode", None) is not None
                 else None
             ),
             stream=(
-                io.StreamHandle.from_json(json["stream"])
+                io.StreamHandle.from_json(json.get("stream"))
                 if json.get("stream", None) is not None
                 else None
             ),
             headers=(
-                Headers.from_json(json["headers"])
+                Headers.from_json(json.get("headers"))
                 if json.get("headers", None) is not None
                 else None
             ),
@@ -2655,8 +2669,8 @@ class LoadNetworkResourceOptions:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> LoadNetworkResourceOptions:
         return cls(
-            disable_cache=bool(json["disableCache"]),
-            include_credentials=bool(json["includeCredentials"]),
+            disable_cache=bool(json.get("disableCache")),
+            include_credentials=bool(json.get("includeCredentials")),
         )
 
 
@@ -2671,7 +2685,7 @@ def get_ip_protection_proxy_status(
         'method': 'Network.getIPProtectionProxyStatus',
     }
     json = yield cmd_dict  # noqa
-    return IpProxyStatus.from_json(json['status'])
+    return IpProxyStatus.from_json(json.get('status'))
 
 
 def set_ip_protection_proxy_bypass_enabled(
@@ -3640,43 +3654,45 @@ class RequestIntercepted:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> RequestIntercepted:
         return cls(
-            interception_id=InterceptionId.from_json(json["interceptionId"]),
-            request=Request.from_json(json["request"]),
-            frame_id=page.FrameId.from_json(json["frameId"]),
-            resource_type=ResourceType.from_json(json["resourceType"]),
-            is_navigation_request=bool(json["isNavigationRequest"]),
+            interception_id=InterceptionId.from_json(
+                json.get("interceptionId")
+            ),
+            request=Request.from_json(json.get("request")),
+            frame_id=page.FrameId.from_json(json.get("frameId")),
+            resource_type=ResourceType.from_json(json.get("resourceType")),
+            is_navigation_request=bool(json.get("isNavigationRequest")),
             is_download=(
-                bool(json["isDownload"])
+                bool(json.get("isDownload"))
                 if json.get("isDownload", None) is not None
                 else None
             ),
             redirect_url=(
-                str(json["redirectUrl"])
+                str(json.get("redirectUrl"))
                 if json.get("redirectUrl", None) is not None
                 else None
             ),
             auth_challenge=(
-                AuthChallenge.from_json(json["authChallenge"])
+                AuthChallenge.from_json(json.get("authChallenge"))
                 if json.get("authChallenge", None) is not None
                 else None
             ),
             response_error_reason=(
-                ErrorReason.from_json(json["responseErrorReason"])
+                ErrorReason.from_json(json.get("responseErrorReason"))
                 if json.get("responseErrorReason", None) is not None
                 else None
             ),
             response_status_code=(
-                int(json["responseStatusCode"])
+                int(json.get("responseStatusCode"))
                 if json.get("responseStatusCode", None) is not None
                 else None
             ),
             response_headers=(
-                Headers.from_json(json["responseHeaders"])
+                Headers.from_json(json.get("responseHeaders"))
                 if json.get("responseHeaders", None) is not None
                 else None
             ),
             request_id=(
-                RequestId.from_json(json["requestId"])
+                RequestId.from_json(json.get("requestId"))
                 if json.get("requestId", None) is not None
                 else None
             ),
@@ -3692,7 +3708,7 @@ class RequestServedFromCache:
 
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> RequestServedFromCache:
-        return cls(request_id=RequestId.from_json(json["requestId"]))
+        return cls(request_id=RequestId.from_json(json.get("requestId")))
 
 
 @event_class("Network.requestWillBeSent")
@@ -3778,9 +3794,9 @@ class ResourceChangedPriority:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> ResourceChangedPriority:
         return cls(
-            request_id=RequestId.from_json(json["requestId"]),
-            new_priority=ResourcePriority.from_json(json["newPriority"]),
-            timestamp=MonotonicTime.from_json(json["timestamp"]),
+            request_id=RequestId.from_json(json.get("requestId")),
+            new_priority=ResourcePriority.from_json(json.get("newPriority")),
+            timestamp=MonotonicTime.from_json(json.get("timestamp")),
         )
 
 
@@ -3799,8 +3815,8 @@ class SignedExchangeReceived:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> SignedExchangeReceived:
         return cls(
-            request_id=RequestId.from_json(json["requestId"]),
-            info=SignedExchangeInfo.from_json(json["info"]),
+            request_id=RequestId.from_json(json.get("requestId")),
+            info=SignedExchangeInfo.from_json(json.get("info")),
         )
 
 
@@ -4080,20 +4096,20 @@ class RequestWillBeSentExtraInfo:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> RequestWillBeSentExtraInfo:
         return cls(
-            request_id=RequestId.from_json(json["requestId"]),
+            request_id=RequestId.from_json(json.get("requestId")),
             associated_cookies=[
                 AssociatedCookie.from_json(i)
                 for i in json["associatedCookies"]
             ],
-            headers=Headers.from_json(json["headers"]),
-            connect_timing=ConnectTiming.from_json(json["connectTiming"]),
+            headers=Headers.from_json(json.get("headers")),
+            connect_timing=ConnectTiming.from_json(json.get("connectTiming")),
             client_security_state=(
-                ClientSecurityState.from_json(json["clientSecurityState"])
+                ClientSecurityState.from_json(json.get("clientSecurityState"))
                 if json.get("clientSecurityState", None) is not None
                 else None
             ),
             site_has_cookie_in_other_partition=(
-                bool(json["siteHasCookieInOtherPartition"])
+                bool(json.get("siteHasCookieInOtherPartition"))
                 if json.get("siteHasCookieInOtherPartition", None) is not None
                 else None
             ),
@@ -4150,35 +4166,35 @@ class ResponseReceivedExtraInfo:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> ResponseReceivedExtraInfo:
         return cls(
-            request_id=RequestId.from_json(json["requestId"]),
+            request_id=RequestId.from_json(json.get("requestId")),
             blocked_cookies=[
                 BlockedSetCookieWithReason.from_json(i)
                 for i in json["blockedCookies"]
             ],
-            headers=Headers.from_json(json["headers"]),
+            headers=Headers.from_json(json.get("headers")),
             resource_ip_address_space=IPAddressSpace.from_json(
-                json["resourceIPAddressSpace"]
+                json.get("resourceIPAddressSpace")
             ),
-            status_code=int(json["statusCode"]),
+            status_code=int(json.get("statusCode")),
             headers_text=(
-                str(json["headersText"])
+                str(json.get("headersText"))
                 if json.get("headersText", None) is not None
                 else None
             ),
             cookie_partition_key=(
-                CookiePartitionKey.from_json(json["cookiePartitionKey"])
+                CookiePartitionKey.from_json(json.get("cookiePartitionKey"))
                 if json.get("cookiePartitionKey", None) is not None
                 else None
             ),
             cookie_partition_key_opaque=(
-                bool(json["cookiePartitionKeyOpaque"])
+                bool(json.get("cookiePartitionKeyOpaque"))
                 if json.get("cookiePartitionKeyOpaque", None) is not None
                 else None
             ),
             exempted_cookies=(
                 [
                     ExemptedSetCookieWithReason.from_json(i)
-                    for i in json["exemptedCookies"]
+                    for i in json.get("exemptedCookies")
                 ]
                 if json.get("exemptedCookies", None) is not None
                 else None
@@ -4207,8 +4223,8 @@ class ResponseReceivedEarlyHints:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> ResponseReceivedEarlyHints:
         return cls(
-            request_id=RequestId.from_json(json["requestId"]),
-            headers=Headers.from_json(json["headers"]),
+            request_id=RequestId.from_json(json.get("requestId")),
+            headers=Headers.from_json(json.get("headers")),
         )
 
 
@@ -4239,21 +4255,21 @@ class TrustTokenOperationDone:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> TrustTokenOperationDone:
         return cls(
-            status=str(json["status"]),
-            type_=TrustTokenOperationType.from_json(json["type"]),
-            request_id=RequestId.from_json(json["requestId"]),
+            status=str(json.get("status")),
+            type_=TrustTokenOperationType.from_json(json.get("type")),
+            request_id=RequestId.from_json(json.get("requestId")),
             top_level_origin=(
-                str(json["topLevelOrigin"])
+                str(json.get("topLevelOrigin"))
                 if json.get("topLevelOrigin", None) is not None
                 else None
             ),
             issuer_origin=(
-                str(json["issuerOrigin"])
+                str(json.get("issuerOrigin"))
                 if json.get("issuerOrigin", None) is not None
                 else None
             ),
             issued_token_count=(
-                int(json["issuedTokenCount"])
+                int(json.get("issuedTokenCount"))
                 if json.get("issuedTokenCount", None) is not None
                 else None
             ),
@@ -4291,7 +4307,7 @@ class SubresourceWebBundleMetadataReceived:
         cls, json: T_JSON_DICT
     ) -> SubresourceWebBundleMetadataReceived:
         return cls(
-            request_id=RequestId.from_json(json["requestId"]),
+            request_id=RequestId.from_json(json.get("requestId")),
             urls=[str(i) for i in json["urls"]],
         )
 
@@ -4311,8 +4327,8 @@ class SubresourceWebBundleMetadataError:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> SubresourceWebBundleMetadataError:
         return cls(
-            request_id=RequestId.from_json(json["requestId"]),
-            error_message=str(json["errorMessage"]),
+            request_id=RequestId.from_json(json.get("requestId")),
+            error_message=str(json.get("errorMessage")),
         )
 
 
@@ -4340,10 +4356,10 @@ class SubresourceWebBundleInnerResponseParsed:
         cls, json: T_JSON_DICT
     ) -> SubresourceWebBundleInnerResponseParsed:
         return cls(
-            inner_request_id=RequestId.from_json(json["innerRequestId"]),
-            inner_request_url=str(json["innerRequestURL"]),
+            inner_request_id=RequestId.from_json(json.get("innerRequestId")),
+            inner_request_url=str(json.get("innerRequestURL")),
             bundle_request_id=(
-                RequestId.from_json(json["bundleRequestId"])
+                RequestId.from_json(json.get("bundleRequestId"))
                 if json.get("bundleRequestId", None) is not None
                 else None
             ),
@@ -4374,11 +4390,11 @@ class SubresourceWebBundleInnerResponseError:
         cls, json: T_JSON_DICT
     ) -> SubresourceWebBundleInnerResponseError:
         return cls(
-            inner_request_id=RequestId.from_json(json["innerRequestId"]),
-            inner_request_url=str(json["innerRequestURL"]),
-            error_message=str(json["errorMessage"]),
+            inner_request_id=RequestId.from_json(json.get("innerRequestId")),
+            inner_request_url=str(json.get("innerRequestURL")),
+            error_message=str(json.get("errorMessage")),
             bundle_request_id=(
-                RequestId.from_json(json["bundleRequestId"])
+                RequestId.from_json(json.get("bundleRequestId"))
                 if json.get("bundleRequestId", None) is not None
                 else None
             ),
@@ -4397,7 +4413,7 @@ class ReportingApiReportAdded:
 
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> ReportingApiReportAdded:
-        return cls(report=ReportingApiReport.from_json(json["report"]))
+        return cls(report=ReportingApiReport.from_json(json.get("report")))
 
 
 @event_class("Network.reportingApiReportUpdated")
@@ -4410,7 +4426,7 @@ class ReportingApiReportUpdated:
 
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> ReportingApiReportUpdated:
-        return cls(report=ReportingApiReport.from_json(json["report"]))
+        return cls(report=ReportingApiReport.from_json(json.get("report")))
 
 
 @event_class("Network.reportingApiEndpointsChangedForOrigin")
@@ -4428,7 +4444,7 @@ class ReportingApiEndpointsChangedForOrigin:
         cls, json: T_JSON_DICT
     ) -> ReportingApiEndpointsChangedForOrigin:
         return cls(
-            origin=str(json["origin"]),
+            origin=str(json.get("origin")),
             endpoints=[
                 ReportingApiEndpoint.from_json(i) for i in json["endpoints"]
             ],

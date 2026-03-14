@@ -44,7 +44,7 @@ def load_unpacked(
         "params": params,
     }
     json = yield cmd_dict
-    return str(json["id"])
+    return str(json.get("id"))
 
 
 def uninstall(
@@ -88,7 +88,7 @@ def get_storage_items(
         "params": params,
     }
     json = yield cmd_dict
-    return dict(json["data"])
+    return dict(json.get("data"))
 
 
 def remove_storage_items(

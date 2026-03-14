@@ -48,10 +48,10 @@ class Database:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> Database:
         return cls(
-            id_=DatabaseId.from_json(json["id"]),
-            domain=str(json["domain"]),
-            name=str(json["name"]),
-            version=str(json["version"]),
+            id_=DatabaseId.from_json(json.get("id")),
+            domain=str(json.get("domain")),
+            name=str(json.get("name")),
+            version=str(json.get("version")),
         )
 
 
@@ -72,8 +72,8 @@ class Error:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> Error:
         return cls(
-            message=str(json["message"]),
-            code=int(json["code"]),
+            message=str(json.get("message")),
+            code=int(json.get("code")),
         )
 
 
@@ -136,7 +136,7 @@ def execute_sql(database_id: DatabaseId, query: str) -> typing.Generator[
             else None
         ),
         (
-            Error.from_json(json["sqlError"])
+            Error.from_json(json.get("sqlError"))
             if json.get("sqlError", None) is not None
             else None
         ),
@@ -166,4 +166,4 @@ class AddDatabase:
 
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> AddDatabase:
-        return cls(database=Database.from_json(json["database"]))
+        return cls(database=Database.from_json(json.get("database")))

@@ -45,8 +45,8 @@ class SamplingProfileNode:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> SamplingProfileNode:
         return cls(
-            size=float(json["size"]),
-            total=float(json["total"]),
+            size=float(json.get("size")),
+            total=float(json.get("total")),
             stack=[str(i) for i in json["stack"]],
         )
 
@@ -97,10 +97,10 @@ class Module:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> Module:
         return cls(
-            name=str(json["name"]),
-            uuid=str(json["uuid"]),
-            base_address=str(json["baseAddress"]),
-            size=float(json["size"]),
+            name=str(json.get("name")),
+            uuid=str(json.get("uuid")),
+            base_address=str(json.get("baseAddress")),
+            size=float(json.get("size")),
         )
 
 
@@ -118,9 +118,9 @@ def get_dom_counters() -> (
     }
     json = yield cmd_dict
     return (
-        int(json["documents"]),
-        int(json["nodes"]),
-        int(json["jsEventListeners"]),
+        int(json.get("documents")),
+        int(json.get("nodes")),
+        int(json.get("jsEventListeners")),
     )
 
 
@@ -218,7 +218,7 @@ def get_all_time_sampling_profile() -> (
         "method": "Memory.getAllTimeSamplingProfile",
     }
     json = yield cmd_dict
-    return SamplingProfile.from_json(json["profile"])
+    return SamplingProfile.from_json(json.get("profile"))
 
 
 def get_browser_sampling_profile() -> (
@@ -232,7 +232,7 @@ def get_browser_sampling_profile() -> (
         "method": "Memory.getBrowserSamplingProfile",
     }
     json = yield cmd_dict
-    return SamplingProfile.from_json(json["profile"])
+    return SamplingProfile.from_json(json.get("profile"))
 
 
 def get_sampling_profile() -> (
@@ -246,4 +246,4 @@ def get_sampling_profile() -> (
         "method": "Memory.getSamplingProfile",
     }
     json = yield cmd_dict
-    return SamplingProfile.from_json(json["profile"])
+    return SamplingProfile.from_json(json.get("profile"))

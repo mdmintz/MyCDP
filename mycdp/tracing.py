@@ -80,27 +80,27 @@ class TraceConfig:
     def from_json(cls, json: T_JSON_DICT) -> TraceConfig:
         return cls(
             record_mode=(
-                str(json["recordMode"])
+                str(json.get("recordMode"))
                 if json.get("recordMode", None) is not None
                 else None
             ),
             trace_buffer_size_in_kb=(
-                float(json["traceBufferSizeInKb"])
+                float(json.get("traceBufferSizeInKb"))
                 if json.get("traceBufferSizeInKb", None) is not None
                 else None
             ),
             enable_sampling=(
-                bool(json["enableSampling"])
+                bool(json.get("enableSampling"))
                 if json.get("enableSampling", None) is not None
                 else None
             ),
             enable_systrace=(
-                bool(json["enableSystrace"])
+                bool(json.get("enableSystrace"))
                 if json.get("enableSystrace", None) is not None
                 else None
             ),
             enable_argument_filter=(
-                bool(json["enableArgumentFilter"])
+                bool(json.get("enableArgumentFilter"))
                 if json.get("enableArgumentFilter", None) is not None
                 else None
             ),
@@ -120,7 +120,7 @@ class TraceConfig:
                 else None
             ),
             memory_dump_config=(
-                MemoryDumpConfig.from_json(json["memoryDumpConfig"])
+                MemoryDumpConfig.from_json(json.get("memoryDumpConfig"))
                 if json.get("memoryDumpConfig", None) is not None
                 else None
             ),
@@ -260,7 +260,7 @@ def request_memory_dump(
         "params": params,
     }
     json = yield cmd_dict
-    return (str(json["dumpGuid"]), bool(json["success"]))
+    return (str(json.get("dumpGuid")), bool(json.get("success")))
 
 
 def start(
@@ -347,17 +347,17 @@ class BufferUsage:
     def from_json(cls, json: T_JSON_DICT) -> BufferUsage:
         return cls(
             percent_full=(
-                float(json["percentFull"])
+                float(json.get("percentFull"))
                 if json.get("percentFull", None) is not None
                 else None
             ),
             event_count=(
-                float(json["eventCount"])
+                float(json.get("eventCount"))
                 if json.get("eventCount", None) is not None
                 else None
             ),
             value=(
-                float(json["value"])
+                float(json.get("value"))
                 if json.get("value", None) is not None
                 else None
             ),
@@ -400,19 +400,19 @@ class TracingComplete:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> TracingComplete:
         return cls(
-            data_loss_occurred=bool(json["dataLossOccurred"]),
+            data_loss_occurred=bool(json.get("dataLossOccurred")),
             stream=(
-                io.StreamHandle.from_json(json["stream"])
+                io.StreamHandle.from_json(json.get("stream"))
                 if json.get("stream", None) is not None
                 else None
             ),
             trace_format=(
-                StreamFormat.from_json(json["traceFormat"])
+                StreamFormat.from_json(json.get("traceFormat"))
                 if json.get("traceFormat", None) is not None
                 else None
             ),
             stream_compression=(
-                StreamCompression.from_json(json["streamCompression"])
+                StreamCompression.from_json(json.get("streamCompression"))
                 if json.get("streamCompression", None) is not None
                 else None
             ),

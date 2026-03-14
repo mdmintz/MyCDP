@@ -73,29 +73,31 @@ class RuleSet:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> RuleSet:
         return cls(
-            id_=RuleSetId.from_json(json["id"]),
-            loader_id=network.LoaderId.from_json(json["loaderId"]),
-            source_text=str(json["sourceText"]),
+            id_=RuleSetId.from_json(json.get("id")),
+            loader_id=network.LoaderId.from_json(json.get("loaderId")),
+            source_text=str(json.get("sourceText")),
             backend_node_id=(
-                dom.BackendNodeId.from_json(json["backendNodeId"])
+                dom.BackendNodeId.from_json(json.get("backendNodeId"))
                 if json.get("backendNodeId", None) is not None
                 else None
             ),
             url=(
-                str(json["url"]) if json.get("url", None) is not None else None
+                str(json.get("url"))
+                if json.get("url", None) is not None
+                else None
             ),
             request_id=(
-                network.RequestId.from_json(json["requestId"])
+                network.RequestId.from_json(json.get("requestId"))
                 if json.get("requestId", None) is not None
                 else None
             ),
             error_type=(
-                RuleSetErrorType.from_json(json["errorType"])
+                RuleSetErrorType.from_json(json.get("errorType"))
                 if json.get("errorType", None) is not None
                 else None
             ),
             error_message=(
-                str(json["errorMessage"])
+                str(json.get("errorMessage"))
                 if json.get("errorMessage", None) is not None
                 else None
             ),
@@ -176,11 +178,11 @@ class PreloadingAttemptKey:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> PreloadingAttemptKey:
         return cls(
-            loader_id=network.LoaderId.from_json(json["loaderId"]),
-            action=SpeculationAction.from_json(json["action"]),
-            url=str(json["url"]),
+            loader_id=network.LoaderId.from_json(json.get("loaderId")),
+            action=SpeculationAction.from_json(json.get("action")),
+            url=str(json.get("url")),
             target_hint=(
-                SpeculationTargetHint.from_json(json["targetHint"])
+                SpeculationTargetHint.from_json(json.get("targetHint"))
                 if json.get("targetHint", None) is not None
                 else None
             ),
@@ -210,7 +212,7 @@ class PreloadingAttemptSource:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> PreloadingAttemptSource:
         return cls(
-            key=PreloadingAttemptKey.from_json(json["key"]),
+            key=PreloadingAttemptKey.from_json(json.get("key")),
             rule_set_ids=[RuleSetId.from_json(i) for i in json["ruleSetIds"]],
             node_ids=[dom.BackendNodeId.from_json(i) for i in json["nodeIds"]],
         )
@@ -450,14 +452,14 @@ class PrerenderMismatchedHeaders:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> PrerenderMismatchedHeaders:
         return cls(
-            header_name=str(json["headerName"]),
+            header_name=str(json.get("headerName")),
             initial_value=(
-                str(json["initialValue"])
+                str(json.get("initialValue"))
                 if json.get("initialValue", None) is not None
                 else None
             ),
             activation_value=(
-                str(json["activationValue"])
+                str(json.get("activationValue"))
                 if json.get("activationValue", None) is not None
                 else None
             ),
@@ -486,7 +488,7 @@ class RuleSetUpdated:
 
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> RuleSetUpdated:
-        return cls(rule_set=RuleSet.from_json(json["ruleSet"]))
+        return cls(rule_set=RuleSet.from_json(json.get("ruleSet")))
 
 
 @event_class("Preload.ruleSetRemoved")
@@ -496,7 +498,7 @@ class RuleSetRemoved:
 
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> RuleSetRemoved:
-        return cls(id_=RuleSetId.from_json(json["id"]))
+        return cls(id_=RuleSetId.from_json(json.get("id")))
 
 
 @event_class("Preload.preloadEnabledStateUpdated")
@@ -512,9 +514,9 @@ class PreloadEnabledStateUpdated:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> PreloadEnabledStateUpdated:
         return cls(
-            disabled_by_preference=bool(json["disabledByPreference"]),
-            disabled_by_data_saver=bool(json["disabledByDataSaver"]),
-            disabled_by_battery_saver=bool(json["disabledByBatterySaver"]),
+            disabled_by_preference=bool(json.get("disabledByPreference")),
+            disabled_by_data_saver=bool(json.get("disabledByDataSaver")),
+            disabled_by_battery_saver=bool(json.get("disabledByBatterySaver")),
             disabled_by_holdback_prefetch_speculation_rules=bool(
                 json["disabledByHoldbackPrefetchSpeculationRules"]
             ),
@@ -539,14 +541,16 @@ class PrefetchStatusUpdated:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> PrefetchStatusUpdated:
         return cls(
-            key=PreloadingAttemptKey.from_json(json["key"]),
+            key=PreloadingAttemptKey.from_json(json.get("key")),
             initiating_frame_id=page.FrameId.from_json(
                 json["initiatingFrameId"]
             ),
-            prefetch_url=str(json["prefetchUrl"]),
-            status=PreloadingStatus.from_json(json["status"]),
-            prefetch_status=PrefetchStatus.from_json(json["prefetchStatus"]),
-            request_id=network.RequestId.from_json(json["requestId"]),
+            prefetch_url=str(json.get("prefetchUrl")),
+            status=PreloadingStatus.from_json(json.get("status")),
+            prefetch_status=PrefetchStatus.from_json(
+                json.get("prefetchStatus")
+            ),
+            request_id=network.RequestId.from_json(json.get("requestId")),
         )
 
 
@@ -568,15 +572,15 @@ class PrerenderStatusUpdated:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> PrerenderStatusUpdated:
         return cls(
-            key=PreloadingAttemptKey.from_json(json["key"]),
-            status=PreloadingStatus.from_json(json["status"]),
+            key=PreloadingAttemptKey.from_json(json.get("key")),
+            status=PreloadingStatus.from_json(json.get("status")),
             prerender_status=(
-                PrerenderFinalStatus.from_json(json["prerenderStatus"])
+                PrerenderFinalStatus.from_json(json.get("prerenderStatus"))
                 if json.get("prerenderStatus", None) is not None
                 else None
             ),
             disallowed_mojo_interface=(
-                str(json["disallowedMojoInterface"])
+                str(json.get("disallowedMojoInterface"))
                 if json.get("disallowedMojoInterface", None) is not None
                 else None
             ),
@@ -601,7 +605,7 @@ class PreloadingAttemptSourcesUpdated:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> PreloadingAttemptSourcesUpdated:
         return cls(
-            loader_id=network.LoaderId.from_json(json["loaderId"]),
+            loader_id=network.LoaderId.from_json(json.get("loaderId")),
             preloading_attempt_sources=[
                 PreloadingAttemptSource.from_json(i)
                 for i in json["preloadingAttemptSources"]

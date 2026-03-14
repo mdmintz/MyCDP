@@ -83,19 +83,19 @@ class TargetInfo:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> TargetInfo:
         return cls(
-            target_id=TargetID.from_json(json["targetId"]),
-            type_=str(json["type"]),
-            title=str(json["title"]),
-            url=str(json["url"]),
-            attached=bool(json["attached"]),
-            can_access_opener=bool(json["canAccessOpener"]),
+            target_id=TargetID.from_json(json.get("targetId")),
+            type_=str(json.get("type")),
+            title=str(json.get("title")),
+            url=str(json.get("url")),
+            attached=bool(json.get("attached")),
+            can_access_opener=bool(json.get("canAccessOpener")),
             opener_id=(
-                TargetID.from_json(json["openerId"])
+                TargetID.from_json(json.get("openerId"))
                 if json.get("openerId", None) is not None
                 else None
             ),
             opener_frame_id=(
-                page.FrameId.from_json(json["openerFrameId"])
+                page.FrameId.from_json(json.get("openerFrameId"))
                 if json.get("openerFrameId", None) is not None
                 else None
             ),
@@ -105,12 +105,14 @@ class TargetInfo:
                 else None
             ),
             browser_context_id=(
-                browser.BrowserContextID.from_json(json["browserContextId"])
+                browser.BrowserContextID.from_json(
+                    json.get("browserContextId")
+                )
                 if json.get("browserContextId", None) is not None
                 else None
             ),
             subtype=(
-                str(json["subtype"])
+                str(json.get("subtype"))
                 if json.get("subtype", None) is not None
                 else None
             ),
@@ -137,12 +139,12 @@ class FilterEntry:
     def from_json(cls, json: T_JSON_DICT) -> FilterEntry:
         return cls(
             exclude=(
-                bool(json["exclude"])
+                bool(json.get("exclude"))
                 if json.get("exclude", None) is not None
                 else None
             ),
             type_=(
-                str(json["type"])
+                str(json.get("type"))
                 if json.get("type", None) is not None
                 else None
             ),
@@ -184,8 +186,8 @@ class RemoteLocation:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> RemoteLocation:
         return cls(
-            host=str(json["host"]),
-            port=int(json["port"]),
+            host=str(json.get("host")),
+            port=int(json.get("port")),
         )
 
 
@@ -226,7 +228,7 @@ def attach_to_target(
         "params": params,
     }
     json = yield cmd_dict
-    return SessionID.from_json(json["sessionId"])
+    return SessionID.from_json(json.get("sessionId"))
 
 
 def attach_to_browser_target() -> (
@@ -241,7 +243,7 @@ def attach_to_browser_target() -> (
         "method": "Target.attachToBrowserTarget",
     }
     json = yield cmd_dict
-    return SessionID.from_json(json["sessionId"])
+    return SessionID.from_json(json.get("sessionId"))
 
 
 def close_target(
@@ -260,7 +262,7 @@ def close_target(
         "params": params,
     }
     json = yield cmd_dict
-    return bool(json["success"])
+    return bool(json.get("success"))
 
 
 def expose_dev_tools_protocol(
@@ -330,7 +332,7 @@ def create_browser_context(
         "params": params,
     }
     json = yield cmd_dict
-    return browser.BrowserContextID.from_json(json["browserContextId"])
+    return browser.BrowserContextID.from_json(json.get("browserContextId"))
 
 
 def get_browser_contexts() -> (
@@ -404,7 +406,7 @@ def create_target(
         "params": params,
     }
     json = yield cmd_dict
-    return TargetID.from_json(json["targetId"])
+    return TargetID.from_json(json.get("targetId"))
 
 
 def detach_from_target(
@@ -462,7 +464,7 @@ def get_target_info(
         "params": params,
     }
     json = yield cmd_dict
-    return TargetInfo.from_json(json["targetInfo"])
+    return TargetInfo.from_json(json.get("targetInfo"))
 
 
 def get_targets(
@@ -615,7 +617,7 @@ def open_dev_tools(
         "params": params,
     }
     json = yield cmd_dict
-    return TargetID.from_json(json["targetId"])
+    return TargetID.from_json(json.get("targetId"))
 
 
 @event_class("Target.attachedToTarget")
@@ -634,9 +636,9 @@ class AttachedToTarget:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> AttachedToTarget:
         return cls(
-            session_id=SessionID.from_json(json["sessionId"]),
-            target_info=TargetInfo.from_json(json["targetInfo"]),
-            waiting_for_debugger=bool(json["waitingForDebugger"]),
+            session_id=SessionID.from_json(json.get("sessionId")),
+            target_info=TargetInfo.from_json(json.get("targetInfo")),
+            waiting_for_debugger=bool(json.get("waitingForDebugger")),
         )
 
 
@@ -658,9 +660,9 @@ class DetachedFromTarget:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> DetachedFromTarget:
         return cls(
-            session_id=SessionID.from_json(json["sessionId"]),
+            session_id=SessionID.from_json(json.get("sessionId")),
             target_id=(
-                TargetID.from_json(json["targetId"])
+                TargetID.from_json(json.get("targetId"))
                 if json.get("targetId", None) is not None
                 else None
             ),
@@ -683,10 +685,10 @@ class ReceivedMessageFromTarget:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> ReceivedMessageFromTarget:
         return cls(
-            session_id=SessionID.from_json(json["sessionId"]),
-            message=str(json["message"]),
+            session_id=SessionID.from_json(json.get("sessionId")),
+            message=str(json.get("message")),
             target_id=(
-                TargetID.from_json(json["targetId"])
+                TargetID.from_json(json.get("targetId"))
                 if json.get("targetId", None) is not None
                 else None
             ),
@@ -701,7 +703,7 @@ class TargetCreated:
 
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> TargetCreated:
-        return cls(target_info=TargetInfo.from_json(json["targetInfo"]))
+        return cls(target_info=TargetInfo.from_json(json.get("targetInfo")))
 
 
 @event_class("Target.targetDestroyed")
@@ -712,7 +714,7 @@ class TargetDestroyed:
 
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> TargetDestroyed:
-        return cls(target_id=TargetID.from_json(json["targetId"]))
+        return cls(target_id=TargetID.from_json(json.get("targetId")))
 
 
 @event_class("Target.targetCrashed")
@@ -728,9 +730,9 @@ class TargetCrashed:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> TargetCrashed:
         return cls(
-            target_id=TargetID.from_json(json["targetId"]),
-            status=str(json["status"]),
-            error_code=int(json["errorCode"]),
+            target_id=TargetID.from_json(json.get("targetId")),
+            status=str(json.get("status")),
+            error_code=int(json.get("errorCode")),
         )
 
 
@@ -745,4 +747,4 @@ class TargetInfoChanged:
 
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> TargetInfoChanged:
-        return cls(target_info=TargetInfo.from_json(json["targetInfo"]))
+        return cls(target_info=TargetInfo.from_json(json.get("targetInfo")))

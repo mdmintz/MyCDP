@@ -69,8 +69,8 @@ class UsageForType:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> UsageForType:
         return cls(
-            storage_type=StorageType.from_json(json["storageType"]),
-            usage=float(json["usage"]),
+            storage_type=StorageType.from_json(json.get("storageType")),
+            usage=float(json.get("usage")),
         )
 
 
@@ -92,8 +92,8 @@ class TrustTokens:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> TrustTokens:
         return cls(
-            issuer_origin=str(json["issuerOrigin"]),
-            count=float(json["count"]),
+            issuer_origin=str(json.get("issuerOrigin")),
+            count=float(json.get("count")),
         )
 
 
@@ -209,8 +209,8 @@ class SharedStorageEntry:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> SharedStorageEntry:
         return cls(
-            key=str(json["key"]),
-            value=str(json["value"]),
+            key=str(json.get("key")),
+            value=str(json.get("value")),
         )
 
 
@@ -241,9 +241,9 @@ class SharedStorageMetadata:
             creation_time=network.TimeSinceEpoch.from_json(
                 json["creationTime"]
             ),
-            length=int(json["length"]),
-            remaining_budget=float(json["remainingBudget"]),
-            bytes_used=int(json["bytesUsed"]),
+            length=int(json.get("length")),
+            remaining_budget=float(json.get("remainingBudget")),
+            bytes_used=int(json.get("bytesUsed")),
         )
 
 
@@ -264,8 +264,8 @@ class SharedStorageReportingMetadata:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> SharedStorageReportingMetadata:
         return cls(
-            event_type=str(json["eventType"]),
-            reporting_url=str(json["reportingUrl"]),
+            event_type=str(json.get("eventType")),
+            reporting_url=str(json.get("reportingUrl")),
         )
 
 
@@ -288,7 +288,7 @@ class SharedStorageUrlWithMetadata:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> SharedStorageUrlWithMetadata:
         return cls(
-            url=str(json["url"]),
+            url=str(json.get("url")),
             reporting_metadata=[
                 SharedStorageReportingMetadata.from_json(i)
                 for i in json["reportingMetadata"]
@@ -368,17 +368,17 @@ class SharedStorageAccessParams:
     def from_json(cls, json: T_JSON_DICT) -> SharedStorageAccessParams:
         return cls(
             script_source_url=(
-                str(json["scriptSourceUrl"])
+                str(json.get("scriptSourceUrl"))
                 if json.get("scriptSourceUrl", None) is not None
                 else None
             ),
             operation_name=(
-                str(json["operationName"])
+                str(json.get("operationName"))
                 if json.get("operationName", None) is not None
                 else None
             ),
             serialized_data=(
-                str(json["serializedData"])
+                str(json.get("serializedData"))
                 if json.get("serializedData", None) is not None
                 else None
             ),
@@ -391,15 +391,17 @@ class SharedStorageAccessParams:
                 else None
             ),
             key=(
-                str(json["key"]) if json.get("key", None) is not None else None
+                str(json.get("key"))
+                if json.get("key", None) is not None
+                else None
             ),
             value=(
-                str(json["value"])
+                str(json.get("value"))
                 if json.get("value", None) is not None
                 else None
             ),
             ignore_if_present=(
-                bool(json["ignoreIfPresent"])
+                bool(json.get("ignoreIfPresent"))
                 if json.get("ignoreIfPresent", None) is not None
                 else None
             ),
@@ -434,9 +436,9 @@ class StorageBucket:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> StorageBucket:
         return cls(
-            storage_key=SerializedStorageKey.from_json(json["storageKey"]),
+            storage_key=SerializedStorageKey.from_json(json.get("storageKey")),
             name=(
-                str(json["name"])
+                str(json.get("name"))
                 if json.get("name", None) is not None
                 else None
             ),
@@ -466,12 +468,16 @@ class StorageBucketInfo:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> StorageBucketInfo:
         return cls(
-            bucket=StorageBucket.from_json(json["bucket"]),
-            id_=str(json["id"]),
-            expiration=network.TimeSinceEpoch.from_json(json["expiration"]),
-            quota=float(json["quota"]),
-            persistent=bool(json["persistent"]),
-            durability=StorageBucketsDurability.from_json(json["durability"]),
+            bucket=StorageBucket.from_json(json.get("bucket")),
+            id_=str(json.get("id")),
+            expiration=network.TimeSinceEpoch.from_json(
+                json.get("expiration")
+            ),
+            quota=float(json.get("quota")),
+            persistent=bool(json.get("persistent")),
+            durability=StorageBucketsDurability.from_json(
+                json.get("durability")
+            ),
         )
 
 
@@ -539,7 +545,7 @@ class AttributionReportingFilterDataEntry:
         cls, json: T_JSON_DICT
     ) -> AttributionReportingFilterDataEntry:
         return cls(
-            key=str(json["key"]),
+            key=str(json.get("key")),
             values=[str(i) for i in json["values"]],
         )
 
@@ -565,7 +571,7 @@ class AttributionReportingFilterConfig:
                 for i in json["filterValues"]
             ],
             lookback_window=(
-                int(json["lookbackWindow"])
+                int(json.get("lookbackWindow"))
                 if json.get("lookbackWindow", None) is not None
                 else None
             ),
@@ -613,8 +619,8 @@ class AttributionReportingAggregationKeysEntry:
         cls, json: T_JSON_DICT
     ) -> AttributionReportingAggregationKeysEntry:
         return cls(
-            key=str(json["key"]),
-            value=UnsignedInt128AsBase16.from_json(json["value"]),
+            key=str(json.get("key")),
+            value=UnsignedInt128AsBase16.from_json(json.get("value")),
         )
 
 
@@ -636,7 +642,7 @@ class AttributionReportingEventReportWindows:
         cls, json: T_JSON_DICT
     ) -> AttributionReportingEventReportWindows:
         return cls(
-            start=int(json["start"]),
+            start=int(json.get("start")),
             ends=[int(i) for i in json["ends"]],
         )
 
@@ -719,19 +725,21 @@ class AttributionReportingSourceRegistration:
         cls, json: T_JSON_DICT
     ) -> AttributionReportingSourceRegistration:
         return cls(
-            time=network.TimeSinceEpoch.from_json(json["time"]),
-            expiry=int(json["expiry"]),
+            time=network.TimeSinceEpoch.from_json(json.get("time")),
+            expiry=int(json.get("expiry")),
             trigger_specs=[
                 AttributionReportingTriggerSpec.from_json(i)
                 for i in json["triggerSpecs"]
             ],
-            aggregatable_report_window=int(json["aggregatableReportWindow"]),
-            type_=AttributionReportingSourceType.from_json(json["type"]),
-            source_origin=str(json["sourceOrigin"]),
-            reporting_origin=str(json["reportingOrigin"]),
+            aggregatable_report_window=int(
+                json.get("aggregatableReportWindow")
+            ),
+            type_=AttributionReportingSourceType.from_json(json.get("type")),
+            source_origin=str(json.get("sourceOrigin")),
+            reporting_origin=str(json.get("reportingOrigin")),
             destination_sites=[str(i) for i in json["destinationSites"]],
-            event_id=UnsignedInt64AsBase10.from_json(json["eventId"]),
-            priority=SignedInt64AsBase10.from_json(json["priority"]),
+            event_id=UnsignedInt64AsBase10.from_json(json.get("eventId")),
+            priority=SignedInt64AsBase10.from_json(json.get("priority")),
             filter_data=[
                 AttributionReportingFilterDataEntry.from_json(i)
                 for i in json["filterData"]
@@ -744,7 +752,7 @@ class AttributionReportingSourceRegistration:
                 json["triggerDataMatching"]
             ),
             debug_key=(
-                UnsignedInt64AsBase10.from_json(json["debugKey"])
+                UnsignedInt64AsBase10.from_json(json.get("debugKey"))
                 if json.get("debugKey", None) is not None
                 else None
             ),
@@ -814,8 +822,8 @@ class AttributionReportingAggregatableValueDictEntry:
         cls, json: T_JSON_DICT
     ) -> AttributionReportingAggregatableValueDictEntry:
         return cls(
-            key=str(json["key"]),
-            value=float(json["value"]),
+            key=str(json.get("key")),
+            value=float(json.get("value")),
         )
 
 
@@ -839,7 +847,9 @@ class AttributionReportingAggregatableValueEntry:
                 AttributionReportingAggregatableValueDictEntry.from_json(i)
                 for i in json["values"]
             ],
-            filters=AttributionReportingFilterPair.from_json(json["filters"]),
+            filters=AttributionReportingFilterPair.from_json(
+                json.get("filters")
+            ),
         )
 
 
@@ -864,11 +874,13 @@ class AttributionReportingEventTriggerData:
         cls, json: T_JSON_DICT
     ) -> AttributionReportingEventTriggerData:
         return cls(
-            data=UnsignedInt64AsBase10.from_json(json["data"]),
-            priority=SignedInt64AsBase10.from_json(json["priority"]),
-            filters=AttributionReportingFilterPair.from_json(json["filters"]),
+            data=UnsignedInt64AsBase10.from_json(json.get("data")),
+            priority=SignedInt64AsBase10.from_json(json.get("priority")),
+            filters=AttributionReportingFilterPair.from_json(
+                json.get("filters")
+            ),
             dedup_key=(
-                UnsignedInt64AsBase10.from_json(json["dedupKey"])
+                UnsignedInt64AsBase10.from_json(json.get("dedupKey"))
                 if json.get("dedupKey", None) is not None
                 else None
             ),
@@ -893,9 +905,11 @@ class AttributionReportingAggregatableTriggerData:
         cls, json: T_JSON_DICT
     ) -> AttributionReportingAggregatableTriggerData:
         return cls(
-            key_piece=UnsignedInt128AsBase16.from_json(json["keyPiece"]),
+            key_piece=UnsignedInt128AsBase16.from_json(json.get("keyPiece")),
             source_keys=[str(i) for i in json["sourceKeys"]],
-            filters=AttributionReportingFilterPair.from_json(json["filters"]),
+            filters=AttributionReportingFilterPair.from_json(
+                json.get("filters")
+            ),
         )
 
 
@@ -916,9 +930,11 @@ class AttributionReportingAggregatableDedupKey:
         cls, json: T_JSON_DICT
     ) -> AttributionReportingAggregatableDedupKey:
         return cls(
-            filters=AttributionReportingFilterPair.from_json(json["filters"]),
+            filters=AttributionReportingFilterPair.from_json(
+                json.get("filters")
+            ),
             dedup_key=(
-                UnsignedInt64AsBase10.from_json(json["dedupKey"])
+                UnsignedInt64AsBase10.from_json(json.get("dedupKey"))
                 if json.get("dedupKey", None) is not None
                 else None
             ),
@@ -980,7 +996,9 @@ class AttributionReportingTriggerRegistration:
         cls, json: T_JSON_DICT
     ) -> AttributionReportingTriggerRegistration:
         return cls(
-            filters=AttributionReportingFilterPair.from_json(json["filters"]),
+            filters=AttributionReportingFilterPair.from_json(
+                json.get("filters")
+            ),
             aggregatable_dedup_keys=[
                 AttributionReportingAggregatableDedupKey.from_json(i)
                 for i in json["aggregatableDedupKeys"]
@@ -997,22 +1015,22 @@ class AttributionReportingTriggerRegistration:
                 AttributionReportingAggregatableValueEntry.from_json(i)
                 for i in json["aggregatableValues"]
             ],
-            debug_reporting=bool(json["debugReporting"]),
+            debug_reporting=bool(json.get("debugReporting")),
             source_registration_time_config=AttributionReportingSourceRegistrationTimeConfig.from_json(  # noqa
                 json["sourceRegistrationTimeConfig"]
             ),
             debug_key=(
-                UnsignedInt64AsBase10.from_json(json["debugKey"])
+                UnsignedInt64AsBase10.from_json(json.get("debugKey"))
                 if json.get("debugKey", None) is not None
                 else None
             ),
             aggregation_coordinator_origin=(
-                str(json["aggregationCoordinatorOrigin"])
+                str(json.get("aggregationCoordinatorOrigin"))
                 if json.get("aggregationCoordinatorOrigin", None) is not None
                 else None
             ),
             trigger_context_id=(
-                str(json["triggerContextId"])
+                str(json.get("triggerContextId"))
                 if json.get("triggerContextId", None) is not None
                 else None
             ),
@@ -1116,7 +1134,7 @@ def get_storage_key_for_frame(
         "params": params,
     }
     json = yield cmd_dict
-    return SerializedStorageKey.from_json(json["storageKey"])
+    return SerializedStorageKey.from_json(json.get("storageKey"))
 
 
 def clear_data_for_origin(
@@ -1239,9 +1257,9 @@ def get_usage_and_quota(
     }
     json = yield cmd_dict
     return (
-        float(json["usage"]),
-        float(json["quota"]),
-        bool(json["overrideActive"]),
+        float(json.get("usage")),
+        float(json.get("quota")),
+        bool(json.get("overrideActive")),
         [UsageForType.from_json(i) for i in json["usageBreakdown"]],
     )
 
@@ -1437,7 +1455,7 @@ def clear_trust_tokens(
         "params": params,
     }
     json = yield cmd_dict
-    return bool(json["didDeleteTokens"])
+    return bool(json.get("didDeleteTokens"))
 
 
 def get_interest_group_details(
@@ -1461,7 +1479,7 @@ def get_interest_group_details(
         "params": params,
     }
     json = yield cmd_dict
-    return dict(json["details"])
+    return dict(json.get("details"))
 
 
 def set_interest_group_tracking(
@@ -1514,7 +1532,7 @@ def get_shared_storage_metadata(
         "params": params,
     }
     json = yield cmd_dict
-    return SharedStorageMetadata.from_json(json["metadata"])
+    return SharedStorageMetadata.from_json(json.get("metadata"))
 
 
 def get_shared_storage_entries(
@@ -1736,7 +1754,7 @@ def send_pending_attribution_reports() -> (
         "method": "Storage.sendPendingAttributionReports",
     }
     json = yield cmd_dict
-    return int(json["numSent"])
+    return int(json.get("numSent"))
 
 
 def get_related_website_sets() -> (
@@ -1773,10 +1791,10 @@ class CacheStorageContentUpdated:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> CacheStorageContentUpdated:
         return cls(
-            origin=str(json["origin"]),
-            storage_key=str(json["storageKey"]),
-            bucket_id=str(json["bucketId"]),
-            cache_name=str(json["cacheName"]),
+            origin=str(json.get("origin")),
+            storage_key=str(json.get("storageKey")),
+            bucket_id=str(json.get("bucketId")),
+            cache_name=str(json.get("cacheName")),
         )
 
 
@@ -1795,9 +1813,9 @@ class CacheStorageListUpdated:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> CacheStorageListUpdated:
         return cls(
-            origin=str(json["origin"]),
-            storage_key=str(json["storageKey"]),
-            bucket_id=str(json["bucketId"]),
+            origin=str(json.get("origin")),
+            storage_key=str(json.get("storageKey")),
+            bucket_id=str(json.get("bucketId")),
         )
 
 
@@ -1820,11 +1838,11 @@ class IndexedDBContentUpdated:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> IndexedDBContentUpdated:
         return cls(
-            origin=str(json["origin"]),
-            storage_key=str(json["storageKey"]),
-            bucket_id=str(json["bucketId"]),
-            database_name=str(json["databaseName"]),
-            object_store_name=str(json["objectStoreName"]),
+            origin=str(json.get("origin")),
+            storage_key=str(json.get("storageKey")),
+            bucket_id=str(json.get("bucketId")),
+            database_name=str(json.get("databaseName")),
+            object_store_name=str(json.get("objectStoreName")),
         )
 
 
@@ -1843,9 +1861,9 @@ class IndexedDBListUpdated:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> IndexedDBListUpdated:
         return cls(
-            origin=str(json["origin"]),
-            storage_key=str(json["storageKey"]),
-            bucket_id=str(json["bucketId"]),
+            origin=str(json.get("origin")),
+            storage_key=str(json.get("storageKey")),
+            bucket_id=str(json.get("bucketId")),
         )
 
 
@@ -1873,27 +1891,29 @@ class InterestGroupAccessed:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> InterestGroupAccessed:
         return cls(
-            access_time=network.TimeSinceEpoch.from_json(json["accessTime"]),
-            type_=InterestGroupAccessType.from_json(json["type"]),
-            owner_origin=str(json["ownerOrigin"]),
-            name=str(json["name"]),
+            access_time=network.TimeSinceEpoch.from_json(
+                json.get("accessTime")
+            ),
+            type_=InterestGroupAccessType.from_json(json.get("type")),
+            owner_origin=str(json.get("ownerOrigin")),
+            name=str(json.get("name")),
             component_seller_origin=(
-                str(json["componentSellerOrigin"])
+                str(json.get("componentSellerOrigin"))
                 if json.get("componentSellerOrigin", None) is not None
                 else None
             ),
             bid=(
-                float(json["bid"])
+                float(json.get("bid"))
                 if json.get("bid", None) is not None
                 else None
             ),
             bid_currency=(
-                str(json["bidCurrency"])
+                str(json.get("bidCurrency"))
                 if json.get("bidCurrency", None) is not None
                 else None
             ),
             unique_auction_id=(
-                InterestGroupAuctionId.from_json(json["uniqueAuctionId"])
+                InterestGroupAuctionId.from_json(json.get("uniqueAuctionId"))
                 if json.get("uniqueAuctionId", None) is not None
                 else None
             ),
@@ -1918,18 +1938,18 @@ class InterestGroupAuctionEventOccurred:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> InterestGroupAuctionEventOccurred:
         return cls(
-            event_time=network.TimeSinceEpoch.from_json(json["eventTime"]),
-            type_=InterestGroupAuctionEventType.from_json(json["type"]),
+            event_time=network.TimeSinceEpoch.from_json(json.get("eventTime")),
+            type_=InterestGroupAuctionEventType.from_json(json.get("type")),
             unique_auction_id=InterestGroupAuctionId.from_json(
                 json["uniqueAuctionId"]
             ),
             parent_auction_id=(
-                InterestGroupAuctionId.from_json(json["parentAuctionId"])
+                InterestGroupAuctionId.from_json(json.get("parentAuctionId"))
                 if json.get("parentAuctionId", None) is not None
                 else None
             ),
             auction_config=(
-                dict(json["auctionConfig"])
+                dict(json.get("auctionConfig"))
                 if json.get("auctionConfig", None) is not None
                 else None
             ),
@@ -1958,8 +1978,8 @@ class InterestGroupAuctionNetworkRequestCreated:
         cls, json: T_JSON_DICT
     ) -> InterestGroupAuctionNetworkRequestCreated:
         return cls(
-            type_=InterestGroupAuctionFetchType.from_json(json["type"]),
-            request_id=network.RequestId.from_json(json["requestId"]),
+            type_=InterestGroupAuctionFetchType.from_json(json.get("type")),
+            request_id=network.RequestId.from_json(json.get("requestId")),
             auctions=[
                 InterestGroupAuctionId.from_json(i) for i in json["auctions"]
             ],
@@ -1988,11 +2008,13 @@ class SharedStorageAccessed:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> SharedStorageAccessed:
         return cls(
-            access_time=network.TimeSinceEpoch.from_json(json["accessTime"]),
-            type_=SharedStorageAccessType.from_json(json["type"]),
-            main_frame_id=page.FrameId.from_json(json["mainFrameId"]),
-            owner_origin=str(json["ownerOrigin"]),
-            params=SharedStorageAccessParams.from_json(json["params"]),
+            access_time=network.TimeSinceEpoch.from_json(
+                json.get("accessTime")
+            ),
+            type_=SharedStorageAccessType.from_json(json.get("type")),
+            main_frame_id=page.FrameId.from_json(json.get("mainFrameId")),
+            owner_origin=str(json.get("ownerOrigin")),
+            params=SharedStorageAccessParams.from_json(json.get("params")),
         )
 
 
@@ -2003,7 +2025,9 @@ class StorageBucketCreatedOrUpdated:
 
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> StorageBucketCreatedOrUpdated:
-        return cls(bucket_info=StorageBucketInfo.from_json(json["bucketInfo"]))
+        return cls(bucket_info=StorageBucketInfo.from_json(
+            json.get("bucketInfo")
+        ))
 
 
 @event_class("Storage.storageBucketDeleted")
@@ -2013,7 +2037,7 @@ class StorageBucketDeleted:
 
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> StorageBucketDeleted:
-        return cls(bucket_id=str(json["bucketId"]))
+        return cls(bucket_id=str(json.get("bucketId")))
 
 
 @event_class("Storage.attributionReportingSourceRegistered")

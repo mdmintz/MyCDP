@@ -32,8 +32,8 @@ class ScreenOrientation:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> ScreenOrientation:
         return cls(
-            type_=str(json["type"]),
-            angle=int(json["angle"]),
+            type_=str(json.get("type")),
+            angle=int(json.get("angle")),
         )
 
 
@@ -59,9 +59,9 @@ class DisplayFeature:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> DisplayFeature:
         return cls(
-            orientation=str(json["orientation"]),
-            offset=int(json["offset"]),
-            mask_length=int(json["maskLength"]),
+            orientation=str(json.get("orientation")),
+            offset=int(json.get("offset")),
+            mask_length=int(json.get("maskLength")),
         )
 
 
@@ -78,7 +78,7 @@ class DevicePosture:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> DevicePosture:
         return cls(
-            type_=str(json["type"]),
+            type_=str(json.get("type")),
         )
 
 
@@ -96,8 +96,8 @@ class MediaFeature:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> MediaFeature:
         return cls(
-            name=str(json["name"]),
-            value=str(json["value"]),
+            name=str(json.get("name")),
+            value=str(json.get("value")),
         )
 
 
@@ -140,8 +140,8 @@ class UserAgentBrandVersion:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> UserAgentBrandVersion:
         return cls(
-            brand=str(json["brand"]),
-            version=str(json["version"]),
+            brand=str(json.get("brand")),
+            version=str(json.get("version")),
         )
 
 
@@ -192,11 +192,11 @@ class UserAgentMetadata:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> UserAgentMetadata:
         return cls(
-            platform=str(json["platform"]),
-            platform_version=str(json["platformVersion"]),
-            architecture=str(json["architecture"]),
-            model=str(json["model"]),
-            mobile=bool(json["mobile"]),
+            platform=str(json.get("platform")),
+            platform_version=str(json.get("platformVersion")),
+            architecture=str(json.get("architecture")),
+            model=str(json.get("model")),
+            mobile=bool(json.get("mobile")),
             brands=(
                 [UserAgentBrandVersion.from_json(i) for i in json["brands"]]
                 if json.get("brands", None) is not None
@@ -211,17 +211,17 @@ class UserAgentMetadata:
                 else None
             ),
             full_version=(
-                str(json["fullVersion"])
+                str(json.get("fullVersion"))
                 if json.get("fullVersion", None) is not None
                 else None
             ),
             bitness=(
-                str(json["bitness"])
+                str(json.get("bitness"))
                 if json.get("bitness", None) is not None
                 else None
             ),
             wow64=(
-                bool(json["wow64"])
+                bool(json.get("wow64"))
                 if json.get("wow64", None) is not None
                 else None
             ),
@@ -271,17 +271,17 @@ class SensorMetadata:
     def from_json(cls, json: T_JSON_DICT) -> SensorMetadata:
         return cls(
             available=(
-                bool(json["available"])
+                bool(json.get("available"))
                 if json.get("available", None) is not None
                 else None
             ),
             minimum_frequency=(
-                float(json["minimumFrequency"])
+                float(json.get("minimumFrequency"))
                 if json.get("minimumFrequency", None) is not None
                 else None
             ),
             maximum_frequency=(
-                float(json["maximumFrequency"])
+                float(json.get("maximumFrequency"))
                 if json.get("maximumFrequency", None) is not None
                 else None
             ),
@@ -300,7 +300,7 @@ class SensorReadingSingle:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> SensorReadingSingle:
         return cls(
-            value=float(json["value"]),
+            value=float(json.get("value")),
         )
 
 
@@ -320,9 +320,9 @@ class SensorReadingXYZ:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> SensorReadingXYZ:
         return cls(
-            x=float(json["x"]),
-            y=float(json["y"]),
-            z=float(json["z"]),
+            x=float(json.get("x")),
+            y=float(json.get("y")),
+            z=float(json.get("z")),
         )
 
 
@@ -344,10 +344,10 @@ class SensorReadingQuaternion:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> SensorReadingQuaternion:
         return cls(
-            x=float(json["x"]),
-            y=float(json["y"]),
-            z=float(json["z"]),
-            w=float(json["w"]),
+            x=float(json.get("x")),
+            y=float(json.get("y")),
+            z=float(json.get("z")),
+            w=float(json.get("w")),
         )
 
 
@@ -371,17 +371,17 @@ class SensorReading:
     def from_json(cls, json: T_JSON_DICT) -> SensorReading:
         return cls(
             single=(
-                SensorReadingSingle.from_json(json["single"])
+                SensorReadingSingle.from_json(json.get("single"))
                 if json.get("single", None) is not None
                 else None
             ),
             xyz=(
-                SensorReadingXYZ.from_json(json["xyz"])
+                SensorReadingXYZ.from_json(json.get("xyz"))
                 if json.get("xyz", None) is not None
                 else None
             ),
             quaternion=(
-                SensorReadingQuaternion.from_json(json["quaternion"])
+                SensorReadingQuaternion.from_json(json.get("quaternion"))
                 if json.get("quaternion", None) is not None
                 else None
             ),
@@ -765,7 +765,7 @@ def get_overridden_sensor_information(
         "params": params,
     }
     json = yield cmd_dict
-    return float(json["requestedSamplingFrequency"])
+    return float(json.get("requestedSamplingFrequency"))
 
 
 def set_sensor_override_enabled(
@@ -935,7 +935,7 @@ def set_virtual_time_policy(
         "params": params,
     }
     json = yield cmd_dict
-    return float(json["virtualTimeTicksBase"])
+    return float(json.get("virtualTimeTicksBase"))
 
 
 def set_locale_override(

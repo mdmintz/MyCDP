@@ -79,15 +79,17 @@ class DataEntry:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> DataEntry:
         return cls(
-            request_url=str(json["requestURL"]),
-            request_method=str(json["requestMethod"]),
+            request_url=str(json.get("requestURL")),
+            request_method=str(json.get("requestMethod")),
             request_headers=[
                 Header.from_json(i) for i in json["requestHeaders"]
             ],
-            response_time=float(json["responseTime"]),
-            response_status=int(json["responseStatus"]),
-            response_status_text=str(json["responseStatusText"]),
-            response_type=CachedResponseType.from_json(json["responseType"]),
+            response_time=float(json.get("responseTime")),
+            response_status=int(json.get("responseStatus")),
+            response_status_text=str(json.get("responseStatusText")),
+            response_type=CachedResponseType.from_json(
+                json.get("responseType")
+            ),
             response_headers=[
                 Header.from_json(i) for i in json["responseHeaders"]
             ],
@@ -121,12 +123,12 @@ class Cache:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> Cache:
         return cls(
-            cache_id=CacheId.from_json(json["cacheId"]),
-            security_origin=str(json["securityOrigin"]),
-            storage_key=str(json["storageKey"]),
-            cache_name=str(json["cacheName"]),
+            cache_id=CacheId.from_json(json.get("cacheId")),
+            security_origin=str(json.get("securityOrigin")),
+            storage_key=str(json.get("storageKey")),
+            cache_name=str(json.get("cacheName")),
             storage_bucket=(
-                storage.StorageBucket.from_json(json["storageBucket"])
+                storage.StorageBucket.from_json(json.get("storageBucket"))
                 if json.get("storageBucket", None) is not None
                 else None
             ),
@@ -147,8 +149,8 @@ class Header:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> Header:
         return cls(
-            name=str(json["name"]),
-            value=str(json["value"]),
+            name=str(json.get("name")),
+            value=str(json.get("value")),
         )
 
 
@@ -167,7 +169,7 @@ class CachedResponse:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> CachedResponse:
         return cls(
-            body=str(json["body"]),
+            body=str(json.get("body")),
         )
 
 
@@ -254,7 +256,7 @@ def request_cached_response(
         "params": params,
     }
     json = yield cmd_dict
-    return CachedResponse.from_json(json["response"])
+    return CachedResponse.from_json(json.get("response"))
 
 
 def request_entries(
@@ -292,5 +294,5 @@ def request_entries(
     json = yield cmd_dict
     return (
         [DataEntry.from_json(i) for i in json["cacheDataEntries"]],
-        float(json["returnCount"]),
+        float(json.get("returnCount")),
     )

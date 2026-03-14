@@ -34,8 +34,8 @@ class DatabaseWithObjectStores:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> DatabaseWithObjectStores:
         return cls(
-            name=str(json["name"]),
-            version=float(json["version"]),
+            name=str(json.get("name")),
+            version=float(json.get("version")),
             object_stores=[
                 ObjectStore.from_json(i) for i in json["objectStores"]
             ],
@@ -65,9 +65,9 @@ class ObjectStore:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> ObjectStore:
         return cls(
-            name=str(json["name"]),
-            key_path=KeyPath.from_json(json["keyPath"]),
-            auto_increment=bool(json["autoIncrement"]),
+            name=str(json.get("name")),
+            key_path=KeyPath.from_json(json.get("keyPath")),
+            auto_increment=bool(json.get("autoIncrement")),
             indexes=[ObjectStoreIndex.from_json(i) for i in json["indexes"]],
         )
 
@@ -95,10 +95,10 @@ class ObjectStoreIndex:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> ObjectStoreIndex:
         return cls(
-            name=str(json["name"]),
-            key_path=KeyPath.from_json(json["keyPath"]),
-            unique=bool(json["unique"]),
-            multi_entry=bool(json["multiEntry"]),
+            name=str(json.get("name")),
+            key_path=KeyPath.from_json(json.get("keyPath")),
+            unique=bool(json.get("unique")),
+            multi_entry=bool(json.get("multiEntry")),
         )
 
 
@@ -132,19 +132,19 @@ class Key:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> Key:
         return cls(
-            type_=str(json["type"]),
+            type_=str(json.get("type")),
             number=(
-                float(json["number"])
+                float(json.get("number"))
                 if json.get("number", None) is not None
                 else None
             ),
             string=(
-                str(json["string"])
+                str(json.get("string"))
                 if json.get("string", None) is not None
                 else None
             ),
             date=(
-                float(json["date"])
+                float(json.get("date"))
                 if json.get("date", None) is not None
                 else None
             ),
@@ -181,15 +181,15 @@ class KeyRange:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> KeyRange:
         return cls(
-            lower_open=bool(json["lowerOpen"]),
-            upper_open=bool(json["upperOpen"]),
+            lower_open=bool(json.get("lowerOpen")),
+            upper_open=bool(json.get("upperOpen")),
             lower=(
-                Key.from_json(json["lower"])
+                Key.from_json(json.get("lower"))
                 if json.get("lower", None) is not None
                 else None
             ),
             upper=(
-                Key.from_json(json["upper"])
+                Key.from_json(json.get("upper"))
                 if json.get("upper", None) is not None
                 else None
             ),
@@ -216,9 +216,9 @@ class DataEntry:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> DataEntry:
         return cls(
-            key=runtime.RemoteObject.from_json(json["key"]),
-            primary_key=runtime.RemoteObject.from_json(json["primaryKey"]),
-            value=runtime.RemoteObject.from_json(json["value"]),
+            key=runtime.RemoteObject.from_json(json.get("key")),
+            primary_key=runtime.RemoteObject.from_json(json.get("primaryKey")),
+            value=runtime.RemoteObject.from_json(json.get("value")),
         )
 
 
@@ -244,9 +244,9 @@ class KeyPath:
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> KeyPath:
         return cls(
-            type_=str(json["type"]),
+            type_=str(json.get("type")),
             string=(
-                str(json["string"])
+                str(json.get("string"))
                 if json.get("string", None) is not None
                 else None
             ),
@@ -429,7 +429,7 @@ def request_data(
     json = yield cmd_dict
     return (
         [DataEntry.from_json(i) for i in json["objectStoreDataEntries"]],
-        bool(json["hasMore"]),
+        bool(json.get("hasMore")),
     )
 
 
@@ -470,7 +470,10 @@ def get_metadata(
         "params": params,
     }
     json = yield cmd_dict
-    return (float(json["entriesCount"]), float(json["keyGeneratorValue"]))
+    return (
+        float(json.get("entriesCount")),
+        float(json.get("keyGeneratorValue")),
+    )
 
 
 def request_database(
@@ -503,7 +506,9 @@ def request_database(
         "params": params,
     }
     json = yield cmd_dict
-    return DatabaseWithObjectStores.from_json(json["databaseWithObjectStores"])
+    return DatabaseWithObjectStores.from_json(
+        json.get("databaseWithObjectStores")
+    )
 
 
 def request_database_names(
