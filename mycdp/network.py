@@ -2233,7 +2233,7 @@ class ContentEncoding(enum.Enum):
         return cls(json)
 
 
-class PrivateNetworkRequestPolicy(enum.Enum):
+class LocalNetworkAccessRequestPolicy(enum.Enum):
     ALLOW = "Allow"
     BLOCK_FROM_INSECURE_TO_MORE_PRIVATE = "BlockFromInsecureToMorePrivate"
     WARN_FROM_INSECURE_TO_MORE_PRIVATE = "WarnFromInsecureToMorePrivate"
@@ -2244,7 +2244,7 @@ class PrivateNetworkRequestPolicy(enum.Enum):
         return self.value
 
     @classmethod
-    def from_json(cls, json: str) -> PrivateNetworkRequestPolicy:
+    def from_json(cls, json: str) -> LocalNetworkAccessRequestPolicy:
         return cls(json)
 
 
@@ -2287,7 +2287,7 @@ class ConnectTiming:
 class ClientSecurityState:
     initiator_is_secure_context: bool
     initiator_ip_address_space: IPAddressSpace
-    private_network_request_policy: PrivateNetworkRequestPolicy
+    local_network_access_request_policy: LocalNetworkAccessRequestPolicy
 
     def to_json(self) -> T_JSON_DICT:
         json: T_JSON_DICT = dict()
@@ -2295,8 +2295,8 @@ class ClientSecurityState:
         json["initiatorIPAddressSpace"] = (
             self.initiator_ip_address_space.to_json()
         )
-        json["privateNetworkRequestPolicy"] = (
-            self.private_network_request_policy.to_json()
+        json["localNetworkAccessRequestPolicy"] = (
+            self.local_network_access_request_policy.to_json()
         )
         return json
 
@@ -2309,8 +2309,8 @@ class ClientSecurityState:
             initiator_ip_address_space=IPAddressSpace.from_json(
                 json.get("initiatorIPAddressSpace")
             ),
-            private_network_request_policy=PrivateNetworkRequestPolicy.from_json(  # noqa
-                json.get("privateNetworkRequestPolicy")
+            local_network_access_request_policy=LocalNetworkAccessRequestPolicy.from_json(  # noqa
+                json.get("localNetworkAccessRequestPolicy")
             ),
         )
 
