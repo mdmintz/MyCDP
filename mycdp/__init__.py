@@ -6,6 +6,7 @@
 from . import (
     browser,
     cache_storage,
+    console,
     debugger,
     dom,
     dom_debugger,
@@ -22,6 +23,7 @@ from . import (
     storage,
     system_info,
     target,
+    web_mcp,
 )
 
 # Instead of importing everything, make a list of all available imports.
@@ -37,6 +39,7 @@ __all__ = [
     "cache_storage",
     "cast",
     "console",
+    "crash_report_context",
     "database",
     "debugger",
     "device_access",
@@ -72,6 +75,7 @@ __all__ = [
     "schema",
     "security",
     "service_worker",
+    "smart_card_emulation",
     "storage",
     "system_info",
     "target",
@@ -79,4 +83,5 @@ __all__ = [
     "tracing",
     "web_audio",
     "web_authn",
+    "web_mcp",
 ]

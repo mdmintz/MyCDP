@@ -199,8 +199,9 @@ class FilledField:
 
 def trigger(
     field_id: dom.BackendNodeId,
-    card: CreditCard,
     frame_id: typing.Optional[page.FrameId] = None,
+    card: typing.Optional[CreditCard] = None,
+    address: typing.Optional[Address] = None,
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Trigger autofill on a form identified by the fieldId.
@@ -209,12 +210,17 @@ def trigger(
     :param frame_id: *(Optional)* Identifies the frame that field belongs to.
     :param card: Credit card information to fill out the form.
     Credit card data is not saved.
+    :param address: *(Optional)* Address to fill out the form.
+    Address data is not saved.
     """
     params: T_JSON_DICT = dict()
     params["fieldId"] = field_id.to_json()
     if frame_id is not None:
         params["frameId"] = frame_id.to_json()
-    params["card"] = card.to_json()
+    if card is not None:
+        params["card"] = card.to_json()
+    if address is not None:
+        params["address"] = address.to_json()
     cmd_dict: T_JSON_DICT = {
         "method": "Autofill.trigger",
         "params": params,

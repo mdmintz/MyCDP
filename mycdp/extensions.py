@@ -9,6 +9,7 @@ from __future__ import annotations
 from .util import T_JSON_DICT
 import enum
 import typing
+from dataclasses import dataclass
 
 
 class StorageArea(enum.Enum):
@@ -26,19 +27,78 @@ class StorageArea(enum.Enum):
         return cls(json)
 
 
+@dataclass
+class ExtensionInfo:
+    """Detailed information about an extension."""
+    #: Extension id.
+    id_: str
+    #: Extension name.
+    name: str
+    #: Extension version.
+    version: str
+    #: The path from which the extension was loaded.
+    path: str
+    #: Extension enabled status.
+    enabled: bool
+
+    def to_json(self) -> T_JSON_DICT:
+        json: T_JSON_DICT = dict()
+        json["id"] = self.id_
+        json["name"] = self.name
+        json["version"] = self.version
+        json["path"] = self.path
+        json["enabled"] = self.enabled
+        return json
+
+    @classmethod
+    def from_json(cls, json: T_JSON_DICT) -> ExtensionInfo:
+        return cls(
+            id_=str(json.get("id")),
+            name=str(json.get("name")),
+            version=str(json.get("version")),
+            path=str(json.get("path")),
+            enabled=bool(json.get("enabled")),
+        )
+
+
+def trigger_action(
+    id_: str, target_id: str
+) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
+    """
+    Runs an extension default action.
+    Available if the client is connected using the --remote-debugging-pipe
+    flag and the --enable-unsafe-extension-debugging flag is set.
+    :param id_: Extension id.
+    :param target_id:
+     A tab target ID to trigger the default extension action on.
+    """
+    params: T_JSON_DICT = dict()
+    params["id"] = id_
+    params["targetId"] = target_id
+    cmd_dict: T_JSON_DICT = {
+        "method": "Extensions.triggerAction",
+        "params": params,
+    }
+    json = yield cmd_dict  # noqa
+
+
 def load_unpacked(
-    path: str,
+    path: str, enable_in_incognito: typing.Optional[bool] = None
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, str]:
     """
-    Installs an unpacked extension from the filesystem similar to the
-    --load-extension CLI flags. Returns the extension ID once the extension
+    Installs an unpacked extension from the filesystem similar to
+    --load-extension CLI flags. Returns extension ID once the extension
     has been installed. Available if the client is connected using the
-    --remote-debugging-pipe and --enable-unsafe-extension-debugging flags.
+    --remote-debugging-pipe flag and the --enable-unsafe-extension-debugging
+    flag is set.
     :param path: Absolute file path.
+    :param enable_in_incognito: *(Optional)* Enable the extension in incognito
     :returns: Extension id.
     """
     params: T_JSON_DICT = dict()
     params["path"] = path
+    if enable_in_incognito is not None:
+        params["enableInIncognito"] = enable_in_incognito
     cmd_dict: T_JSON_DICT = {
         "method": "Extensions.loadUnpacked",
         "params": params,
@@ -47,9 +107,22 @@ def load_unpacked(
     return str(json.get("id"))
 
 
-def uninstall(
-    id_: str
-) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
+def get_extensions() -> (
+    typing.Generator[T_JSON_DICT, T_JSON_DICT, typing.List[ExtensionInfo]]
+):
+    """
+    Gets a list of all unpacked extensions.
+    Available if the client is connected using the --remote-debugging-pipe flag
+    and the --enable-unsafe-extension-debugging flag is set.
+    """
+    cmd_dict: T_JSON_DICT = {
+        "method": "Extensions.getExtensions",
+    }
+    json = yield cmd_dict
+    return [ExtensionInfo.from_json(i) for i in json["extensions"]]
+
+
+def uninstall(id_: str) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Uninstalls an unpacked extension (others not supported) from the profile.
     Available if the client is connected using the --remote-debugging-pipe flag
@@ -57,12 +130,12 @@ def uninstall(
     :param id_: Extension id.
     """
     params: T_JSON_DICT = dict()
-    params['id'] = id_
+    params["id"] = id_
     cmd_dict: T_JSON_DICT = {
-        'method': 'Extensions.uninstall',
-        'params': params,
+        "method": "Extensions.uninstall",
+        "params": params,
     }
-    json = yield cmd_dict  # NOQA
+    json = yield cmd_dict  # noqa
 
 
 def get_storage_items(
@@ -76,7 +149,6 @@ def get_storage_items(
     :param id_: ID of extension.
     :param storage_area: StorageArea to retrieve data from.
     :param keys: *(Optional)* Keys to retrieve.
-    :returns:
     """
     params: T_JSON_DICT = dict()
     params["id"] = id_
@@ -92,9 +164,7 @@ def get_storage_items(
 
 
 def remove_storage_items(
-    id_: str,
-    storage_area: StorageArea,
-    keys: typing.List[str],
+    id_: str, storage_area: StorageArea, keys: typing.List[str]
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Removes `keys` from extension storage in the given `storageArea`.
@@ -110,15 +180,14 @@ def remove_storage_items(
         "method": "Extensions.removeStorageItems",
         "params": params,
     }
-    json = yield cmd_dict  # NOQA
+    json = yield cmd_dict  # noqa
 
 
 def clear_storage_items(
-    id_: str,
-    storage_area: StorageArea,
+    id_: str, storage_area: StorageArea
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
-    Clears extension storage in the given `storageArea`.
+    Clears extension storage in the given ``storageArea``.
     :param id_: ID of extension.
     :param storage_area: StorageArea to remove data from.
     """
@@ -129,17 +198,16 @@ def clear_storage_items(
         "method": "Extensions.clearStorageItems",
         "params": params,
     }
-    json = yield cmd_dict  # NOQA
+    json = yield cmd_dict  # noqa
 
 
 def set_storage_items(
-    id_: str,
-    storage_area: StorageArea,
-    values: dict,
+    id_: str, storage_area: StorageArea, values: dict
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
-    Sets `values` in extension storage in the given `storageArea`.
-    The provided `values` are merged with existing values in the storage area.
+    Sets ``values`` in extension storage in the given ``storageArea``.
+    The provided ``values`` will be merged with existing values
+    in the storage area.
     :param id_: ID of extension.
     :param storage_area: StorageArea to set data in.
     :param values: Values to set.
@@ -152,4 +220,4 @@ def set_storage_items(
         "method": "Extensions.setStorageItems",
         "params": params,
     }
-    json = yield cmd_dict  # NOQA
+    json = yield cmd_dict  # noqa

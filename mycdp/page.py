@@ -83,34 +83,6 @@ class AdFrameStatus:
         )
 
 
-@dataclass
-class AdScriptId:
-    """
-    Identifies the bottom-most script which caused the frame
-    to be labelled as an ad.
-    """
-    #: Script Id of the bottom-most script which caused the frame
-    #: to be labelled as an ad.
-    script_id: runtime.ScriptId
-    #: Id of adScriptId's debugger.
-    debugger_id: runtime.UniqueDebuggerId
-
-    def to_json(self) -> T_JSON_DICT:
-        json: T_JSON_DICT = dict()
-        json["scriptId"] = self.script_id.to_json()
-        json["debuggerId"] = self.debugger_id.to_json()
-        return json
-
-    @classmethod
-    def from_json(cls, json: T_JSON_DICT) -> AdScriptId:
-        return cls(
-            script_id=runtime.ScriptId.from_json(json.get("scriptId")),
-            debugger_id=runtime.UniqueDebuggerId.from_json(
-                json.get("debuggerId")
-            ),
-        )
-
-
 class SecureContextType(enum.Enum):
     """
     Indicates whether the frame is a secure context and why it is the case.
@@ -170,6 +142,7 @@ class PermissionsPolicyFeature(enum.Enum):
     AMBIENT_LIGHT_SENSOR = "ambient-light-sensor"
     ARIA_NOTIFY = "aria-notify"
     ATTRIBUTION_REPORTING = "attribution-reporting"
+    AUTOFILL = "autofill"
     AUTOPLAY = "autoplay"
     BLUETOOTH = "bluetooth"
     BROWSING_TOPICS = "browsing-topics"
@@ -217,7 +190,6 @@ class PermissionsPolicyFeature(enum.Enum):
     ENCRYPTED_MEDIA = "encrypted-media"
     EXECUTION_WHILE_OUT_OF_VIEWPORT = "execution-while-out-of-viewport"
     EXECUTION_WHILE_NOT_RENDERED = "execution-while-not-rendered"
-    FENCED_UNPARTITIONED_STORAGE_READ = "fenced-unpartitioned-storage-read"
     FOCUS_WITHOUT_USER_ACTIVATION = "focus-without-user-activation"
     FULLSCREEN = "fullscreen"
     FROBULATE = "frobulate"
@@ -233,8 +205,11 @@ class PermissionsPolicyFeature(enum.Enum):
     LANGUAGE_DETECTOR = "language-detector"
     LANGUAGE_MODEL = "language-model"
     LOCAL_FONTS = "local-fonts"
+    LOCAL_NETWORK = "local-network"
     LOCAL_NETWORK_ACCESS = "local-network-access"
+    LOOPBACK_NETWORK = "loopback-network"
     MAGNETOMETER = "magnetometer"
+    MANUAL_TEXT = "manual-text"
     MEDIA_PLAYBACK_WHILE_NOT_VISIBLE = "media-playback-while-not-visible"
     MICROPHONE = "microphone"
     MIDI = "midi"
@@ -242,7 +217,6 @@ class PermissionsPolicyFeature(enum.Enum):
     OTP_CREDENTIALS = "otp-credentials"
     PAYMENT = "payment"
     PICTURE_IN_PICTURE = "picture-in-picture"
-    POPINS = "popins"
     PRIVATE_AGGREGATION = "private-aggregation"
     PRIVATE_STATE_TOKEN_ISSUANCE = "private-state-token-issuance"
     PRIVATE_STATE_TOKEN_REDEMPTION = "private-state-token-redemption"
@@ -253,7 +227,6 @@ class PermissionsPolicyFeature(enum.Enum):
     RUN_AD_AUCTION = "run-ad-auction"
     SCREEN_WAKE_LOCK = "screen-wake-lock"
     SERIAL = "serial"
-    SHARED_AUTOFILL = "shared-autofill"
     SHARED_STORAGE = "shared-storage"
     SHARED_STORAGE_SELECT_URL = "shared-storage-select-url"
     SMART_CARD = "smart-card"
@@ -1857,6 +1830,7 @@ class BackForwardCacheNotRestoredReason(enum.Enum):
     )
     USER_AGENT_OVERRIDE_DIFFERS = "UserAgentOverrideDiffers"
     FOREGROUND_CACHE_LIMIT = "ForegroundCacheLimit"
+    FORWARD_CACHE_DISABLED = "ForwardCacheDisabled"
     BROWSING_INSTANCE_NOT_SWAPPED = "BrowsingInstanceNotSwapped"
     BACK_FORWARD_CACHE_DISABLED_FOR_DELEGATE = (
         "BackForwardCacheDisabledForDelegate"
@@ -1919,7 +1893,11 @@ class BackForwardCacheNotRestoredReason(enum.Enum):
     BROADCAST_CHANNEL = "BroadcastChannel"
     WEB_XR = "WebXR"
     SHARED_WORKER = "SharedWorker"
+    SHARED_WORKER_MESSAGE = "SharedWorkerMessage"
+    SHARED_WORKER_WITH_NO_ACTIVE_CLIENT = "SharedWorkerWithNoActiveClient"
+    WEB_BLUETOOTH = "WebBluetooth"
     WEB_LOCKS = "WebLocks"
+    WEB_LOCKS_CONTENTION = "WebLocksContention"
     WEB_HID = "WebHID"
     WEB_SHARE = "WebShare"
     REQUESTED_STORAGE_ACCESS_GRANT = "RequestedStorageAccessGrant"
@@ -2405,26 +2383,30 @@ def get_app_id() -> typing.Generator[
     )
 
 
-def get_ad_script_id(
+def get_ad_script_ancestry(
     frame_id: FrameId,
-) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, typing.Optional[AdScriptId]]:
+) -> typing.Generator[
+    T_JSON_DICT, T_JSON_DICT, typing.Optional[network.AdAncestry]
+]:
     """
     :param frame_id:
-    :returns: *(Optional)*
-    Identifies the bottom-most script which caused the frame
-    to be labelled as an ad. Only sent if frame is labelled
-    as an ad and id is available.
+    :returns: *(Optional)* The ancestry chain of ad script identifiers leading
+    to this frame's creation, along with the root script's filterlist rule.
+    The ancestry chain is ordered from the most immediate script
+    (in the frame creation stack) to more distant ancestors
+    (that created the immediately preceding script).
+    Only sent if frame is labelled as an ad and ids are available.
     """
     params: T_JSON_DICT = dict()
     params["frameId"] = frame_id.to_json()
     cmd_dict: T_JSON_DICT = {
-        "method": "Page.getAdScriptId",
+        "method": "Page.getAdScriptAncestry",
         "params": params,
     }
     json = yield cmd_dict
     return (
-        AdScriptId.from_json(json.get("adScriptId"))
-        if json.get("adScriptId", None) is not None
+        network.AdAncestry.from_json(json.get("adScriptAncestry"))
+        if json.get("adScriptAncestry", None) is not None
         else None
     )
 
@@ -2590,7 +2572,7 @@ def navigate(
         FrameId,
         typing.Optional[network.LoaderId],
         typing.Optional[str],
-        typing.Optional[bool]
+        typing.Optional[bool],
     ],
 ]:
     """
@@ -2598,20 +2580,19 @@ def navigate(
     :param url: URL to navigate the page to.
     :param referrer: *(Optional)* Referrer URL.
     :param transition_type: *(Optional)* Intended transition type.
-    :param frame_id: *(Optional)*
-     Frame id to navigate, if not specified navigates the top frame.
+    :param frame_id: *(Optional)* Frame ID to navigate.
+     (If not specified, navigates the top frame)
     :param referrer_policy: **(EXPERIMENTAL)** *(Optional)*
      Referrer-policy used for the navigation.
     :returns: A tuple with the following items:
         0. **frameId** - Frame id that has navigated (or failed to navigate)
         1. **loaderId** - *(Optional)* Loader identifier.
-         This is omitted in case of same-document navigation,
-         as the previously committed loaderId would not change.
-        2. **errorText** - *(Optional)*
-         User friendly error message,
-         present if and only if navigation has failed.
+            This is omitted in case of same-document navigation,
+            as the previously committed loaderId would not change.
+        2. **errorText** - *(Optional)* User friendly error message,
+            present if and only if navigation has failed.
         3. **isDownload** - *(Optional)*
-         Whether the navigation resulted in a download.
+            Whether the navigation resulted in a download.
     """
     params: T_JSON_DICT = dict()
     params["url"] = url
@@ -2630,21 +2611,15 @@ def navigate(
     json = yield cmd_dict
     return (
         FrameId.from_json(json.get("frameId")),
-        (
-            network.LoaderId.from_json(json.get("loaderId"))
-            if json.get("loaderId", None) is not None
-            else None
-        ),
-        (
-            str(json.get("errorText"))
-            if json.get("errorText", None) is not None
-            else None
-        ),
-        (
-            bool(json['isDownload'])
-            if json.get('isDownload', None) is not None
-            else None
-        ),
+        network.LoaderId.from_json(json.get("loaderId"))
+        if json.get("loaderId", None) is not None
+        else None,
+        str(json["errorText"])
+        if json.get("errorText", None) is not None
+        else None,
+        bool(json["isDownload"])
+        if json.get("isDownload", None) is not None
+        else None,
     )
 
 
@@ -3276,6 +3251,27 @@ def set_prerendering_allowed(
     json = yield cmd_dict  # noqa
 
 
+def get_annotated_page_content(
+    include_actionable_information: typing.Optional[bool] = None,
+) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, str]:
+    """
+    Get the annotated page content for the main frame.
+    This is an experimental command that is subject to change.
+    :param include_actionable_information: *(Optional)*
+     Whether to include actionable information. Defaults to true.
+    :returns: The annotated page content as a base64 encoded protobuf.
+    """
+    params: T_JSON_DICT = dict()
+    if include_actionable_information is not None:
+        params["includeActionableInformation"] = include_actionable_information
+    cmd_dict: T_JSON_DICT = {
+        "method": "Page.getAnnotatedPageContent",
+        "params": params,
+    }
+    json = yield cmd_dict
+    return str(json.get("content"))
+
+
 @event_class("Page.domContentEventFired")
 @dataclass
 class DomContentEventFired:
@@ -3726,10 +3722,7 @@ class WindowOpen:
 @event_class("Page.compilationCacheProduced")
 @dataclass
 class CompilationCacheProduced:
-    """
-    Issued for every compilation cache generated. Is only available
-    if Page.setGenerateCompilationCache is enabled.
-    """
+    """Issued for every compilation cache generated."""
     url: str
     #: Base64-encoded data (Encoded as a base64 string when passed over JSON)
     data: str

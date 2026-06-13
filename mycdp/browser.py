@@ -129,6 +129,8 @@ class PermissionType(enum.Enum):
     GEOLOCATION = "geolocation"
     IDLE_DETECTION = "idleDetection"
     LOCAL_FONTS = "localFonts"
+    LOCAL_NETWORK = "localNetwork"
+    LOOPBACK_NETWORK = "loopbackNetwork"
     MIDI = "midi"
     MIDI_SYSEX = "midiSysex"
     NFC = "nfc"
@@ -310,14 +312,20 @@ def set_permission(
     permission: PermissionDescriptor,
     setting: PermissionSetting,
     origin: typing.Optional[str] = None,
+    embedded_origin: typing.Optional[str] = None,
     browser_context_id: typing.Optional[BrowserContextID] = None,
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
-    Set permission settings for given origin.
+    Set permission settings for given embedding and embedded origins.
     :param permission: Descriptor of permission to override.
     :param setting: Setting of the permission.
-    :param origin: *(Optional)* Origin the permission applies to,
+    :param origin: *(Optional)* Embedding origin the permission applies to,
      all origins if not specified.
+    :param embedded_origin: *(Optional)*
+     Embedded origin the permission applies to.
+     It is ignored unless the embedding origin is present and valid.
+     If the embedding origin is provided but the embedded origin isn't,
+     the embedding origin is used as the embedded origin.
     :param browser_context_id: *(Optional)* Context to override.
      When omitted, default browser context is used.
     """
@@ -332,6 +340,8 @@ def set_permission(
         params["setting"] = setting  # if str
     if origin is not None:
         params["origin"] = origin
+    if embedded_origin is not None:
+        params["embeddedOrigin"] = embedded_origin
     if browser_context_id is not None:
         try:
             params["browserContextId"] = browser_context_id.to_json()

@@ -10,6 +10,7 @@ import enum
 import typing
 from dataclasses import dataclass
 from .util import event_class, T_JSON_DICT
+from . import network
 from . import page
 from . import runtime
 
@@ -26,6 +27,20 @@ class NodeId(int):
 
     def __repr__(self):
         return "NodeId({})".format(super().__repr__())
+
+
+class StyleSheetId(str):
+    """Unique identifier for a CSS stylesheet."""
+
+    def to_json(self) -> str:
+        return self
+
+    @classmethod
+    def from_json(cls, json: str) -> StyleSheetId:
+        return cls(json)
+
+    def __repr__(self):
+        return "StyleSheetId({})".format(super().__repr__())
 
 
 class BackendNodeId(int):
@@ -77,6 +92,7 @@ class PseudoType(enum.Enum):
     CHECKMARK = "checkmark"
     BEFORE = "before"
     AFTER = "after"
+    EXPAND_ICON = "expand-icon"
     PICKER_ICON = "picker-icon"
     INTEREST_HINT = "interest-hint"
     MARKER = "marker"
@@ -111,6 +127,7 @@ class PseudoType(enum.Enum):
     DETAILS_CONTENT = "details-content"
     PICKER = "picker"
     PERMISSION_ICON = "permission-icon"
+    OVERSCROLL_AREA_PARENT = "overscroll-area-parent"
 
     def to_json(self) -> str:
         return self.value
@@ -264,6 +281,10 @@ class Node:
     is_svg: typing.Optional[bool] = None
     compatibility_mode: typing.Optional[CompatibilityMode] = None
     assigned_slot: typing.Optional[BackendNode] = None
+    is_scrollable: typing.Optional[bool] = None
+    affected_by_starting_styles: typing.Optional[bool] = None
+    adopted_style_sheets: typing.Optional[typing.List[StyleSheetId]] = None
+    ad_provenance: typing.Optional[network.AdProvenance] = None
 
     def to_json(self) -> T_JSON_DICT:
         json: T_JSON_DICT = dict()
@@ -327,142 +348,122 @@ class Node:
             json["compatibilityMode"] = self.compatibility_mode.to_json()
         if self.assigned_slot is not None:
             json["assignedSlot"] = self.assigned_slot.to_json()
+        if self.is_scrollable is not None:
+            json["isScrollable"] = self.is_scrollable
+        if self.affected_by_starting_styles is not None:
+            json["affectedByStartingStyles"] = self.affected_by_starting_styles
+        if self.adopted_style_sheets is not None:
+            json["adoptedStyleSheets"] = [
+                i.to_json() for i in self.adopted_style_sheets
+            ]
+        if self.ad_provenance is not None:
+            json["adProvenance"] = self.ad_provenance.to_json()
         return json
 
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> Node:
         return cls(
-            node_id=NodeId.from_json(json.get("nodeId")),
-            backend_node_id=BackendNodeId.from_json(json.get("backendNodeId")),
+            node_id=NodeId.from_json(json["nodeId"]),
+            backend_node_id=BackendNodeId.from_json(
+                json.get("backendNodeId")
+            ),
             node_type=int(json.get("nodeType")),
             node_name=str(json.get("nodeName")),
             local_name=str(json.get("localName")),
             node_value=str(json.get("nodeValue")),
-            parent_id=(
-                NodeId.from_json(json.get("parentId"))
-                if json.get("parentId", None) is not None
-                else None
-            ),
-            child_node_count=(
-                int(json.get("childNodeCount"))
-                if json.get("childNodeCount", None) is not None
-                else None
-            ),
-            children=(
-                [Node.from_json(i) for i in json["children"]]
-                if json.get("children", None) is not None
-                else None
-            ),
-            attributes=(
-                [str(i) for i in json["attributes"]]
-                if json.get("attributes", None) is not None
-                else None
-            ),
-            document_url=(
-                str(json.get("documentURL"))
-                if json.get("documentURL", None) is not None
-                else None
-            ),
-            base_url=(
-                str(json.get("baseURL"))
-                if json.get("baseURL", None) is not None
-                else None
-            ),
-            public_id=(
-                str(json.get("publicId"))
-                if json.get("publicId", None) is not None
-                else None
-            ),
-            system_id=(
-                str(json.get("systemId"))
-                if json.get("systemId", None) is not None
-                else None
-            ),
-            internal_subset=(
-                str(json.get("internalSubset"))
-                if json.get("internalSubset", None) is not None
-                else None
-            ),
-            xml_version=(
-                str(json.get("xmlVersion"))
-                if json.get("xmlVersion", None) is not None
-                else None
-            ),
-            name=(
-                str(json.get("name"))
-                if json.get("name", None) is not None
-                else None
-            ),
-            value=(
-                str(json.get("value"))
-                if json.get("value", None) is not None
-                else None
-            ),
-            pseudo_type=(
-                PseudoType.from_json(json.get("pseudoType"))
-                if json.get("pseudoType", None) is not None
-                else None
-            ),
-            pseudo_identifier=(
-                str(json.get("pseudoIdentifier"))
-                if json.get("pseudoIdentifier", None) is not None
-                else None
-            ),
-            shadow_root_type=(
-                ShadowRootType.from_json(json.get("shadowRootType"))
-                if json.get("shadowRootType", None) is not None
-                else None
-            ),
-            frame_id=(
-                page.FrameId.from_json(json.get("frameId"))
-                if json.get("frameId", None) is not None
-                else None
-            ),
-            content_document=(
-                Node.from_json(json.get("contentDocument"))
-                if json.get("contentDocument", None) is not None
-                else None
-            ),
-            shadow_roots=(
-                [Node.from_json(i) for i in json["shadowRoots"]]
-                if json.get("shadowRoots", None) is not None
-                else None
-            ),
-            template_content=(
-                Node.from_json(json.get("templateContent"))
-                if json.get("templateContent", None) is not None
-                else None
-            ),
-            pseudo_elements=(
-                [Node.from_json(i) for i in json["pseudoElements"]]
-                if json.get("pseudoElements", None) is not None
-                else None
-            ),
-            imported_document=(
-                Node.from_json(json.get("importedDocument"))
-                if json.get("importedDocument", None) is not None
-                else None
-            ),
-            distributed_nodes=(
-                [BackendNode.from_json(i) for i in json["distributedNodes"]]
-                if json.get("distributedNodes", None) is not None
-                else None
-            ),
-            is_svg=(
-                bool(json.get("isSVG"))
-                if json.get("isSVG", None) is not None
-                else None
-            ),
-            compatibility_mode=(
-                CompatibilityMode.from_json(json.get("compatibilityMode"))
-                if json.get("compatibilityMode", None) is not None
-                else None
-            ),
-            assigned_slot=(
-                BackendNode.from_json(json.get("assignedSlot"))
-                if json.get("assignedSlot", None) is not None
-                else None
-            ),
+            parent_id=NodeId.from_json(json.get("parentId"))
+            if json.get("parentId", None) is not None
+            else None,
+            child_node_count=int(json.get("childNodeCount"))
+            if json.get("childNodeCount", None) is not None
+            else None,
+            children=[Node.from_json(i) for i in json["children"]]
+            if json.get("children", None) is not None
+            else None,
+            attributes=[str(i) for i in json["attributes"]]
+            if json.get("attributes", None) is not None
+            else None,
+            document_url=str(json["documentURL"])
+            if json.get("documentURL", None) is not None
+            else None,
+            base_url=str(json["baseURL"])
+            if json.get("baseURL", None) is not None
+            else None,
+            public_id=str(json["publicId"])
+            if json.get("publicId", None) is not None
+            else None,
+            system_id=str(json["systemId"])
+            if json.get("systemId", None) is not None
+            else None,
+            internal_subset=str(json["internalSubset"])
+            if json.get("internalSubset", None) is not None
+            else None,
+            xml_version=str(json["xmlVersion"])
+            if json.get("xmlVersion", None) is not None
+            else None,
+            name=str(json["name"])
+            if json.get("name", None) is not None
+            else None,
+            value=str(json["value"])
+            if json.get("value", None) is not None
+            else None,
+            pseudo_type=PseudoType.from_json(json["pseudoType"])
+            if json.get("pseudoType", None) is not None
+            else None,
+            pseudo_identifier=str(json["pseudoIdentifier"])
+            if json.get("pseudoIdentifier", None) is not None
+            else None,
+            shadow_root_type=ShadowRootType.from_json(json["shadowRootType"])
+            if json.get("shadowRootType", None) is not None
+            else None,
+            frame_id=page.FrameId.from_json(json["frameId"])
+            if json.get("frameId", None) is not None
+            else None,
+            content_document=Node.from_json(json["contentDocument"])
+            if json.get("contentDocument", None) is not None
+            else None,
+            shadow_roots=[Node.from_json(i) for i in json["shadowRoots"]]
+            if json.get("shadowRoots", None) is not None
+            else None,
+            template_content=Node.from_json(json["templateContent"])
+            if json.get("templateContent", None) is not None
+            else None,
+            pseudo_elements=[Node.from_json(i) for i in json["pseudoElements"]]
+            if json.get("pseudoElements", None) is not None
+            else None,
+            imported_document=Node.from_json(json["importedDocument"])
+            if json.get("importedDocument", None) is not None
+            else None,
+            distributed_nodes=[
+                BackendNode.from_json(i) for i in json["distributedNodes"]
+            ]
+            if json.get("distributedNodes", None) is not None
+            else None,
+            is_svg=bool(json["isSVG"])
+            if json.get("isSVG", None) is not None
+            else None,
+            compatibility_mode=CompatibilityMode.from_json(
+                json["compatibilityMode"]
+            )
+            if json.get("compatibilityMode", None) is not None
+            else None,
+            assigned_slot=BackendNode.from_json(json["assignedSlot"])
+            if json.get("assignedSlot", None) is not None
+            else None,
+            is_scrollable=bool(json["isScrollable"])
+            if json.get("isScrollable", None) is not None
+            else None,
+            affected_by_starting_styles=bool(json["affectedByStartingStyles"])
+            if json.get("affectedByStartingStyles", None) is not None
+            else None,
+            adopted_style_sheets=[
+                StyleSheetId.from_json(i) for i in json["adoptedStyleSheets"]
+            ]
+            if json.get("adoptedStyleSheets", None) is not None
+            else None,
+            ad_provenance=network.AdProvenance.from_json(json["adProvenance"])
+            if json.get("adProvenance", None) is not None
+            else None,
         )
 
 
@@ -1692,7 +1693,7 @@ def get_container_for_node(
     Returns the query container of the given node based on container query
     conditions: containerName, physical and logical axes, and whether
     it queries scroll-state or anchored elements. If no axes are provided and
-    queriesScrollState is False, the style container is returned, which is the
+    queriesScrollState is false, the style container is returned, which is the
     direct parent or the closest element with a matching container-name.
     :param node_id:
     :param container_name: *(Optional)*
@@ -1700,7 +1701,8 @@ def get_container_for_node(
     :param logical_axes: *(Optional)*
     :param queries_scroll_state: *(Optional)*
     :param queries_anchored: *(Optional)*
-    :returns: The container node for the given node, or null if not found.
+    :returns: *(Optional)* The container node for the given node,
+     or null if not found.
     """
     params: T_JSON_DICT = dict()
     params["nodeId"] = node_id.to_json()
@@ -1720,8 +1722,8 @@ def get_container_for_node(
     }
     json = yield cmd_dict
     return (
-        NodeId.from_json(json.get('nodeId'))
-        if json.get('nodeId', None) is not None
+        NodeId.from_json(json["nodeId"])
+        if json.get("nodeId", None) is not None
         else None
     )
 
@@ -1830,6 +1832,25 @@ class AttributeRemoved:
         return cls(
             node_id=NodeId.from_json(json.get("nodeId")),
             name=str(json.get("name")),
+        )
+
+
+@event_class("DOM.adoptedStyleSheetsModified")
+@dataclass
+class AdoptedStyleSheetsModified:
+    """Fired when ``Element``'s adoptedStyleSheets are modified."""
+    #: Id of the node that has changed.
+    node_id: NodeId
+    #: New adoptedStyleSheets array.
+    adopted_style_sheets: typing.List[StyleSheetId]
+
+    @classmethod
+    def from_json(cls, json: T_JSON_DICT) -> AdoptedStyleSheetsModified:
+        return cls(
+            node_id=NodeId.from_json(json["nodeId"]),
+            adopted_style_sheets=[
+                StyleSheetId.from_json(i) for i in json["adoptedStyleSheets"]
+            ],
         )
 
 
@@ -2009,6 +2030,48 @@ class ScrollableFlagUpdated:
         return cls(
             node_id=NodeId.from_json(json.get("nodeId")),
             is_scrollable=bool(json.get("isScrollable")),
+        )
+
+
+@event_class("DOM.adRelatedStateUpdated")
+@dataclass
+class AdRelatedStateUpdated:
+    """Fired when a node's ad related state changes."""
+    #: The id of the node.
+    node_id: NodeId
+    #: The provenance of the ad related node, if it is ad related.
+    ad_provenance: typing.Optional[network.AdProvenance]
+
+    @classmethod
+    def from_json(cls, json: T_JSON_DICT) -> AdRelatedStateUpdated:
+        return cls(
+            node_id=NodeId.from_json(json.get("nodeId")),
+            ad_provenance=network.AdProvenance.from_json(
+                json.get("adProvenance")
+            )
+            if json.get("adProvenance", None) is not None
+            else None,
+        )
+
+
+@event_class("DOM.affectedByStartingStylesFlagUpdated")
+@dataclass
+class AffectedByStartingStylesFlagUpdated:
+    """Fired when a node's starting styles changes."""
+    #: The id of the node.
+    node_id: NodeId
+    #: If the node has starting styles.
+    affected_by_starting_styles: bool
+
+    @classmethod
+    def from_json(
+        cls, json: T_JSON_DICT
+    ) -> AffectedByStartingStylesFlagUpdated:
+        return cls(
+            node_id=NodeId.from_json(json.get("nodeId")),
+            affected_by_starting_styles=bool(
+                json.get("affectedByStartingStyles")
+            ),
         )
 
 

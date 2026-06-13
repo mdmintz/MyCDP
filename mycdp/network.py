@@ -37,6 +37,7 @@ class ResourceType(enum.Enum):
     PING = "Ping"
     CSP_VIOLATION_REPORT = "CSPViolationReport"
     PREFLIGHT = "Preflight"
+    FED_CM = "FedCM"
     OTHER = "Other"
 
     def to_json(self) -> str:
@@ -359,6 +360,22 @@ class ResourcePriority(enum.Enum):
         return cls(json)
 
 
+class RenderBlockingBehavior(enum.Enum):
+    """The render-blocking behavior of a resource request."""
+    BLOCKING = "Blocking"
+    IN_BODY_PARSER_BLOCKING = "InBodyParserBlocking"
+    NON_BLOCKING = "NonBlocking"
+    NON_BLOCKING_DYNAMIC = "NonBlockingDynamic"
+    POTENTIALLY_BLOCKING = "PotentiallyBlocking"
+
+    def to_json(self) -> str:
+        return self.value
+
+    @classmethod
+    def from_json(cls, json: str) -> RenderBlockingBehavior:
+        return cls(json)
+
+
 @dataclass
 class PostDataEntry:
     """Post data entry for HTTP request."""
@@ -443,6 +460,8 @@ class Request:
             json["trustTokenParams"] = self.trust_token_params.to_json()
         if self.is_same_site is not None:
             json["isSameSite"] = self.is_same_site
+        if self.is_ad_related is not None:
+            json["isAdRelated"] = self.is_ad_related
         return json
 
     @classmethod
@@ -671,6 +690,7 @@ class BlockedReason(enum.Enum):
     MIXED_CONTENT = "mixed-content"
     ORIGIN = "origin"
     INSPECTOR = "inspector"
+    INTEGRITY = "integrity"
     SUBRESOURCE_FILTER = "subresource-filter"
     CONTENT_TYPE = "content-type"
     COEP_FRAME_RESOURCE_NEEDS_COEP_HEADER = (
@@ -690,6 +710,7 @@ class BlockedReason(enum.Enum):
         "corp-not-same-origin-after-defaulted-to-same-origin-by-coep-and-dip"
     )
     CORP_NOT_SAME_SITE = "corp-not-same-site"
+    SRI_MESSAGE_SIGNATURE_MISMATCH = "sri-message-signature-mismatch"
 
     def to_json(self) -> str:
         return self.value
@@ -699,29 +720,11 @@ class BlockedReason(enum.Enum):
         return cls(json)
 
 
-class IpProxyStatus(enum.Enum):
-    """
-    Sets Controls for IP Proxy of requests.
-    Page reload is required before the new behavior will be observed.
-    """
-    AVAILABLE = "Available"
-    FEATURE_NOT_ENABLED = "FeatureNotEnabled"
-    MASKED_DOMAIN_LIST_NOT_ENABLED = "MaskedDomainListNotEnabled"
-    MASKED_DOMAIN_LIST_NOT_POPULATED = "MaskedDomainListNotPopulated"
-    AUTH_TOKENS_UNAVAILABLE = "AuthTokensUnavailable"
-    UNAVAILABLE = "Unavailable"
-    BYPASSED_BY_DEV_TOOLS = "BypassedByDevTools"
-
-    def to_json(self) -> str:
-        return self.value
-
-    @classmethod
-    def from_json(cls, json: str) -> IpProxyStatus:
-        return cls(json)
-
-
 class CorsError(enum.Enum):
-    """The reason why request was blocked."""
+    """
+    The reason why request was blocked.
+    """
+
     DISALLOWED_BY_MODE = "DisallowedByMode"
     INVALID_RESPONSE = "InvalidResponse"
     WILDCARD_ORIGIN_NOT_ALLOWED = "WildcardOriginNotAllowed"
@@ -743,12 +746,6 @@ class CorsError(enum.Enum):
     PREFLIGHT_INVALID_ALLOW_CREDENTIALS = "PreflightInvalidAllowCredentials"
     PREFLIGHT_MISSING_ALLOW_EXTERNAL = "PreflightMissingAllowExternal"
     PREFLIGHT_INVALID_ALLOW_EXTERNAL = "PreflightInvalidAllowExternal"
-    PREFLIGHT_MISSING_ALLOW_PRIVATE_NETWORK = (
-        "PreflightMissingAllowPrivateNetwork"
-    )
-    PREFLIGHT_INVALID_ALLOW_PRIVATE_NETWORK = (
-        "PreflightInvalidAllowPrivateNetwork"
-    )
     INVALID_ALLOW_METHODS_PREFLIGHT_RESPONSE = (
         "InvalidAllowMethodsPreflightResponse"
     )
@@ -762,21 +759,11 @@ class CorsError(enum.Enum):
         "HeaderDisallowedByPreflightResponse"
     )
     REDIRECT_CONTAINS_CREDENTIALS = "RedirectContainsCredentials"
-    INSECURE_PRIVATE_NETWORK = "InsecurePrivateNetwork"
-    INVALID_PRIVATE_NETWORK_ACCESS = "InvalidPrivateNetworkAccess"
-    UNEXPECTED_PRIVATE_NETWORK_ACCESS = "UnexpectedPrivateNetworkAccess"
+    INSECURE_LOCAL_NETWORK = "InsecureLocalNetwork"
+    INVALID_LOCAL_NETWORK_ACCESS = "InvalidLocalNetworkAccess"
     NO_CORS_REDIRECT_MODE_NOT_FOLLOW = "NoCorsRedirectModeNotFollow"
-    PREFLIGHT_MISSING_PRIVATE_NETWORK_ACCESS_ID = (
-        "PreflightMissingPrivateNetworkAccessId"
-    )
-    PREFLIGHT_MISSING_PRIVATE_NETWORK_ACCESS_NAME = (
-        "PreflightMissingPrivateNetworkAccessName"
-    )
-    PRIVATE_NETWORK_ACCESS_PERMISSION_UNAVAILABLE = (
-        "PrivateNetworkAccessPermissionUnavailable"
-    )
-    PRIVATE_NETWORK_ACCESS_PERMISSION_DENIED = (
-        "PrivateNetworkAccessPermissionDenied"
+    LOCAL_NETWORK_ACCESS_PERMISSION_DENIED = (
+        "LocalNetworkAccessPermissionDenied"
     )
 
     def to_json(self) -> str:
@@ -895,6 +882,7 @@ class ServiceWorkerRouterSource(enum.Enum):
     CACHE = "cache"
     FETCH_EVENT = "fetch-event"
     RACE_NETWORK_AND_FETCH_HANDLER = "race-network-and-fetch-handler"
+    RACE_NETWORK_AND_CACHE = "race-network-and-cache"
 
     def to_json(self) -> str:
         return self.value
@@ -1021,9 +1009,6 @@ class Response:
     alternate_protocol_usage: typing.Optional[AlternateProtocolUsage] = None
     #: Security details for the request.
     security_details: typing.Optional[SecurityDetails] = None
-    #: Indicates whether the request was sent through IP Protection proxies.
-    #: If set to True, the request used the IP Protection privacy feature.
-    is_ip_protection_used: typing.Optional[bool] = None
 
     def to_json(self) -> T_JSON_DICT:
         json: T_JSON_DICT = dict()
@@ -1077,8 +1062,6 @@ class Response:
             )
         if self.security_details is not None:
             json["securityDetails"] = self.security_details.to_json()
-        if self.is_ip_protection_used is not None:
-            json["isIpProtectionUsed"] = self.is_ip_protection_used
         return json
 
     @classmethod
@@ -1186,11 +1169,6 @@ class Response:
                 SecurityDetails.from_json(json.get("securityDetails"))
                 if json.get("securityDetails", None) is not None
                 else None
-            ),
-            is_ip_protection_used=(
-                bool(json.get('isIpProtectionUsed'))
-                if json.get('isIpProtectionUsed', None) is not None
-                else None,
             ),
         )
 
@@ -1450,8 +1428,6 @@ class Cookie:
     session: bool
     #: Cookie Priority
     priority: CookiePriority
-    #: True if cookie is SameParty.
-    same_party: bool
     #: Cookie source scheme type.
     source_scheme: CookieSourceScheme
     #: Cookie source port.
@@ -1480,7 +1456,6 @@ class Cookie:
         json["secure"] = self.secure
         json["session"] = self.session
         json["priority"] = self.priority.to_json()
-        json["sameParty"] = self.same_party
         json["sourceScheme"] = self.source_scheme.to_json()
         json["sourcePort"] = self.source_port
         if self.expires is not None:
@@ -1505,7 +1480,6 @@ class Cookie:
             secure=bool(json.get("secure")),
             session=bool(json.get("session")),
             priority=CookiePriority.from_json(json.get("priority")),
-            same_party=bool(json.get("sameParty")),
             source_scheme=CookieSourceScheme.from_json(
                 json.get("sourceScheme")
             ),
@@ -1554,10 +1528,6 @@ class SetCookieBlockedReason(enum.Enum):
     SCHEMEFUL_SAME_SITE_UNSPECIFIED_TREATED_AS_LAX = (
         "SchemefulSameSiteUnspecifiedTreatedAsLax"
     )
-    SAME_PARTY_FROM_CROSS_PARTY_CONTEXT = "SamePartyFromCrossPartyContext"
-    SAME_PARTY_CONFLICTS_WITH_OTHER_ATTRIBUTES = (
-        "SamePartyConflictsWithOtherAttributes"
-    )
     NAME_VALUE_PAIR_EXCEEDS_MAX_SIZE = "NameValuePairExceedsMaxSize"
     DISALLOWED_CHARACTER = "DisallowedCharacter"
     NO_COOKIE_CONTENT = "NoCookieContent"
@@ -1588,8 +1558,10 @@ class CookieBlockedReason(enum.Enum):
     SCHEMEFUL_SAME_SITE_UNSPECIFIED_TREATED_AS_LAX = (
         "SchemefulSameSiteUnspecifiedTreatedAsLax"
     )
-    SAME_PARTY_FROM_CROSS_PARTY_CONTEXT = "SamePartyFromCrossPartyContext"
     NAME_VALUE_PAIR_EXCEEDS_MAX_SIZE = "NameValuePairExceedsMaxSize"
+    PORT_MISMATCH = "PortMismatch"
+    SCHEME_MISMATCH = "SchemeMismatch"
+    ANONYMOUS_CONTEXT = "AnonymousContext"
 
     def to_json(self) -> str:
         return self.value
@@ -1608,12 +1580,13 @@ class CookieExemptionReason(enum.Enum):
     USER_SETTING = "UserSetting"
     TPCD_METADATA = "TPCDMetadata"
     TPCD_DEPRECATION_TRIAL = "TPCDDeprecationTrial"
+    TOP_LEVEL_TPCD_DEPRECATION_TRIAL = "TopLevelTPCDDeprecationTrial"
     TPCD_HEURISTICS = "TPCDHeuristics"
     ENTERPRISE_POLICY = "EnterprisePolicy"
     STORAGE_ACCESS = "StorageAccess"
     TOP_LEVEL_STORAGE_ACCESS = "TopLevelStorageAccess"
-    CORS_OPT_IN = "CorsOptIn"
     SCHEME = "Scheme"
+    SAME_SITE_NONE_COOKIES_IN_SANDBOX = "SameSiteNoneCookiesInSandbox"
 
     def to_json(self) -> str:
         return self.value
@@ -1761,8 +1734,6 @@ class CookieParam:
     expires: typing.Optional[TimeSinceEpoch] = None
     #: Cookie Priority.
     priority: typing.Optional[CookiePriority] = None
-    #: True if cookie is SameParty.
-    same_party: typing.Optional[bool] = None
     #: Cookie source scheme type.
     source_scheme: typing.Optional[CookieSourceScheme] = None
     #: Cookie source port.
@@ -1795,8 +1766,6 @@ class CookieParam:
             json["expires"] = self.expires.to_json()
         if self.priority is not None:
             json["priority"] = self.priority.to_json()
-        if self.same_party is not None:
-            json["sameParty"] = self.same_party
         if self.source_scheme is not None:
             json["sourceScheme"] = self.source_scheme.to_json()
         if self.source_port is not None:
@@ -1848,11 +1817,6 @@ class CookieParam:
             priority=(
                 CookiePriority.from_json(json.get("priority"))
                 if json.get("priority", None) is not None
-                else None
-            ),
-            same_party=(
-                bool(json.get("sameParty"))
-                if json.get("sameParty", None) is not None
                 else None
             ),
             source_scheme=(
@@ -2178,6 +2142,9 @@ class SignedExchangeInfo:
     #: The outer response of signed HTTP exchange which was
     #: received from network.
     outer_response: Response
+    #: Whether network response for the signed exchange was
+    #: accompanied by extra headers.
+    has_extra_info: bool
     #: Information about the signed exchange header.
     header: typing.Optional[SignedExchangeHeader] = None
     #: Security details for the signed exchange header.
@@ -2188,6 +2155,7 @@ class SignedExchangeInfo:
     def to_json(self) -> T_JSON_DICT:
         json: T_JSON_DICT = dict()
         json["outerResponse"] = self.outer_response.to_json()
+        json["hasExtraInfo"] = self.has_extra_info
         if self.header is not None:
             json["header"] = self.header.to_json()
         if self.security_details is not None:
@@ -2200,21 +2168,20 @@ class SignedExchangeInfo:
     def from_json(cls, json: T_JSON_DICT) -> SignedExchangeInfo:
         return cls(
             outer_response=Response.from_json(json.get("outerResponse")),
-            header=(
-                SignedExchangeHeader.from_json(json.get("header"))
-                if json.get("header", None) is not None
-                else None
-            ),
-            security_details=(
-                SecurityDetails.from_json(json.get("securityDetails"))
-                if json.get("securityDetails", None) is not None
-                else None
-            ),
-            errors=(
-                [SignedExchangeError.from_json(i) for i in json["errors"]]
-                if json.get("errors", None) is not None
-                else None
-            ),
+            has_extra_info=bool(json.get("hasExtraInfo")),
+            header=SignedExchangeHeader.from_json(json.get("header"))
+            if json.get("header", None) is not None
+            else None,
+            security_details=SecurityDetails.from_json(
+                json.get("securityDetails")
+            )
+            if json.get("securityDetails", None) is not None
+            else None,
+            errors=[
+                SignedExchangeError.from_json(i) for i in json.get("errors")
+            ]
+            if json.get("errors", None) is not None
+            else None,
         )
 
 
@@ -2231,6 +2198,279 @@ class ContentEncoding(enum.Enum):
     @classmethod
     def from_json(cls, json: str) -> ContentEncoding:
         return cls(json)
+
+
+@dataclass
+class NetworkConditions:
+    #: Only matching requests will be affected by these conditions.
+    #: Patterns use the URLPattern constructor string
+    #: syntax (https://urlpattern.spec.whatwg.org/) and must be absolute.
+    #: If the pattern is empty, all requests are
+    #: matched (including p2p connections).
+    url_pattern: str
+    #: Minimum latency from request sent to response headers received (ms).
+    latency: float
+    #: Maximal aggregated download throughput (bytes/sec).
+    #: -1 disables download throttling.
+    download_throughput: float
+    #: Maximal aggregated upload throughput (bytes/sec).
+    #: -1 disables upload throttling.
+    upload_throughput: float
+    #: Connection type if known.
+    connection_type: typing.Optional[ConnectionType] = None
+    #: WebRTC packet loss (percent, 0-100).
+    #: 0 disables packet loss emulation, 100 drops all the packets.
+    packet_loss: typing.Optional[float] = None
+    #: WebRTC packet queue length (packet).
+    #: 0 removes any queue length limitations.
+    packet_queue_length: typing.Optional[int] = None
+    #: WebRTC packetReordering feature.
+    packet_reordering: typing.Optional[bool] = None
+    #: True to emulate internet disconnection.
+    offline: typing.Optional[bool] = None
+
+    def to_json(self) -> T_JSON_DICT:
+        json: T_JSON_DICT = dict()
+        json["urlPattern"] = self.url_pattern
+        json["latency"] = self.latency
+        json["downloadThroughput"] = self.download_throughput
+        json["uploadThroughput"] = self.upload_throughput
+        if self.connection_type is not None:
+            json["connectionType"] = self.connection_type.to_json()
+        if self.packet_loss is not None:
+            json["packetLoss"] = self.packet_loss
+        if self.packet_queue_length is not None:
+            json["packetQueueLength"] = self.packet_queue_length
+        if self.packet_reordering is not None:
+            json["packetReordering"] = self.packet_reordering
+        if self.offline is not None:
+            json["offline"] = self.offline
+        return json
+
+    @classmethod
+    def from_json(cls, json: T_JSON_DICT) -> NetworkConditions:
+        return cls(
+            url_pattern=str(json.get("urlPattern")),
+            latency=float(json.get("latency")),
+            download_throughput=float(json.get("downloadThroughput")),
+            upload_throughput=float(json.get("uploadThroughput")),
+            connection_type=ConnectionType.from_json(
+                json.get("connectionType")
+            )
+            if json.get("connectionType", None) is not None
+            else None,
+            packet_loss=float(json.get("packetLoss"))
+            if json.get("packetLoss", None) is not None
+            else None,
+            packet_queue_length=int(json.get("packetQueueLength"))
+            if json.get("packetQueueLength", None) is not None
+            else None,
+            packet_reordering=bool(json.get("packetReordering"))
+            if json.get("packetReordering", None) is not None
+            else None,
+            offline=bool(json.get("offline"))
+            if json.get("offline", None) is not None
+            else None,
+        )
+
+
+@dataclass
+class BlockPattern:
+    #: URL pattern to match.
+    #: Patterns use the URLPattern constructor string syntax
+    #: (https://urlpattern.spec.whatwg.org/) and must be absolute.
+    #: Example: ``*://*:*/*.css``.
+    url_pattern: str
+    #: Whether or not to block the pattern.
+    #: If false, a matching request will not be blocked
+    #: even if it matches a later ``BlockPattern``.
+    block: bool
+
+    def to_json(self) -> T_JSON_DICT:
+        json: T_JSON_DICT = dict()
+        json["urlPattern"] = self.url_pattern
+        json["block"] = self.block
+        return json
+
+    @classmethod
+    def from_json(cls, json: T_JSON_DICT) -> BlockPattern:
+        return cls(
+            url_pattern=str(json.get("urlPattern")),
+            block=bool(json.get("block")),
+        )
+
+
+class DirectSocketDnsQueryType(enum.Enum):
+    IPV4 = "ipv4"
+    IPV6 = "ipv6"
+
+    def to_json(self) -> str:
+        return self.value
+
+    @classmethod
+    def from_json(cls, json: str) -> DirectSocketDnsQueryType:
+        return cls(json)
+
+
+@dataclass
+class DirectTCPSocketOptions:
+    #: TCP_NODELAY option
+    no_delay: bool
+    #: Expected to be unsigned integer.
+    keep_alive_delay: typing.Optional[float] = None
+    #: Expected to be unsigned integer.
+    send_buffer_size: typing.Optional[float] = None
+    #: Expected to be unsigned integer.
+    receive_buffer_size: typing.Optional[float] = None
+    dns_query_type: typing.Optional[DirectSocketDnsQueryType] = None
+
+    def to_json(self) -> T_JSON_DICT:
+        json: T_JSON_DICT = dict()
+        json["noDelay"] = self.no_delay
+        if self.keep_alive_delay is not None:
+            json["keepAliveDelay"] = self.keep_alive_delay
+        if self.send_buffer_size is not None:
+            json["sendBufferSize"] = self.send_buffer_size
+        if self.receive_buffer_size is not None:
+            json["receiveBufferSize"] = self.receive_buffer_size
+        if self.dns_query_type is not None:
+            json["dnsQueryType"] = self.dns_query_type.to_json()
+        return json
+
+    @classmethod
+    def from_json(cls, json: T_JSON_DICT) -> DirectTCPSocketOptions:
+        return cls(
+            no_delay=bool(json.get("noDelay")),
+            keep_alive_delay=float(json.get("keepAliveDelay"))
+            if json.get("keepAliveDelay", None) is not None
+            else None,
+            send_buffer_size=float(json.get("sendBufferSize"))
+            if json.get("sendBufferSize", None) is not None
+            else None,
+            receive_buffer_size=float(json.get("receiveBufferSize"))
+            if json.get("receiveBufferSize", None) is not None
+            else None,
+            dns_query_type=DirectSocketDnsQueryType.from_json(
+                json.get("dnsQueryType")
+            )
+            if json.get("dnsQueryType", None) is not None
+            else None,
+        )
+
+
+@dataclass
+class DirectUDPSocketOptions:
+    remote_addr: typing.Optional[str] = None
+    #: Unsigned int 16.
+    remote_port: typing.Optional[int] = None
+    local_addr: typing.Optional[str] = None
+    #: Unsigned int 16.
+    local_port: typing.Optional[int] = None
+    dns_query_type: typing.Optional[DirectSocketDnsQueryType] = None
+    #: Expected to be unsigned integer.
+    send_buffer_size: typing.Optional[float] = None
+    #: Expected to be unsigned integer.
+    receive_buffer_size: typing.Optional[float] = None
+    multicast_loopback: typing.Optional[bool] = None
+    #: Unsigned int 8.
+    multicast_time_to_live: typing.Optional[int] = None
+    multicast_allow_address_sharing: typing.Optional[bool] = None
+
+    def to_json(self) -> T_JSON_DICT:
+        json: T_JSON_DICT = dict()
+        if self.remote_addr is not None:
+            json["remoteAddr"] = self.remote_addr
+        if self.remote_port is not None:
+            json["remotePort"] = self.remote_port
+        if self.local_addr is not None:
+            json["localAddr"] = self.local_addr
+        if self.local_port is not None:
+            json["localPort"] = self.local_port
+        if self.dns_query_type is not None:
+            json["dnsQueryType"] = self.dns_query_type.to_json()
+        if self.send_buffer_size is not None:
+            json["sendBufferSize"] = self.send_buffer_size
+        if self.receive_buffer_size is not None:
+            json["receiveBufferSize"] = self.receive_buffer_size
+        if self.multicast_loopback is not None:
+            json["multicastLoopback"] = self.multicast_loopback
+        if self.multicast_time_to_live is not None:
+            json["multicastTimeToLive"] = self.multicast_time_to_live
+        if self.multicast_allow_address_sharing is not None:
+            json["multicastAllowAddressSharing"] = (
+                self.multicast_allow_address_sharing
+            )
+        return json
+
+    @classmethod
+    def from_json(cls, json: T_JSON_DICT) -> DirectUDPSocketOptions:
+        return cls(
+            remote_addr=str(json.get("remoteAddr"))
+            if json.get("remoteAddr", None) is not None
+            else None,
+            remote_port=int(json.get("remotePort"))
+            if json.get("remotePort", None) is not None
+            else None,
+            local_addr=str(json.get("localAddr"))
+            if json.get("localAddr", None) is not None
+            else None,
+            local_port=int(json.get("localPort"))
+            if json.get("localPort", None) is not None
+            else None,
+            dns_query_type=DirectSocketDnsQueryType.from_json(
+                json.get("dnsQueryType")
+            )
+            if json.get("dnsQueryType", None) is not None
+            else None,
+            send_buffer_size=float(json.get("sendBufferSize"))
+            if json.get("sendBufferSize", None) is not None
+            else None,
+            receive_buffer_size=float(json.get("receiveBufferSize"))
+            if json.get("receiveBufferSize", None) is not None
+            else None,
+            multicast_loopback=bool(json.get("multicastLoopback"))
+            if json.get("multicastLoopback", None) is not None
+            else None,
+            multicast_time_to_live=int(json.get("multicastTimeToLive"))
+            if json.get("multicastTimeToLive", None) is not None
+            else None,
+            multicast_allow_address_sharing=bool(
+                json.get("multicastAllowAddressSharing")
+            )
+            if json.get("multicastAllowAddressSharing", None) is not None
+            else None,
+        )
+
+
+@dataclass
+class DirectUDPMessage:
+    data: str
+    #: Null for connected mode.
+    remote_addr: typing.Optional[str] = None
+    #: Null for connected mode.
+    #: Expected to be unsigned integer.
+    remote_port: typing.Optional[int] = None
+
+    def to_json(self) -> T_JSON_DICT:
+        json: T_JSON_DICT = dict()
+        json["data"] = self.data
+        if self.remote_addr is not None:
+            json["remoteAddr"] = self.remote_addr
+        if self.remote_port is not None:
+            json["remotePort"] = self.remote_port
+        return json
+
+    @classmethod
+    def from_json(cls, json: T_JSON_DICT) -> DirectUDPMessage:
+        return cls(
+            data=str(json["data"]),
+            remote_addr=str(json.get("remoteAddr"))
+            if json.get("remoteAddr", None) is not None
+            else None,
+            remote_port=int(json.get("remotePort"))
+            if json.get("remotePort", None) is not None
+            else None,
+        )
 
 
 class LocalNetworkAccessRequestPolicy(enum.Enum):
@@ -2315,6 +2555,108 @@ class ClientSecurityState:
         )
 
 
+@dataclass
+class AdScriptIdentifier:
+    """
+    Identifies the script on the stack that caused a resource or element to be
+    labeled as an ad. For resources, this indicates the context that triggered
+    the fetch. For elements, this indicates the context that caused the element
+    to be appended to the DOM.
+    """
+    #: The script's V8 identifier.
+    script_id: runtime.ScriptId
+    #: V8's debugging ID for the v8::Context.
+    debugger_id: runtime.UniqueDebuggerId
+    #: The script's url (or generated name based on id if inline script).
+    name: str
+
+    def to_json(self) -> T_JSON_DICT:
+        json: T_JSON_DICT = dict()
+        json["scriptId"] = self.script_id.to_json()
+        json["debuggerId"] = self.debugger_id.to_json()
+        json["name"] = self.name
+        return json
+
+    @classmethod
+    def from_json(cls, json: T_JSON_DICT) -> AdScriptIdentifier:
+        return cls(
+            script_id=runtime.ScriptId.from_json(json.get("scriptId")),
+            debugger_id=runtime.UniqueDebuggerId.from_json(
+                json.get("debuggerId")
+            ),
+            name=str(json["name"]),
+        )
+
+
+@dataclass
+class AdAncestry:
+    """
+    Encapsulates the script ancestry and the root script filter list rule that
+    caused the resource or element to be labeled as an ad.
+    """
+    #: A chain of ``AdScriptIdentifier``'s representing the ancestry of an ad
+    #: script that led to the creation of a resource or element. The chain is
+    #: ordered from the script itself (lowest level) up to its root ancestor
+    #: that was flagged by a filter list.
+    ancestry_chain: typing.List[AdScriptIdentifier]
+    #: The filter list rule that caused the root (last) script in
+    #: ``ancestryChain`` to be tagged as an ad.
+    root_script_filterlist_rule: typing.Optional[str] = None
+
+    def to_json(self) -> T_JSON_DICT:
+        json: T_JSON_DICT = dict()
+        json["ancestryChain"] = [i.to_json() for i in self.ancestry_chain]
+        if self.root_script_filterlist_rule is not None:
+            json["rootScriptFilterlistRule"] = self.root_script_filterlist_rule
+        return json
+
+    @classmethod
+    def from_json(cls, json: T_JSON_DICT) -> AdAncestry:
+        return cls(
+            ancestry_chain=[
+                AdScriptIdentifier.from_json(i) for i in json["ancestryChain"]
+            ],
+            root_script_filterlist_rule=str(json["rootScriptFilterlistRule"])
+            if json.get("rootScriptFilterlistRule", None) is not None
+            else None,
+        )
+
+
+@dataclass
+class AdProvenance:
+    """
+    Represents the provenance of an ad resource or element. Only one of
+    ``filterlistRule`` or ``adScriptAncestry`` can be set. If `filterlistRule`
+    is provided, the resource URL directly matches a filter list rule. If
+    ``adScriptAncestry`` is provided, an ad script initiated the resource fetch
+    or appended the element to the DOM. If neither is provided, the entity is
+    known to be an ad, but provenance tracking information is unavailable.
+    """
+    #: The filterlist rule that matched, if any.
+    filterlist_rule: typing.Optional[str] = None
+    #: The script ancestry that created the ad, if any.
+    ad_script_ancestry: typing.Optional[AdAncestry] = None
+
+    def to_json(self) -> T_JSON_DICT:
+        json: T_JSON_DICT = dict()
+        if self.filterlist_rule is not None:
+            json["filterlistRule"] = self.filterlist_rule
+        if self.ad_script_ancestry is not None:
+            json["adScriptAncestry"] = self.ad_script_ancestry.to_json()
+        return json
+
+    @classmethod
+    def from_json(cls, json: T_JSON_DICT) -> AdProvenance:
+        return cls(
+            filterlist_rule=str(json["filterlistRule"])
+            if json.get("filterlistRule", None) is not None
+            else None,
+            ad_script_ancestry=AdAncestry.from_json(json["adScriptAncestry"])
+            if json.get("adScriptAncestry", None) is not None
+            else None,
+        )
+
+
 class CrossOriginOpenerPolicyValue(enum.Enum):
     SAME_ORIGIN = "SameOrigin"
     SAME_ORIGIN_ALLOW_POPUPS = "SameOriginAllowPopups"
@@ -2322,6 +2664,7 @@ class CrossOriginOpenerPolicyValue(enum.Enum):
     UNSAFE_NONE = "UnsafeNone"
     SAME_ORIGIN_PLUS_COEP = "SameOriginPlusCoep"
     RESTRICT_PROPERTIES_PLUS_COEP = "RestrictPropertiesPlusCoep"
+    NOOPENER_ALLOW_POPUPS = "NoopenerAllowPopups"
 
     def to_json(self) -> str:
         return self.value
@@ -2592,6 +2935,487 @@ class ReportingApiEndpoint:
 
 
 @dataclass
+class DeviceBoundSessionKey:
+    """Unique identifier for a device bound session."""
+    #: The site the session is set up for.
+    site: str
+    #: The id of the session.
+    id_: str
+
+    def to_json(self) -> T_JSON_DICT:
+        json: T_JSON_DICT = dict()
+        json["site"] = self.site
+        json["id"] = self.id_
+        return json
+
+    @classmethod
+    def from_json(cls, json: T_JSON_DICT) -> DeviceBoundSessionKey:
+        return cls(
+            site=str(json.get("site")),
+            id_=str(json.get("id")),
+        )
+
+
+@dataclass
+class DeviceBoundSessionWithUsage:
+    """How a device bound session was used during a request."""
+    #: The key for the session.
+    session_key: DeviceBoundSessionKey
+    #: How the session was used (or not used).
+    usage: str
+
+    def to_json(self) -> T_JSON_DICT:
+        json: T_JSON_DICT = dict()
+        json["sessionKey"] = self.session_key.to_json()
+        json["usage"] = self.usage
+        return json
+
+    @classmethod
+    def from_json(cls, json: T_JSON_DICT) -> DeviceBoundSessionWithUsage:
+        return cls(
+            session_key=DeviceBoundSessionKey.from_json(
+                json.get("sessionKey")
+            ),
+            usage=str(json.get("usage")),
+        )
+
+
+@dataclass
+class DeviceBoundSessionCookieCraving:
+    """A device bound session's cookie craving."""
+    #: The name of the craving.
+    name: str
+    #: The domain of the craving.
+    domain: str
+    #: The path of the craving.
+    path: str
+    #: The ``Secure`` attribute of the craving attributes.
+    secure: bool
+    #: The ``HttpOnly`` attribute of the craving attributes.
+    http_only: bool
+    #: The ``SameSite`` attribute of the craving attributes.
+    same_site: typing.Optional[CookieSameSite] = None
+
+    def to_json(self) -> T_JSON_DICT:
+        json: T_JSON_DICT = dict()
+        json["name"] = self.name
+        json["domain"] = self.domain
+        json["path"] = self.path
+        json["secure"] = self.secure
+        json["httpOnly"] = self.http_only
+        if self.same_site is not None:
+            json["sameSite"] = self.same_site.to_json()
+        return json
+
+    @classmethod
+    def from_json(cls, json: T_JSON_DICT) -> DeviceBoundSessionCookieCraving:
+        return cls(
+            name=str(json.get("name")),
+            domain=str(json.get("domain")),
+            path=str(json.get("path")),
+            secure=bool(json.get("secure")),
+            http_only=bool(json.get("httpOnly")),
+            same_site=CookieSameSite.from_json(json.get("sameSite"))
+            if json.get("sameSite", None) is not None
+            else None,
+        )
+
+
+@dataclass
+class DeviceBoundSessionUrlRule:
+    """A device bound session's inclusion URL rule."""
+    rule_type: str
+    host_pattern: str
+    path_prefix: str
+
+    def to_json(self) -> T_JSON_DICT:
+        json: T_JSON_DICT = dict()
+        json["ruleType"] = self.rule_type
+        json["hostPattern"] = self.host_pattern
+        json["pathPrefix"] = self.path_prefix
+        return json
+
+    @classmethod
+    def from_json(cls, json: T_JSON_DICT) -> DeviceBoundSessionUrlRule:
+        return cls(
+            rule_type=str(json.get("ruleType")),
+            host_pattern=str(json.get("hostPattern")),
+            path_prefix=str(json.get("pathPrefix")),
+        )
+
+
+@dataclass
+class DeviceBoundSessionInclusionRules:
+    """A device bound session's inclusion rules."""
+    origin: str
+    #: Whether the whole site is included. See comments on
+    #: ``net::device_bound_sessions::SessionInclusionRules::include_site_``
+    #: for more details; this boolean is true if that value is populated.
+    include_site: bool
+    url_rules: typing.List[DeviceBoundSessionUrlRule]
+
+    def to_json(self) -> T_JSON_DICT:
+        json: T_JSON_DICT = dict()
+        json["origin"] = self.origin
+        json["includeSite"] = self.include_site
+        json["urlRules"] = [i.to_json() for i in self.url_rules]
+        return json
+
+    @classmethod
+    def from_json(cls, json: T_JSON_DICT) -> DeviceBoundSessionInclusionRules:
+        return cls(
+            origin=str(json.get("origin")),
+            include_site=bool(json.get("includeSite")),
+            url_rules=[
+                DeviceBoundSessionUrlRule.from_json(i)
+                for i in json["urlRules"]
+            ],
+        )
+
+
+@dataclass
+class DeviceBoundSession:
+    """A device bound session."""
+    #: The site and session ID of the session.
+    key: DeviceBoundSessionKey
+    refresh_url: str
+    inclusion_rules: DeviceBoundSessionInclusionRules
+    cookie_cravings: typing.List[DeviceBoundSessionCookieCraving]
+    expiry_date: TimeSinceEpoch
+    allowed_refresh_initiators: typing.List[str]
+    cached_challenge: typing.Optional[str] = None
+
+    def to_json(self) -> T_JSON_DICT:
+        json: T_JSON_DICT = dict()
+        json["key"] = self.key.to_json()
+        json["refreshUrl"] = self.refresh_url
+        json["inclusionRules"] = self.inclusion_rules.to_json()
+        json["cookieCravings"] = [i.to_json() for i in self.cookie_cravings]
+        json["expiryDate"] = self.expiry_date.to_json()
+        json["allowedRefreshInitiators"] = [
+            i for i in self.allowed_refresh_initiators
+        ]
+        if self.cached_challenge is not None:
+            json["cachedChallenge"] = self.cached_challenge
+        return json
+
+    @classmethod
+    def from_json(cls, json: T_JSON_DICT) -> DeviceBoundSession:
+        return cls(
+            key=DeviceBoundSessionKey.from_json(json.get("key")),
+            refresh_url=str(json["refreshUrl"]),
+            inclusion_rules=DeviceBoundSessionInclusionRules.from_json(
+                json["inclusionRules"]
+            ),
+            cookie_cravings=[
+                DeviceBoundSessionCookieCraving.from_json(i)
+                for i in json["cookieCravings"]
+            ],
+            expiry_date=TimeSinceEpoch.from_json(json.get("expiryDate")),
+            allowed_refresh_initiators=[
+                str(i) for i in json["allowedRefreshInitiators"]
+            ],
+            cached_challenge=str(json["cachedChallenge"])
+            if json.get("cachedChallenge", None) is not None
+            else None,
+        )
+
+
+class DeviceBoundSessionEventId(str):
+    """A unique identifier for a device bound session event."""
+
+    def to_json(self) -> str:
+        return self
+
+    @classmethod
+    def from_json(cls, json: str) -> DeviceBoundSessionEventId:
+        return cls(json)
+
+    def __repr__(self):
+        return "DeviceBoundSessionEventId({})".format(super().__repr__())
+
+
+class DeviceBoundSessionFetchResult(enum.Enum):
+    """A fetch result for a device bound session creation or refresh."""
+    SUCCESS = "Success"
+    KEY_ERROR = "KeyError"
+    SIGNING_ERROR = "SigningError"
+    SERVER_REQUESTED_TERMINATION = "ServerRequestedTermination"
+    INVALID_SESSION_ID = "InvalidSessionId"
+    INVALID_CHALLENGE = "InvalidChallenge"
+    TOO_MANY_CHALLENGES = "TooManyChallenges"
+    INVALID_FETCHER_URL = "InvalidFetcherUrl"
+    INVALID_REFRESH_URL = "InvalidRefreshUrl"
+    TRANSIENT_HTTP_ERROR = "TransientHttpError"
+    SCOPE_ORIGIN_SAME_SITE_MISMATCH = "ScopeOriginSameSiteMismatch"
+    REFRESH_URL_SAME_SITE_MISMATCH = "RefreshUrlSameSiteMismatch"
+    MISMATCHED_SESSION_ID = "MismatchedSessionId"
+    MISSING_SCOPE = "MissingScope"
+    NO_CREDENTIALS = "NoCredentials"
+    SUBDOMAIN_REGISTRATION_WELL_KNOWN_UNAVAILABLE = (
+        "SubdomainRegistrationWellKnownUnavailable"
+    )
+    SUBDOMAIN_REGISTRATION_UNAUTHORIZED = "SubdomainRegistrationUnauthorized"
+    SUBDOMAIN_REGISTRATION_WELL_KNOWN_MALFORMED = (
+        "SubdomainRegistrationWellKnownMalformed"
+    )
+    SESSION_PROVIDER_WELL_KNOWN_UNAVAILABLE = (
+        "SessionProviderWellKnownUnavailable"
+    )
+    RELYING_PARTY_WELL_KNOWN_UNAVAILABLE = "RelyingPartyWellKnownUnavailable"
+    FEDERATED_KEY_THUMBPRINT_MISMATCH = "FederatedKeyThumbprintMismatch"
+    INVALID_FEDERATED_SESSION_URL = "InvalidFederatedSessionUrl"
+    INVALID_FEDERATED_KEY = "InvalidFederatedKey"
+    TOO_MANY_RELYING_ORIGIN_LABELS = "TooManyRelyingOriginLabels"
+    BOUND_COOKIE_SET_FORBIDDEN = "BoundCookieSetForbidden"
+    NET_ERROR = "NetError"
+    PROXY_ERROR = "ProxyError"
+    EMPTY_SESSION_CONFIG = "EmptySessionConfig"
+    INVALID_CREDENTIALS_CONFIG = "InvalidCredentialsConfig"
+    INVALID_CREDENTIALS_TYPE = "InvalidCredentialsType"
+    INVALID_CREDENTIALS_EMPTY_NAME = "InvalidCredentialsEmptyName"
+    INVALID_CREDENTIALS_COOKIE = "InvalidCredentialsCookie"
+    PERSISTENT_HTTP_ERROR = "PersistentHttpError"
+    REGISTRATION_ATTEMPTED_CHALLENGE = "RegistrationAttemptedChallenge"
+    INVALID_SCOPE_ORIGIN = "InvalidScopeOrigin"
+    SCOPE_ORIGIN_CONTAINS_PATH = "ScopeOriginContainsPath"
+    REFRESH_INITIATOR_NOT_STRING = "RefreshInitiatorNotString"
+    REFRESH_INITIATOR_INVALID_HOST_PATTERN = (
+        "RefreshInitiatorInvalidHostPattern"
+    )
+    INVALID_SCOPE_SPECIFICATION = "InvalidScopeSpecification"
+    MISSING_SCOPE_SPECIFICATION_TYPE = "MissingScopeSpecificationType"
+    EMPTY_SCOPE_SPECIFICATION_DOMAIN = "EmptyScopeSpecificationDomain"
+    EMPTY_SCOPE_SPECIFICATION_PATH = "EmptyScopeSpecificationPath"
+    INVALID_SCOPE_SPECIFICATION_TYPE = "InvalidScopeSpecificationType"
+    INVALID_SCOPE_INCLUDE_SITE = "InvalidScopeIncludeSite"
+    MISSING_SCOPE_INCLUDE_SITE = "MissingScopeIncludeSite"
+    FEDERATED_NOT_AUTHORIZED_BY_PROVIDER = "FederatedNotAuthorizedByProvider"
+    FEDERATED_NOT_AUTHORIZED_BY_RELYING_PARTY = (
+        "FederatedNotAuthorizedByRelyingParty"
+    )
+    SESSION_PROVIDER_WELL_KNOWN_MALFORMED = "SessionProviderWellKnownMalformed"
+    SESSION_PROVIDER_WELL_KNOWN_HAS_PROVIDER_ORIGIN = (
+        "SessionProviderWellKnownHasProviderOrigin"
+    )
+    RELYING_PARTY_WELL_KNOWN_MALFORMED = "RelyingPartyWellKnownMalformed"
+    RELYING_PARTY_WELL_KNOWN_HAS_RELYING_ORIGINS = (
+        "RelyingPartyWellKnownHasRelyingOrigins"
+    )
+    INVALID_FEDERATED_SESSION_PROVIDER_SESSION_MISSING = (
+        "InvalidFederatedSessionProviderSessionMissing"
+    )
+    INVALID_FEDERATED_SESSION_WRONG_PROVIDER_ORIGIN = (
+        "InvalidFederatedSessionWrongProviderOrigin"
+    )
+    INVALID_CREDENTIALS_COOKIE_CREATION_TIME = (
+        "InvalidCredentialsCookieCreationTime"
+    )
+    INVALID_CREDENTIALS_COOKIE_NAME = "InvalidCredentialsCookieName"
+    INVALID_CREDENTIALS_COOKIE_PARSING = "InvalidCredentialsCookieParsing"
+    INVALID_CREDENTIALS_COOKIE_UNPERMITTED_ATTRIBUTE = (
+        "InvalidCredentialsCookieUnpermittedAttribute"
+    )
+    INVALID_CREDENTIALS_COOKIE_INVALID_DOMAIN = (
+        "InvalidCredentialsCookieInvalidDomain"
+    )
+    INVALID_CREDENTIALS_COOKIE_PREFIX = "InvalidCredentialsCookiePrefix"
+    INVALID_SCOPE_RULE_PATH = "InvalidScopeRulePath"
+    INVALID_SCOPE_RULE_HOST_PATTERN = "InvalidScopeRuleHostPattern"
+    SCOPE_RULE_ORIGIN_SCOPED_HOST_PATTERN_MISMATCH = (
+        "ScopeRuleOriginScopedHostPatternMismatch"
+    )
+    SCOPE_RULE_SITE_SCOPED_HOST_PATTERN_MISMATCH = (
+        "ScopeRuleSiteScopedHostPatternMismatch"
+    )
+    SIGNING_QUOTA_EXCEEDED = "SigningQuotaExceeded"
+    INVALID_CONFIG_JSON = "InvalidConfigJson"
+    INVALID_FEDERATED_SESSION_PROVIDER_FAILED_TO_RESTORE_KEY = (
+        "InvalidFederatedSessionProviderFailedToRestoreKey"
+    )
+    FAILED_TO_UNWRAP_KEY = "FailedToUnwrapKey"
+    SESSION_DELETED_DURING_REFRESH = "SessionDeletedDuringRefresh"
+
+    def to_json(self) -> str:
+        return self.value
+
+    @classmethod
+    def from_json(cls, json: str) -> DeviceBoundSessionFetchResult:
+        return cls(json)
+
+
+@dataclass
+class DeviceBoundSessionFailedRequest:
+    """Details about a failed device bound session network request."""
+    #: The failed request URL.
+    request_url: str
+    #: The net error of the response if it was not OK.
+    net_error: typing.Optional[str] = None
+    #: The response code if the net error was OK and the response code was not
+    #: 200.
+    response_error: typing.Optional[int] = None
+    #: The body of the response if the net error was OK, the response code was
+    #: not 200, and the response body was not empty.
+    response_error_body: typing.Optional[str] = None
+
+    def to_json(self) -> T_JSON_DICT:
+        json: T_JSON_DICT = dict()
+        json["requestUrl"] = self.request_url
+        if self.net_error is not None:
+            json["netError"] = self.net_error
+        if self.response_error is not None:
+            json["responseError"] = self.response_error
+        if self.response_error_body is not None:
+            json["responseErrorBody"] = self.response_error_body
+        return json
+
+    @classmethod
+    def from_json(cls, json: T_JSON_DICT) -> DeviceBoundSessionFailedRequest:
+        return cls(
+            request_url=str(json["requestUrl"]),
+            net_error=str(json["netError"])
+            if json.get("netError", None) is not None
+            else None,
+            response_error=int(json["responseError"])
+            if json.get("responseError", None) is not None
+            else None,
+            response_error_body=str(json["responseErrorBody"])
+            if json.get("responseErrorBody", None) is not None
+            else None,
+        )
+
+
+@dataclass
+class CreationEventDetails:
+    """Session event details specific to creation."""
+    #: The result of the fetch attempt.
+    fetch_result: DeviceBoundSessionFetchResult
+    #: The session if there was a newly created session. This is populated for
+    #: all successful creation events.
+    new_session: typing.Optional[DeviceBoundSession] = None
+    #: Details about a failed device bound session network request if there was
+    #: one.
+    failed_request: typing.Optional[DeviceBoundSessionFailedRequest] = None
+
+    def to_json(self) -> T_JSON_DICT:
+        json: T_JSON_DICT = dict()
+        json["fetchResult"] = self.fetch_result.to_json()
+        if self.new_session is not None:
+            json["newSession"] = self.new_session.to_json()
+        if self.failed_request is not None:
+            json["failedRequest"] = self.failed_request.to_json()
+        return json
+
+    @classmethod
+    def from_json(cls, json: T_JSON_DICT) -> CreationEventDetails:
+        return cls(
+            fetch_result=DeviceBoundSessionFetchResult.from_json(
+                json.get("fetchResult")
+            ),
+            new_session=DeviceBoundSession.from_json(json.get("newSession"))
+            if json.get("newSession", None) is not None
+            else None,
+            failed_request=DeviceBoundSessionFailedRequest.from_json(
+                json.get("failedRequest")
+            )
+            if json.get("failedRequest", None) is not None
+            else None,
+        )
+
+
+@dataclass
+class RefreshEventDetails:
+    """Session event details specific to refresh."""
+    #: The result of a refresh.
+    refresh_result: str
+    was_fully_proactive_refresh: bool
+    #: If there was a fetch attempt, the result of that.
+    fetch_result: typing.Optional[DeviceBoundSessionFetchResult] = None
+    #: The session display if there was a newly created session.
+    #: This is populated for any refresh event that modifies the session config
+    new_session: typing.Optional[DeviceBoundSession] = None
+    #: Details about a failed device bound session network request if there was
+    #: one.
+    failed_request: typing.Optional[DeviceBoundSessionFailedRequest] = None
+
+    def to_json(self) -> T_JSON_DICT:
+        json: T_JSON_DICT = dict()
+        json["refreshResult"] = self.refresh_result
+        json["wasFullyProactiveRefresh"] = self.was_fully_proactive_refresh
+        if self.fetch_result is not None:
+            json["fetchResult"] = self.fetch_result.to_json()
+        if self.new_session is not None:
+            json["newSession"] = self.new_session.to_json()
+        if self.failed_request is not None:
+            json["failedRequest"] = self.failed_request.to_json()
+        return json
+
+    @classmethod
+    def from_json(cls, json: T_JSON_DICT) -> RefreshEventDetails:
+        return cls(
+            refresh_result=str(json.get("refreshResult")),
+            was_fully_proactive_refresh=bool(
+                json.get("wasFullyProactiveRefresh")
+            ),
+            fetch_result=DeviceBoundSessionFetchResult.from_json(
+                json.get("fetchResult")
+            )
+            if json.get("fetchResult", None) is not None
+            else None,
+            new_session=DeviceBoundSession.from_json(
+                json.get("newSession")
+            )
+            if json.get("newSession", None) is not None
+            else None,
+            failed_request=DeviceBoundSessionFailedRequest.from_json(
+                json.get("failedRequest")
+            )
+            if json.get("failedRequest", None) is not None
+            else None,
+        )
+
+
+@dataclass
+class TerminationEventDetails:
+    """Session event details specific to termination."""
+    #: The reason for a session being deleted.
+    deletion_reason: str
+
+    def to_json(self) -> T_JSON_DICT:
+        json: T_JSON_DICT = dict()
+        json["deletionReason"] = self.deletion_reason
+        return json
+
+    @classmethod
+    def from_json(cls, json: T_JSON_DICT) -> TerminationEventDetails:
+        return cls(
+            deletion_reason=str(json.get("deletionReason")),
+        )
+
+
+@dataclass
+class ChallengeEventDetails:
+    """Session event details specific to challenges."""
+    #: The result of a challenge.
+    challenge_result: str
+    #: The challenge set.
+    challenge: str
+
+    def to_json(self) -> T_JSON_DICT:
+        json: T_JSON_DICT = dict()
+        json["challengeResult"] = self.challenge_result
+        json["challenge"] = self.challenge
+        return json
+
+    @classmethod
+    def from_json(cls, json: T_JSON_DICT) -> ChallengeEventDetails:
+        return cls(
+            challenge_result=str(json.get("challengeResult")),
+            challenge=str(json.get("challenge")),
+        )
+
+
+@dataclass
 class LoadNetworkResourcePageResult:
     """An object providing the result of a network resource load."""
     success: bool
@@ -2623,39 +3447,29 @@ class LoadNetworkResourcePageResult:
     def from_json(cls, json: T_JSON_DICT) -> LoadNetworkResourcePageResult:
         return cls(
             success=bool(json.get("success")),
-            net_error=(
-                float(json.get("netError"))
-                if json.get("netError", None) is not None
-                else None
-            ),
-            net_error_name=(
-                str(json.get("netErrorName"))
-                if json.get("netErrorName", None) is not None
-                else None
-            ),
-            http_status_code=(
-                float(json.get("httpStatusCode"))
-                if json.get("httpStatusCode", None) is not None
-                else None
-            ),
-            stream=(
-                io.StreamHandle.from_json(json.get("stream"))
-                if json.get("stream", None) is not None
-                else None
-            ),
-            headers=(
-                Headers.from_json(json.get("headers"))
-                if json.get("headers", None) is not None
-                else None
-            ),
+            net_error=float(json.get("netError"))
+            if json.get("netError", None) is not None
+            else None,
+            net_error_name=str(json.get("netErrorName"))
+            if json.get("netErrorName", None) is not None
+            else None,
+            http_status_code=float(json.get("httpStatusCode"))
+            if json.get("httpStatusCode", None) is not None
+            else None,
+            stream=io.StreamHandle.from_json(json.get("stream"))
+            if json.get("stream", None) is not None
+            else None,
+            headers=Headers.from_json(json.get("headers"))
+            if json.get("headers", None) is not None
+            else None,
         )
 
 
 @dataclass
 class LoadNetworkResourceOptions:
     """
-    An options object that may be extended later
-    to better support CORS, CORB and streaming.
+    An options object that may be extended later to better support CORS,
+    CORB and streaming.
     """
     disable_cache: bool
     include_credentials: bool
@@ -2672,36 +3486,6 @@ class LoadNetworkResourceOptions:
             disable_cache=bool(json.get("disableCache")),
             include_credentials=bool(json.get("includeCredentials")),
         )
-
-
-def get_ip_protection_proxy_status(
-) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, IpProxyStatus]:
-    """
-    Returns enum representing if IP Proxy of requests is available,
-    or reason it is not active.
-    :returns: Whether IP proxy is available or reason if not active.
-    """
-    cmd_dict: T_JSON_DICT = {
-        'method': 'Network.getIPProtectionProxyStatus',
-    }
-    json = yield cmd_dict  # noqa
-    return IpProxyStatus.from_json(json.get('status'))
-
-
-def set_ip_protection_proxy_bypass_enabled(
-    enabled: bool,
-) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
-    """
-    Sets bypass IP Protection Proxy boolean.
-    :param enabled: Whether IP Proxy is bypassed by devtools. False by default.
-    """
-    params: T_JSON_DICT = dict()
-    params['enabled'] = enabled
-    cmd_dict: T_JSON_DICT = {
-        'method': 'Network.setIPProtectionProxyBypassEnabled',
-        'params': params,
-    }
-    json = yield cmd_dict  # noqa
 
 
 def set_accepted_encodings(
@@ -2724,13 +3508,53 @@ def set_accepted_encodings(
 def clear_accepted_encodings_override() -> (
     typing.Generator[T_JSON_DICT, T_JSON_DICT, None]
 ):
-    """
-    Clears accepted encodings set by setAcceptedEncodings
-    """
+    """Clears accepted encodings set by setAcceptedEncodings"""
     cmd_dict: T_JSON_DICT = {
         "method": "Network.clearAcceptedEncodingsOverride",
     }
     json = yield cmd_dict  # noqa
+
+
+def can_clear_browser_cache() -> typing.Generator[
+    T_JSON_DICT, T_JSON_DICT, bool
+]:
+    """
+    Tells whether clearing browser cache is supported.
+    :returns: True if browser cache can be cleared.
+    """
+    cmd_dict: T_JSON_DICT = {
+        "method": "Network.canClearBrowserCache",
+    }
+    json = yield cmd_dict
+    return bool(json["result"])
+
+
+def can_clear_browser_cookies() -> typing.Generator[
+    T_JSON_DICT, T_JSON_DICT, bool
+]:
+    """
+    Tells whether clearing browser cookies is supported.
+    :returns: True if browser cookies can be cleared.
+    """
+    cmd_dict: T_JSON_DICT = {
+        "method": "Network.canClearBrowserCookies",
+    }
+    json = yield cmd_dict
+    return bool(json["result"])  # noqa
+
+
+def can_emulate_network_conditions() -> (
+    typing.Generator[T_JSON_DICT, T_JSON_DICT, bool]
+):
+    """
+    Tells whether emulation of network conditions is supported.
+    :returns: True if emulation of network conditions is supported.
+    """
+    cmd_dict: T_JSON_DICT = {
+        "method": "Network.canEmulateNetworkConditions",
+    }
+    json = yield cmd_dict
+    return bool(json["result"])
 
 
 def clear_browser_cache() -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
@@ -2770,8 +3594,6 @@ def continue_intercepted_request(
     same InterceptionId.
     Deprecated, use Fetch.continueRequest, Fetch.fulfillRequest
     and Fetch.failRequest instead.
-    .. deprecated:: 1.3
-    **EXPERIMENTAL**
     :param interception_id:
     :param error_reason: *(Optional)*
      If set this causes the request to fail with the given reason.
@@ -2923,6 +3745,80 @@ def emulate_network_conditions(
     json = yield cmd_dict  # noqa
 
 
+def emulate_network_conditions_by_rule(
+    matched_network_conditions: typing.List[NetworkConditions],
+    offline: typing.Optional[bool] = None,
+    emulate_offline_service_worker: typing.Optional[bool] = None,
+) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, typing.List[str]]:
+    """
+    Activates emulation of network conditions for individual requests using URL
+    match patterns. Unlike the deprecated Network.emulateNetworkConditions this
+    method does not affect `navigator` state. Use Network.overrideNetworkState
+    to explicitly modify ``navigator`` behavior.
+    :param offline: **(DEPRECATED)** *(Optional)*
+     True to emulate internet disconnection.
+     Deprecated, use the offline property in matchedNetworkConditions
+     or emulateOfflineServiceWorker instead.
+    :param emulate_offline_service_worker: *(Optional)*
+     True to emulate offline service worker.
+    :param matched_network_conditions:
+     Configure conditions for matching requests.
+     If multiple entries match a request, the first entry wins.
+     Global conditions can be configured by leaving the urlPattern
+     for the conditions empty. These global conditions are also applied
+     for throttling of p2p connections.
+    :returns: An id for each entry in matchedNetworkConditions.
+     The id will be included in the requestWillBeSentExtraInfo
+     for requests affected by a rule.
+    """
+    params: T_JSON_DICT = dict()
+    if offline is not None:
+        params["offline"] = offline
+    if emulate_offline_service_worker is not None:
+        params["emulateOfflineServiceWorker"] = emulate_offline_service_worker
+    params["matchedNetworkConditions"] = [
+        i.to_json() for i in matched_network_conditions
+    ]
+    cmd_dict: T_JSON_DICT = {
+        "method": "Network.emulateNetworkConditionsByRule",
+        "params": params,
+    }
+    json = yield cmd_dict
+    return [str(i) for i in json["ruleIds"]]
+
+
+def override_network_state(
+    offline: bool,
+    latency: float,
+    download_throughput: float,
+    upload_throughput: float,
+    connection_type: typing.Optional[ConnectionType] = None,
+) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
+    """
+    Override the state of navigator.onLine and navigator.connection.
+    :param offline: True to emulate internet disconnection.
+    :param latency: Minimum latency from request sent
+     to response headers received (ms).
+    :param download_throughput: Maximal aggregated download throughput
+     (bytes/sec). -1 disables download throttling.
+    :param upload_throughput: Maximal aggregated upload throughput
+     (bytes/sec).  -1 disables upload throttling.
+    :param connection_type: *(Optional)* Connection type if known.
+    """
+    params: T_JSON_DICT = dict()
+    params["offline"] = offline
+    params["latency"] = latency
+    params["downloadThroughput"] = download_throughput
+    params["uploadThroughput"] = upload_throughput
+    if connection_type is not None:
+        params["connectionType"] = connection_type.to_json()
+    cmd_dict: T_JSON_DICT = {
+        "method": "Network.overrideNetworkState",
+        "params": params,
+    }
+    json = yield cmd_dict  # noqa
+
+
 def enable(
     max_total_buffer_size: typing.Optional[int] = None,
     max_resource_buffer_size: typing.Optional[int] = None,
@@ -2932,21 +3828,25 @@ def enable(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Enables network tracking.
-    Network events will now be delivered to the client.
-    :param max_total_buffer_size: *(Optional)*
-     Buffer size in bytes to use when preserving network payloads (XHRs, etc).
-    :param max_resource_buffer_size: *(Optional)*
+    (Network events will now be delivered to the client.)
+    :param max_total_buffer_size: **(EXPERIMENTAL)** *(Optional)*
+    Buffer size in bytes to use when preserving network payloads (XHRs, etc).
+    This is the maximum number of bytes
+    that will be collected by this DevTools session.
+    :param max_resource_buffer_size: **(EXPERIMENTAL)** *(Optional)*
      Per-resource buffer size in bytes to use when preserving network payloads
      (XHRs, etc).
-    :param max_post_data_size: *(Optional)*
-     Longest post body size (in bytes) that would be included
-     in requestWillBeSent notification.
-    :param report_direct_socket_traffic: *(Optional)*
+    :param max_post_data_size: *(Optional)* Longest post body size (in bytes)
+     that would be included in requestWillBeSent notification
+    :param report_direct_socket_traffic: **(EXPERIMENTAL)** *(Optional)*
      Whether DirectSocket chunk send/receive events should be reported.
-    :param enable_durable_messages: *(Optional)*
+    :param enable_durable_messages: **(EXPERIMENTAL)** *(Optional)*
      Enable storing response bodies outside of renderer,
      so that these survive a cross-process navigation.
      Requires maxTotalBufferSize to be set. Currently defaults to false.
+     This field is being deprecated in favor of the dedicated
+     configureDurableMessages command, due to the possibility of deadlocks when
+     awaiting Network.enable before issuing Runtime.runIfWaitingForDebugger.
     """
     params: T_JSON_DICT = dict()
     if max_total_buffer_size is not None:
@@ -2966,6 +3866,32 @@ def enable(
     json = yield cmd_dict  # noqa
 
 
+def configure_durable_messages(
+    max_total_buffer_size: typing.Optional[int] = None,
+    max_resource_buffer_size: typing.Optional[int] = None,
+) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
+    """
+    Configures storing response bodies outside of renderer,
+    so that these survive a cross-process navigation.
+    If maxTotalBufferSize is not set, durable messages are disabled.
+    :param max_total_buffer_size: *(Optional)*
+     Buffer size in bytes to use when preserving network payloads (XHRs, etc).
+    :param max_resource_buffer_size: *(Optional)*
+     Per-resource buffer size in bytes to use
+     when preserving network payloads (XHRs, etc).
+    """
+    params: T_JSON_DICT = dict()
+    if max_total_buffer_size is not None:
+        params["maxTotalBufferSize"] = max_total_buffer_size
+    if max_resource_buffer_size is not None:
+        params["maxResourceBufferSize"] = max_resource_buffer_size
+    cmd_dict: T_JSON_DICT = {
+        "method": "Network.configureDurableMessages",
+        "params": params,
+    }
+    json = yield cmd_dict  # noqa
+
+
 def get_all_cookies() -> (
     typing.Generator[T_JSON_DICT, T_JSON_DICT, typing.List[Cookie]]
 ):
@@ -2973,7 +3899,6 @@ def get_all_cookies() -> (
     Returns all browser cookies. Depending on the backend support,
     will return detailed cookie information in the ``cookies`` field.
     Deprecated. Use Storage.getCookies instead.
-    .. deprecated:: 1.3
     :returns: Array of cookie objects.
     """
     cmd_dict: T_JSON_DICT = {
@@ -2988,7 +3913,6 @@ def get_certificate(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, typing.List[str]]:
     """
     Returns the DER-encoded certificate.
-    **EXPERIMENTAL**
     :param origin: Origin to get certificate for.
     """
     params: T_JSON_DICT = dict()
@@ -3047,12 +3971,15 @@ def get_response_body(
 
 def get_request_post_data(
     request_id: RequestId,
-) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, str]:
+) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, typing.Tuple[str, bool]]:
     """
     Returns post data sent with the request.
     Returns an error when no data was sent with the request.
     :param request_id: Identifier of the network request to get content for.
-    :returns: Request body string, omitting files from multipart requests
+    :returns: A tuple with the following items:
+        0. **postData** - Request body string,
+            omitting files from multipart requests
+        1. **base64Encoded** - True, if content was sent as base64.
     """
     params: T_JSON_DICT = dict()
     params["requestId"] = request_id.to_json()
@@ -3061,7 +3988,7 @@ def get_request_post_data(
         "params": params,
     }
     json = yield cmd_dict
-    return str(json.get("postData"))
+    return (str(json.get("postData")), bool(json.get("base64Encoded")))
 
 
 def get_response_body_for_interception(
@@ -3069,7 +3996,6 @@ def get_response_body_for_interception(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, typing.Tuple[str, bool]]:
     """
     Returns content served for the given currently intercepted request.
-    **EXPERIMENTAL**
     :param interception_id:
      Identifier for the intercepted request to get body for.
     :returns: A tuple with the following items:
@@ -3139,7 +4065,6 @@ def search_in_response_body(
 ]:
     """
     Searches for given string in response content.
-    **EXPERIMENTAL**
     :param request_id: Identifier of the network response to search.
     :param query: String to search for.
     :param case_sensitive: *(Optional)* If true, search is case sensitive.
@@ -3162,15 +4087,23 @@ def search_in_response_body(
 
 
 def set_blocked_urls(
-    urls: typing.List[str],
+    url_patterns: typing.Optional[typing.List[BlockPattern]] = None,
+    urls: typing.Optional[typing.List[str]] = None,
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Blocks URLs from loading.
-    **EXPERIMENTAL**
-    :param urls: URL patterns to block. Wildcards ('*') are allowed.
+    :param url_patterns: *(Optional)*
+    Patterns to match in the order in which they are given.
+    These patterns also take precedence over any wildcard patterns
+    defined in `urls`.
+    :param urls: **(DEPRECATED)** *(Optional)*
+    URL patterns to block. Wildcards ('*') are allowed.
     """
     params: T_JSON_DICT = dict()
-    params["urls"] = [i for i in urls]
+    if url_patterns is not None:
+        params["urlPatterns"] = [i.to_json() for i in url_patterns]
+    if urls is not None:
+        params["urls"] = [i for i in urls]
     cmd_dict: T_JSON_DICT = {
         "method": "Network.setBlockedURLs",
         "params": params,
@@ -3222,7 +4155,6 @@ def set_cookie(
     same_site: typing.Optional[CookieSameSite] = None,
     expires: typing.Optional[TimeSinceEpoch] = None,
     priority: typing.Optional[CookiePriority] = None,
-    same_party: typing.Optional[bool] = None,
     source_scheme: typing.Optional[CookieSourceScheme] = None,
     source_port: typing.Optional[int] = None,
     partition_key: typing.Optional[CookiePartitionKey] = None,
@@ -3244,8 +4176,6 @@ def set_cookie(
     :param expires: *(Optional)*
      Cookie expiration date, session cookie if not set
     :param priority: **(EXPERIMENTAL)** *(Optional)* Cookie Priority type.
-    :param same_party: **(EXPERIMENTAL)** *(Optional)*
-     True if cookie is SameParty.
     :param source_scheme: **(EXPERIMENTAL)** *(Optional)*
      Cookie source scheme type.
     :param source_port: **(EXPERIMENTAL)** *(Optional)*
@@ -3278,8 +4208,6 @@ def set_cookie(
         params["expires"] = expires.to_json()
     if priority is not None:
         params["priority"] = priority.to_json()
-    if same_party is not None:
-        params["sameParty"] = same_party
     if source_scheme is not None:
         params["sourceScheme"] = source_scheme.to_json()
     if source_port is not None:
@@ -3332,7 +4260,6 @@ def set_attach_debug_stack(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
     """
     Specifies whether to attach a page script stack id in requests
-    **EXPERIMENTAL**
     :param enabled: Whether to attach a page script stack for debugging purpose
     """
     params: T_JSON_DICT = dict()
@@ -3351,8 +4278,6 @@ def set_request_interception(
     Sets the requests to intercept that match the provided patterns
     and optionally resource types.
     Deprecated, please use Fetch.enable instead.
-    .. deprecated:: 1.3
-    **EXPERIMENTAL**
     :param patterns: Requests matching any of these patterns will be forwarded
     and wait for the corresponding continueInterceptedRequest call.
     """
@@ -3456,6 +4381,41 @@ def enable_reporting_api(
     json = yield cmd_dict  # noqa
 
 
+def enable_device_bound_sessions(
+    enable: bool,
+) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
+    """
+    Sets up tracking device bound sessions and fetching
+    of initial set of sessions.
+    :param enable: Whether to enable or disable events.
+    """
+    params: T_JSON_DICT = dict()
+    params["enable"] = enable
+    cmd_dict: T_JSON_DICT = {
+        "method": "Network.enableDeviceBoundSessions",
+        "params": params,
+    }
+    json = yield cmd_dict  # noqa
+
+
+def fetch_schemeful_site(
+    origin: str,
+) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, str]:
+    """
+    Fetches the schemeful site for a specific origin.
+    :param origin: The URL origin.
+    :returns: The corresponding schemeful site.
+    """
+    params: T_JSON_DICT = dict()
+    params["origin"] = origin
+    cmd_dict: T_JSON_DICT = {
+        "method": "Network.fetchSchemefulSite",
+        "params": params,
+    }
+    json = yield cmd_dict
+    return str(json["schemefulSite"])
+
+
 def load_network_resource(
     url: str,
     options: LoadNetworkResourceOptions,
@@ -3463,7 +4423,6 @@ def load_network_resource(
 ) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, LoadNetworkResourcePageResult]:
     """
     Fetches the resource and returns the content.
-    **EXPERIMENTAL**
     :param frame_id: *(Optional)* Frame id to get the resource for.
      Mandatory for frame targets, and should be omitted for worker targets.
     :param url: URL of the resource to get content for.
@@ -3480,6 +4439,26 @@ def load_network_resource(
     }
     json = yield cmd_dict
     return LoadNetworkResourcePageResult.from_json(json.get("resource"))
+
+
+def set_cookie_controls(
+    enable_third_party_cookie_restriction: bool,
+) -> typing.Generator[T_JSON_DICT, T_JSON_DICT, None]:
+    """
+    Sets Controls for third-party cookie access
+    Page reload is required before the new cookie behavior will be observed
+    :param enable_third_party_cookie_restriction:
+     Whether 3pc restriction is enabled.
+    """
+    params: T_JSON_DICT = dict()
+    params[
+        "enableThirdPartyCookieRestriction"
+    ] = enable_third_party_cookie_restriction
+    cmd_dict: T_JSON_DICT = {
+        "method": "Network.setCookieControls",
+        "params": params,
+    }
+    json = yield cmd_dict  # noqa
 
 
 @event_class("Network.dataReceived")
@@ -3742,6 +4721,8 @@ class RequestWillBeSent:
     frame_id: typing.Optional[page.FrameId]
     #: Whether the request is initiated by a user gesture. Defaults to false.
     has_user_gesture: typing.Optional[bool]
+    #: The render-blocking behavior of the request.
+    render_blocking_behavior: typing.Optional[RenderBlockingBehavior]
 
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> RequestWillBeSent:
@@ -3754,36 +4735,30 @@ class RequestWillBeSent:
             wall_time=TimeSinceEpoch.from_json(json.get("wallTime")),
             initiator=Initiator.from_json(json.get("initiator")),
             redirect_has_extra_info=bool(json.get("redirectHasExtraInfo")),
-            redirect_response=(
-                Response.from_json(json.get("redirectResponse"))
-                if json.get("redirectResponse", None) is not None
-                else None
-            ),
-            type_=(
-                ResourceType.from_json(json.get("type"))
-                if json.get("type", None) is not None
-                else None
-            ),
-            frame_id=(
-                page.FrameId.from_json(json.get("frameId"))
-                if json.get("frameId", None) is not None
-                else None
-            ),
-            has_user_gesture=(
-                bool(json.get("hasUserGesture"))
-                if json.get("hasUserGesture", None) is not None
-                else None
-            ),
+            redirect_response=Response.from_json(json.get("redirectResponse"))
+            if json.get("redirectResponse", None) is not None
+            else None,
+            type_=ResourceType.from_json(json.get("type"))
+            if json.get("type", None) is not None
+            else None,
+            frame_id=page.FrameId.from_json(json.get("frameId"))
+            if json.get("frameId", None) is not None
+            else None,
+            has_user_gesture=bool(json.get("hasUserGesture"))
+            if json.get("hasUserGesture", None) is not None
+            else None,
+            render_blocking_behavior=RenderBlockingBehavior.from_json(
+                json.get("renderBlockingBehavior")
+            )
+            if json.get("renderBlockingBehavior", None) is not None
+            else None,
         )
 
 
 @event_class("Network.resourceChangedPriority")
 @dataclass
 class ResourceChangedPriority:
-    """
-    **EXPERIMENTAL**
-    Fired when resource loading priority is changed.
-    """
+    """Fired when resource loading priority is changed"""
     #: Request identifier.
     request_id: RequestId
     #: New priority
@@ -3803,10 +4778,7 @@ class ResourceChangedPriority:
 @event_class("Network.signedExchangeReceived")
 @dataclass
 class SignedExchangeReceived:
-    """
-    **EXPERIMENTAL**
-    Fired when a signed exchange was received over the network.
-    """
+    """Fired when a signed exchange was received over the network."""
     #: Request identifier.
     request_id: RequestId
     #: Information about the signed exchange response.
@@ -3890,12 +4862,10 @@ class WebSocketCreated:
     def from_json(cls, json: T_JSON_DICT) -> WebSocketCreated:
         return cls(
             request_id=RequestId.from_json(json.get("requestId")),
-            url=str(json.get("url")),
-            initiator=(
-                Initiator.from_json(json.get("initiator"))
-                if json.get("initiator", None) is not None
-                else None
-            ),
+            url=str(json["url"]),
+            initiator=Initiator.from_json(json.get("initiator"))
+            if json.get("initiator", None) is not None
+            else None,
         )
 
 
@@ -3915,7 +4885,7 @@ class WebSocketFrameError:
         return cls(
             request_id=RequestId.from_json(json.get("requestId")),
             timestamp=MonotonicTime.from_json(json.get("timestamp")),
-            error_message=str(json.get("errorMessage")),
+            error_message=str(json["errorMessage"]),
         )
 
 
@@ -4023,11 +4993,9 @@ class WebTransportCreated:
             transport_id=RequestId.from_json(json.get("transportId")),
             url=str(json.get("url")),
             timestamp=MonotonicTime.from_json(json.get("timestamp")),
-            initiator=(
-                Initiator.from_json(json.get("initiator"))
-                if json.get("initiator", None) is not None
-                else None
-            ),
+            initiator=Initiator.from_json(json.get("initiator"))
+            if json.get("initiator", None) is not None
+            else None,
         )
 
 
@@ -4065,33 +5033,308 @@ class WebTransportClosed:
         )
 
 
+@event_class("Network.directTCPSocketCreated")
+@dataclass
+class DirectTCPSocketCreated:
+    """Fired upon direct_socket.TCPSocket creation."""
+    identifier: RequestId
+    remote_addr: str
+    #: Unsigned int 16.
+    remote_port: int
+    options: DirectTCPSocketOptions
+    timestamp: MonotonicTime
+    initiator: typing.Optional[Initiator]
+
+    @classmethod
+    def from_json(cls, json: T_JSON_DICT) -> DirectTCPSocketCreated:
+        return cls(
+            identifier=RequestId.from_json(json["identifier"]),
+            remote_addr=str(json["remoteAddr"]),
+            remote_port=int(json["remotePort"]),
+            options=DirectTCPSocketOptions.from_json(json["options"]),
+            timestamp=MonotonicTime.from_json(json["timestamp"]),
+            initiator=Initiator.from_json(json["initiator"])
+            if json.get("initiator", None) is not None
+            else None,
+        )
+
+
+@event_class("Network.directTCPSocketOpened")
+@dataclass
+class DirectTCPSocketOpened:
+    """Fired when direct_socket.TCPSocket connection is opened."""
+    identifier: RequestId
+    remote_addr: str
+    #: Expected to be unsigned integer.
+    remote_port: int
+    timestamp: MonotonicTime
+    local_addr: typing.Optional[str]
+    #: Expected to be unsigned integer.
+    local_port: typing.Optional[int]
+
+    @classmethod
+    def from_json(cls, json: T_JSON_DICT) -> DirectTCPSocketOpened:
+        return cls(
+            identifier=RequestId.from_json(json["identifier"]),
+            remote_addr=str(json["remoteAddr"]),
+            remote_port=int(json["remotePort"]),
+            timestamp=MonotonicTime.from_json(json["timestamp"]),
+            local_addr=str(json["localAddr"])
+            if json.get("localAddr", None) is not None
+            else None,
+            local_port=int(json["localPort"])
+            if json.get("localPort", None) is not None
+            else None,
+        )
+
+
+@event_class("Network.directTCPSocketAborted")
+@dataclass
+class DirectTCPSocketAborted:
+    """Fired when direct_socket.TCPSocket is aborted."""
+    identifier: RequestId
+    error_message: str
+    timestamp: MonotonicTime
+
+    @classmethod
+    def from_json(cls, json: T_JSON_DICT) -> DirectTCPSocketAborted:
+        return cls(
+            identifier=RequestId.from_json(json["identifier"]),
+            error_message=str(json["errorMessage"]),
+            timestamp=MonotonicTime.from_json(json["timestamp"]),
+        )
+
+
+@event_class("Network.directTCPSocketClosed")
+@dataclass
+class DirectTCPSocketClosed:
+    """Fired when direct_socket.TCPSocket is closed."""
+    identifier: RequestId
+    timestamp: MonotonicTime
+
+    @classmethod
+    def from_json(cls, json: T_JSON_DICT) -> DirectTCPSocketClosed:
+        return cls(
+            identifier=RequestId.from_json(json["identifier"]),
+            timestamp=MonotonicTime.from_json(json["timestamp"]),
+        )
+
+
+@event_class("Network.directTCPSocketChunkSent")
+@dataclass
+class DirectTCPSocketChunkSent:
+    """Fired when data is sent to tcp direct socket stream."""
+    identifier: RequestId
+    data: str
+    timestamp: MonotonicTime
+
+    @classmethod
+    def from_json(cls, json: T_JSON_DICT) -> DirectTCPSocketChunkSent:
+        return cls(
+            identifier=RequestId.from_json(json["identifier"]),
+            data=str(json["data"]),
+            timestamp=MonotonicTime.from_json(json["timestamp"]),
+        )
+
+
+@event_class("Network.directTCPSocketChunkReceived")
+@dataclass
+class DirectTCPSocketChunkReceived:
+    """Fired when data is received from tcp direct socket stream."""
+    identifier: RequestId
+    data: str
+    timestamp: MonotonicTime
+
+    @classmethod
+    def from_json(cls, json: T_JSON_DICT) -> DirectTCPSocketChunkReceived:
+        return cls(
+            identifier=RequestId.from_json(json["identifier"]),
+            data=str(json["data"]),
+            timestamp=MonotonicTime.from_json(json["timestamp"]),
+        )
+
+
+@event_class("Network.directUDPSocketJoinedMulticastGroup")
+@dataclass
+class DirectUDPSocketJoinedMulticastGroup:
+    identifier: RequestId
+    ip_address: str
+
+    @classmethod
+    def from_json(
+        cls, json: T_JSON_DICT
+    ) -> DirectUDPSocketJoinedMulticastGroup:
+        return cls(
+            identifier=RequestId.from_json(json["identifier"]),
+            ip_address=str(json["IPAddress"]),
+        )
+
+
+@event_class("Network.directUDPSocketLeftMulticastGroup")
+@dataclass
+class DirectUDPSocketLeftMulticastGroup:
+    identifier: RequestId
+    ip_address: str
+
+    @classmethod
+    def from_json(cls, json: T_JSON_DICT) -> DirectUDPSocketLeftMulticastGroup:
+        return cls(
+            identifier=RequestId.from_json(json["identifier"]),
+            ip_address=str(json["IPAddress"]),
+        )
+
+
+@event_class("Network.directUDPSocketCreated")
+@dataclass
+class DirectUDPSocketCreated:
+    """Fired upon direct_socket.UDPSocket creation."""
+    identifier: RequestId
+    options: DirectUDPSocketOptions
+    timestamp: MonotonicTime
+    initiator: typing.Optional[Initiator]
+
+    @classmethod
+    def from_json(cls, json: T_JSON_DICT) -> DirectUDPSocketCreated:
+        return cls(
+            identifier=RequestId.from_json(json["identifier"]),
+            options=DirectUDPSocketOptions.from_json(json["options"]),
+            timestamp=MonotonicTime.from_json(json["timestamp"]),
+            initiator=Initiator.from_json(json["initiator"])
+            if json.get("initiator", None) is not None
+            else None,
+        )
+
+
+@event_class("Network.directUDPSocketOpened")
+@dataclass
+class DirectUDPSocketOpened:
+    """Fired when direct_socket.UDPSocket connection is opened."""
+    identifier: RequestId
+    local_addr: str
+    #: Expected to be unsigned integer.
+    local_port: int
+    timestamp: MonotonicTime
+    remote_addr: typing.Optional[str]
+    #: Expected to be unsigned integer.
+    remote_port: typing.Optional[int]
+
+    @classmethod
+    def from_json(cls, json: T_JSON_DICT) -> DirectUDPSocketOpened:
+        return cls(
+            identifier=RequestId.from_json(json["identifier"]),
+            local_addr=str(json["localAddr"]),
+            local_port=int(json["localPort"]),
+            timestamp=MonotonicTime.from_json(json["timestamp"]),
+            remote_addr=str(json["remoteAddr"])
+            if json.get("remoteAddr", None) is not None
+            else None,
+            remote_port=int(json["remotePort"])
+            if json.get("remotePort", None) is not None
+            else None,
+        )
+
+
+@event_class("Network.directUDPSocketAborted")
+@dataclass
+class DirectUDPSocketAborted:
+    """Fired when direct_socket.UDPSocket is aborted."""
+    identifier: RequestId
+    error_message: str
+    timestamp: MonotonicTime
+
+    @classmethod
+    def from_json(cls, json: T_JSON_DICT) -> DirectUDPSocketAborted:
+        return cls(
+            identifier=RequestId.from_json(json["identifier"]),
+            error_message=str(json["errorMessage"]),
+            timestamp=MonotonicTime.from_json(json["timestamp"]),
+        )
+
+
+@event_class("Network.directUDPSocketClosed")
+@dataclass
+class DirectUDPSocketClosed:
+    """Fired when direct_socket.UDPSocket is closed."""
+    identifier: RequestId
+    timestamp: MonotonicTime
+
+    @classmethod
+    def from_json(cls, json: T_JSON_DICT) -> DirectUDPSocketClosed:
+        return cls(
+            identifier=RequestId.from_json(json["identifier"]),
+            timestamp=MonotonicTime.from_json(json["timestamp"]),
+        )
+
+
+@event_class("Network.directUDPSocketChunkSent")
+@dataclass
+class DirectUDPSocketChunkSent:
+    """Fired when message is sent to udp direct socket stream."""
+    identifier: RequestId
+    message: DirectUDPMessage
+    timestamp: MonotonicTime
+
+    @classmethod
+    def from_json(cls, json: T_JSON_DICT) -> DirectUDPSocketChunkSent:
+        return cls(
+            identifier=RequestId.from_json(json["identifier"]),
+            message=DirectUDPMessage.from_json(json["message"]),
+            timestamp=MonotonicTime.from_json(json["timestamp"]),
+        )
+
+
+@event_class("Network.directUDPSocketChunkReceived")
+@dataclass
+class DirectUDPSocketChunkReceived:
+    """Fired when message is received from udp direct socket stream."""
+    identifier: RequestId
+    message: DirectUDPMessage
+    timestamp: MonotonicTime
+
+    @classmethod
+    def from_json(cls, json: T_JSON_DICT) -> DirectUDPSocketChunkReceived:
+        return cls(
+            identifier=RequestId.from_json(json["identifier"]),
+            message=DirectUDPMessage.from_json(json["message"]),
+            timestamp=MonotonicTime.from_json(json["timestamp"]),
+        )
+
+
 @event_class("Network.requestWillBeSentExtraInfo")
 @dataclass
 class RequestWillBeSentExtraInfo:
     """
-    **EXPERIMENTAL**
     Fired when additional information about a requestWillBeSent event
     is available from the network stack. Not every requestWillBeSent event
     will have an additional requestWillBeSentExtraInfo fired for it,
     and there is no guarantee whether requestWillBeSent
     or requestWillBeSentExtraInfo will be fired first for the same request.
     """
-    #: Request identifier.
-    #: Used to match this information to an existing requestWillBeSent event.
+    #: Request identifier. Used to match this information to an existing
+    #: requestWillBeSent event.
     request_id: RequestId
     #: A list of cookies potentially associated to the requested URL.
-    #: This includes both cookies sent with the request and the ones not sent;
-    #: the latter are distinguished by having blockedReasons field set.
+    #: This includes both cookies sent with
+    #: the request and the ones not sent; the latter are distinguished
+    #: by having blockedReasons field set.
     associated_cookies: typing.List[AssociatedCookie]
     #: Raw request headers as they will be sent over the wire.
     headers: Headers
     #: Connection timing information for the request.
     connect_timing: ConnectTiming
+    #: How the request site's device bound sessions
+    #: were used during this request.
+    device_bound_session_usages: typing.Optional[
+        typing.List[DeviceBoundSessionWithUsage]
+    ]
     #: The client security state set for the request.
     client_security_state: typing.Optional[ClientSecurityState]
     #: Whether the site has partitioned cookies stored
     #: in a partition different than the current one.
     site_has_cookie_in_other_partition: typing.Optional[bool]
+    #: The network conditions id if this request was affected by network
+    #: conditions configured via emulateNetworkConditionsByRule.
+    applied_network_conditions_id: typing.Optional[str]
 
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> RequestWillBeSentExtraInfo:
@@ -4101,18 +5344,29 @@ class RequestWillBeSentExtraInfo:
                 AssociatedCookie.from_json(i)
                 for i in json["associatedCookies"]
             ],
-            headers=Headers.from_json(json.get("headers")),
+            headers=Headers.from_json(json["headers"]),
             connect_timing=ConnectTiming.from_json(json.get("connectTiming")),
-            client_security_state=(
-                ClientSecurityState.from_json(json.get("clientSecurityState"))
-                if json.get("clientSecurityState", None) is not None
-                else None
-            ),
-            site_has_cookie_in_other_partition=(
-                bool(json.get("siteHasCookieInOtherPartition"))
-                if json.get("siteHasCookieInOtherPartition", None) is not None
-                else None
-            ),
+            device_bound_session_usages=[
+                DeviceBoundSessionWithUsage.from_json(i)
+                for i in json["deviceBoundSessionUsages"]
+            ]
+            if json.get("deviceBoundSessionUsages", None) is not None
+            else None,
+            client_security_state=ClientSecurityState.from_json(
+                json.get("clientSecurityState")
+            )
+            if json.get("clientSecurityState", None) is not None
+            else None,
+            site_has_cookie_in_other_partition=bool(
+                json.get("siteHasCookieInOtherPartition")
+            )
+            if json.get("siteHasCookieInOtherPartition", None) is not None
+            else None,
+            applied_network_conditions_id=str(
+                json.get("appliedNetworkConditionsId")
+            )
+            if json.get("appliedNetworkConditionsId", None) is not None
+            else None,
         )
 
 
@@ -4120,9 +5374,8 @@ class RequestWillBeSentExtraInfo:
 @dataclass
 class ResponseReceivedExtraInfo:
     """
-    **EXPERIMENTAL**
-    Fired when additional information about a responseReceived event
-    is available from the network stack. Not every responseReceived event
+    Fired when additional information about a responseReceived event is
+    available from the network stack. Not every responseReceived event
     will have an additional responseReceivedExtraInfo for it, and
     responseReceivedExtraInfo may be fired before or after responseReceived.
     """
@@ -4136,31 +5389,34 @@ class ResponseReceivedExtraInfo:
     #: instead of a proper cookie.
     blocked_cookies: typing.List[BlockedSetCookieWithReason]
     #: Raw response headers as they were received over the wire.
+    #: Duplicate headers in the response are represented as a single key
+    #: with their values concatentated using ``\n`` as the separator.
+    #: See also ``headersText`` that contains verbatim text for HTTP/1.*.
     headers: Headers
-    #: The IP address space of the resource.
-    #: The address space can only be determined once the transport
-    #: established the connection,
+    #: The IP address space of the resource. The address space can only be
+    #: determined once the transport established the connection,
     #: so we can't send it in ``requestWillBeSentExtraInfo``.
     resource_ip_address_space: IPAddressSpace
-    #: The status code of the response.
-    #: This is useful in cases the request failed and no responseReceived
+    #: The status code of the response. This is useful in cases the request
+    #: failed and no responseReceived
     #: event is triggered, which is the case for, e.g., CORS errors.
-    #: This is also the correct status code for cached requests,
-    #: where the status in responseReceived is a 200 and this will be 304.
+    #: This is also the correct status code
+    #: for cached requests, where the status in responseReceived is a 200
+    #: and this will be 304.
     status_code: int
-    #: Raw response header text as it was received over the wire.
-    #: The raw text may not always be available,
-    #: such as in the case of HTTP/2 or QUIC.
+    #: Raw response header text as it was received over the wire. The raw text
+    #: may not always be available, such as in the case of HTTP/2 or QUIC.
     headers_text: typing.Optional[str]
-    #: The cookie partition key that will be used to store partitioned
-    #: cookies set in this response.
+    #: The cookie partition key that will be used to store partitioned cookies
+    #: set in this response.
     #: Only sent when partitioned cookies are enabled.
     cookie_partition_key: typing.Optional[CookiePartitionKey]
     #: True if partitioned cookies are enabled, but the partition key
     #: is not serializable to string.
     cookie_partition_key_opaque: typing.Optional[bool]
-    #: A list of cookies which should have been blocked by 3PCD but are
-    #: exempted and stored from the response with the corresponding reason.
+    #: A list of cookies which should have been blocked by 3PCD
+    #: but are exempted and stored from
+    #: the response with the corresponding reason.
     exempted_cookies: typing.Optional[typing.List[ExemptedSetCookieWithReason]]
 
     @classmethod
@@ -4169,36 +5425,32 @@ class ResponseReceivedExtraInfo:
             request_id=RequestId.from_json(json.get("requestId")),
             blocked_cookies=[
                 BlockedSetCookieWithReason.from_json(i)
-                for i in json["blockedCookies"]
+                for i in json.get("blockedCookies")
             ],
             headers=Headers.from_json(json.get("headers")),
             resource_ip_address_space=IPAddressSpace.from_json(
                 json.get("resourceIPAddressSpace")
             ),
             status_code=int(json.get("statusCode")),
-            headers_text=(
-                str(json.get("headersText"))
-                if json.get("headersText", None) is not None
-                else None
-            ),
-            cookie_partition_key=(
-                CookiePartitionKey.from_json(json.get("cookiePartitionKey"))
-                if json.get("cookiePartitionKey", None) is not None
-                else None
-            ),
-            cookie_partition_key_opaque=(
-                bool(json.get("cookiePartitionKeyOpaque"))
-                if json.get("cookiePartitionKeyOpaque", None) is not None
-                else None
-            ),
-            exempted_cookies=(
-                [
-                    ExemptedSetCookieWithReason.from_json(i)
-                    for i in json.get("exemptedCookies")
-                ]
-                if json.get("exemptedCookies", None) is not None
-                else None
-            ),
+            headers_text=str(json.get("headersText"))
+            if json.get("headersText", None) is not None
+            else None,
+            cookie_partition_key=CookiePartitionKey.from_json(
+                json.get("cookiePartitionKey")
+            )
+            if json.get("cookiePartitionKey", None) is not None
+            else None,
+            cookie_partition_key_opaque=bool(
+                json.get("cookiePartitionKeyOpaque")
+            )
+            if json.get("cookiePartitionKeyOpaque", None) is not None
+            else None,
+            exempted_cookies=[
+                ExemptedSetCookieWithReason.from_json(i)
+                for i in json.get("exemptedCookies")
+            ]
+            if json.get("exemptedCookies", None) is not None
+            else None,
         )
 
 
@@ -4206,18 +5458,20 @@ class ResponseReceivedExtraInfo:
 @dataclass
 class ResponseReceivedEarlyHints:
     """
-    **EXPERIMENTAL**
-    Fired when 103 Early Hints headers is received
-    in addition to the common response.
-    Not every responseReceived event will have
-    a responseReceivedEarlyHints fired.
-    Only one responseReceivedEarlyHints may be fired for
-    each responseReceived event.
+    Fired when 103 Early Hints headers is received in addition to the common
+    response. Not every responseReceived event will have an
+    responseReceivedEarlyHints fired.
+    Only one responseReceivedEarlyHints may be fired
+    for eached responseReceived event.
     """
-    #: Request identifier.
-    #: Used to match this information to another responseReceived event.
+    #: Request identifier. Used to match this information
+    #: to another responseReceived event.
     request_id: RequestId
     #: Raw response headers as they were received over the wire.
+    #: Duplicate headers in the response are represented
+    #: as a single key with their values
+    #: concatentated using ``\n`` as the separator.
+    #: See also ``headersText`` that contains verbatim text for HTTP/1.*.
     headers: Headers
 
     @classmethod
@@ -4232,7 +5486,6 @@ class ResponseReceivedEarlyHints:
 @dataclass
 class TrustTokenOperationDone:
     """
-    **EXPERIMENTAL**
     Fired exactly once for each Trust Token operation. Depending on
     the type of the operation and whether the operation succeeded or
     failed, the event is fired before the corresponding request was sent
@@ -4258,154 +5511,32 @@ class TrustTokenOperationDone:
             status=str(json.get("status")),
             type_=TrustTokenOperationType.from_json(json.get("type")),
             request_id=RequestId.from_json(json.get("requestId")),
-            top_level_origin=(
-                str(json.get("topLevelOrigin"))
-                if json.get("topLevelOrigin", None) is not None
-                else None
-            ),
-            issuer_origin=(
-                str(json.get("issuerOrigin"))
-                if json.get("issuerOrigin", None) is not None
-                else None
-            ),
-            issued_token_count=(
-                int(json.get("issuedTokenCount"))
-                if json.get("issuedTokenCount", None) is not None
-                else None
-            ),
+            top_level_origin=str(json.get("topLevelOrigin"))
+            if json.get("topLevelOrigin", None) is not None
+            else None,
+            issuer_origin=str(json.get("issuerOrigin"))
+            if json.get("issuerOrigin", None) is not None
+            else None,
+            issued_token_count=int(json.get("issuedTokenCount"))
+            if json.get("issuedTokenCount", None) is not None
+            else None,
         )
 
 
 @event_class("Network.policyUpdated")
 @dataclass
 class PolicyUpdated:
-    """
-    **EXPERIMENTAL**
-    Fired once security policy has been updated.
-    """
+    """Fired once security policy has been updated."""
 
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> PolicyUpdated:
         return cls()
 
 
-@event_class("Network.subresourceWebBundleMetadataReceived")
-@dataclass
-class SubresourceWebBundleMetadataReceived:
-    """
-    **EXPERIMENTAL**
-    Fired once when parsing the .wbn file has succeeded.
-    The event contains the information about the web bundle contents.
-    """
-    #: Request identifier. Used to match this information to another event.
-    request_id: RequestId
-    #: A list of URLs of resources in the subresource Web Bundle.
-    urls: typing.List[str]
-
-    @classmethod
-    def from_json(
-        cls, json: T_JSON_DICT
-    ) -> SubresourceWebBundleMetadataReceived:
-        return cls(
-            request_id=RequestId.from_json(json.get("requestId")),
-            urls=[str(i) for i in json["urls"]],
-        )
-
-
-@event_class("Network.subresourceWebBundleMetadataError")
-@dataclass
-class SubresourceWebBundleMetadataError:
-    """
-    **EXPERIMENTAL**
-    Fired once when parsing the .wbn file has failed.
-    """
-    #: Request identifier. Used to match this information to another event.
-    request_id: RequestId
-    #: Error message
-    error_message: str
-
-    @classmethod
-    def from_json(cls, json: T_JSON_DICT) -> SubresourceWebBundleMetadataError:
-        return cls(
-            request_id=RequestId.from_json(json.get("requestId")),
-            error_message=str(json.get("errorMessage")),
-        )
-
-
-@event_class("Network.subresourceWebBundleInnerResponseParsed")
-@dataclass
-class SubresourceWebBundleInnerResponseParsed:
-    """
-    **EXPERIMENTAL**
-    Fired when handling requests for resources within a .wbn file.
-    Note: this will only be fired for resources that are requested
-    by the webpage.
-    """
-    #: Request identifier of the subresource request
-    inner_request_id: RequestId
-    #: URL of the subresource resource.
-    inner_request_url: str
-    #: Bundle request identifier. Used to match this information to
-    #: another event.
-    #: This made be absent in case when the instrumentation was enabled only
-    #: after webbundle was parsed.
-    bundle_request_id: typing.Optional[RequestId]
-
-    @classmethod
-    def from_json(
-        cls, json: T_JSON_DICT
-    ) -> SubresourceWebBundleInnerResponseParsed:
-        return cls(
-            inner_request_id=RequestId.from_json(json.get("innerRequestId")),
-            inner_request_url=str(json.get("innerRequestURL")),
-            bundle_request_id=(
-                RequestId.from_json(json.get("bundleRequestId"))
-                if json.get("bundleRequestId", None) is not None
-                else None
-            ),
-        )
-
-
-@event_class("Network.subresourceWebBundleInnerResponseError")
-@dataclass
-class SubresourceWebBundleInnerResponseError:
-    """
-    **EXPERIMENTAL**
-    Fired when request for resources within a .wbn file failed.
-    """
-    #: Request identifier of the subresource request
-    inner_request_id: RequestId
-    #: URL of the subresource resource.
-    inner_request_url: str
-    #: Error message
-    error_message: str
-    #: Bundle request identifier. Used to match this information
-    #: to another event.
-    #: This made be absent in case when the instrumentation was
-    #: enabled only after webbundle was parsed.
-    bundle_request_id: typing.Optional[RequestId]
-
-    @classmethod
-    def from_json(
-        cls, json: T_JSON_DICT
-    ) -> SubresourceWebBundleInnerResponseError:
-        return cls(
-            inner_request_id=RequestId.from_json(json.get("innerRequestId")),
-            inner_request_url=str(json.get("innerRequestURL")),
-            error_message=str(json.get("errorMessage")),
-            bundle_request_id=(
-                RequestId.from_json(json.get("bundleRequestId"))
-                if json.get("bundleRequestId", None) is not None
-                else None
-            ),
-        )
-
-
 @event_class("Network.reportingApiReportAdded")
 @dataclass
 class ReportingApiReportAdded:
     """
-    **EXPERIMENTAL**
     Is sent whenever a new report is added.
     And after 'enableReportingApi' for all existing reports.
     """
@@ -4413,15 +5544,12 @@ class ReportingApiReportAdded:
 
     @classmethod
     def from_json(cls, json: T_JSON_DICT) -> ReportingApiReportAdded:
-        return cls(report=ReportingApiReport.from_json(json.get("report")))
+        return cls(report=ReportingApiReport.from_json(json["report"]))
 
 
 @event_class("Network.reportingApiReportUpdated")
 @dataclass
 class ReportingApiReportUpdated:
-    """
-    **EXPERIMENTAL**
-    """
     report: ReportingApiReport
 
     @classmethod
@@ -4432,9 +5560,6 @@ class ReportingApiReportUpdated:
 @event_class("Network.reportingApiEndpointsChangedForOrigin")
 @dataclass
 class ReportingApiEndpointsChangedForOrigin:
-    """
-    **EXPERIMENTAL**
-    """
     #: Origin of the document(s) which configured the endpoints.
     origin: str
     endpoints: typing.List[ReportingApiEndpoint]
@@ -4446,6 +5571,74 @@ class ReportingApiEndpointsChangedForOrigin:
         return cls(
             origin=str(json.get("origin")),
             endpoints=[
-                ReportingApiEndpoint.from_json(i) for i in json["endpoints"]
+                ReportingApiEndpoint.from_json(i)
+                for i in json.get("endpoints")
             ],
+        )
+
+
+@event_class("Network.deviceBoundSessionsAdded")
+@dataclass
+class DeviceBoundSessionsAdded:
+    """Triggered when the initial set of device bound sessions is added."""
+    #: The device bound sessions.
+    sessions: typing.List[DeviceBoundSession]
+
+    @classmethod
+    def from_json(cls, json: T_JSON_DICT) -> DeviceBoundSessionsAdded:
+        return cls(
+            sessions=[
+                DeviceBoundSession.from_json(i) for i in json.get("sessions")]
+        )
+
+
+@event_class("Network.deviceBoundSessionEventOccurred")
+@dataclass
+class DeviceBoundSessionEventOccurred:
+    """Triggered when a device bound session event occurs."""
+    #: A unique identifier for this session event.
+    event_id: DeviceBoundSessionEventId
+    #: The site this session event is associated with.
+    site: str
+    #: Whether this event was considered successful.
+    succeeded: bool
+    #: The session ID this event is associated with. May not be populated for
+    #: failed events.
+    session_id: typing.Optional[str]
+    #: The below are the different session event type details.
+    #: Exactly one is populated.
+    creation_event_details: typing.Optional[CreationEventDetails]
+    refresh_event_details: typing.Optional[RefreshEventDetails]
+    termination_event_details: typing.Optional[TerminationEventDetails]
+    challenge_event_details: typing.Optional[ChallengeEventDetails]
+
+    @classmethod
+    def from_json(cls, json: T_JSON_DICT) -> DeviceBoundSessionEventOccurred:
+        return cls(
+            event_id=DeviceBoundSessionEventId.from_json(json.get("eventId")),
+            site=str(json.get("site")),
+            succeeded=bool(json.get("succeeded")),
+            session_id=str(json.get("sessionId"))
+            if json.get("sessionId", None) is not None
+            else None,
+            creation_event_details=CreationEventDetails.from_json(
+                json.get("creationEventDetails")
+            )
+            if json.get("creationEventDetails", None) is not None
+            else None,
+            refresh_event_details=RefreshEventDetails.from_json(
+                json.get("refreshEventDetails")
+            )
+            if json.get("refreshEventDetails", None) is not None
+            else None,
+            termination_event_details=TerminationEventDetails.from_json(
+                json.get("terminationEventDetails")
+            )
+            if json.get("terminationEventDetails", None) is not None
+            else None,
+            challenge_event_details=ChallengeEventDetails.from_json(
+                json.get("challengeEventDetails")
+            )
+            if json.get("challengeEventDetails", None) is not None
+            else None,
         )
